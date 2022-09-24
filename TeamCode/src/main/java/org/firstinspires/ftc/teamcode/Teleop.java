@@ -30,7 +30,6 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,13 +50,12 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
 @Disabled
-public class BasicOpMode_Iterative extends OpMode
+public class Teleop extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    Eyes theCamera = new Eyes();
-    RobotHardware robot = new RobotHardware(this);
+    Thunderbot robot = new Thunderbot( hardwareMap, telemetry );
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -66,7 +64,6 @@ public class BasicOpMode_Iterative extends OpMode
     public void init() {
 
         robot.init();
-        theCamera.init(hardwareMap);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -77,7 +74,7 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void init_loop() {
-        int zone = theCamera.stageSwitchingPipeline.getSignalZone();
+        int zone = robot.getSignalZone();
         telemetry.addData("SignalZone = ", zone);
     }
 

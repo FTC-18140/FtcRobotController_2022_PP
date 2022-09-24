@@ -141,7 +141,7 @@ public class Eyes
             }
         }
 
-        public int getSignalZone()
+        protected int getSignalZone()
         {
             return numContoursFound;
         }
