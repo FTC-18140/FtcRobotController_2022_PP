@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -15,6 +16,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opencv.imgproc.Imgproc.FONT_HERSHEY_SIMPLEX;
 
 public class Eyes
 {
@@ -54,33 +57,56 @@ public class Eyes
      */
     static class StageSwitchingPipeline extends OpenCvPipeline
     {
-        Mat yCbCrChan2Mat = new Mat();
-        Mat thresholdMat = new Mat();
-        Mat contoursOnFrameMat = new Mat();
-        List<MatOfPoint> contoursList = new ArrayList<>();
+        Mat smallerMatrix = new Mat();
+        String answer = new String();
         int signalZone;
+        Scalar green = new Scalar(0,250,0);
+        Scalar blue = new Scalar( 0, 0, 255);
 
         @Override
         public Mat processFrame(Mat input)
         {
-            contoursList.clear();
-
             /*
-             * This pipeline finds the contours of yellow blobs such as the Gold Mineral
-             * from the Rover Ruckus game.
+             * This pipeline finds the signal and identifies what zone it indicates.
              */
-            Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
-            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
 
-            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-            signalZone = contoursList.size();
+            // Step 1 - identify the rectangle in the image that we want to study
+            Imgproc.rectangle( input, new Point( 100,100), new Point( 300, 300), green, 4);
 
-            input.copyTo(contoursOnFrameMat);
-            Imgproc.drawContours(contoursOnFrameMat, contoursList, -1, new Scalar(0, 0, 255), 3, 8);
+            // Step 2 - create a smaller, submatrix that only contains the pixels in the rectangle we are studying
 
-            return contoursOnFrameMat;
+//            you can use the submat( .. ) method such as
+//            smallerMatrix = input.submat( ...... );
 
+            // Step 3 - apply the OpenCV conversions, filters, thresholds, etc. to the submatrix
+
+//            Examples -- these will not work for our season -- but you can see the the kinds of things we might do
+
+//            Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
+//            Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
+//            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+
+            // Step 4 - add the values of the pixels in our submatrix
+
+
+            // Step 5 - store the answer in the signalZone variable.  Also can write it on the screen.
+
+//            signalZone = <our answer goes here>;
+            if (signalZone == 1)
+            {
+                answer = "ONE";
+            }
+            else if ( signalZone == 2)
+            {
+                answer = "TWO";
+            }
+            else
+            {
+                answer = "THREE";
+            }
+            Imgproc.putText( input, answer, new Point( 100, 50), FONT_HERSHEY_SIMPLEX, 1, blue);
+
+            return input;
         }
 
         protected int getSignalZone()

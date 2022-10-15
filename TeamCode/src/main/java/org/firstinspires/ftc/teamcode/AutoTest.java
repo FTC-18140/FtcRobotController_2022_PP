@@ -21,7 +21,7 @@ public class AutoTest extends OpMode
     @Override
     public void init_loop()
     {
-       // TODO: add code to get the signal sleeve value
+       // TODO: add code to get the signal sleeve value from the Eyes class.
     }
 
     @Override
