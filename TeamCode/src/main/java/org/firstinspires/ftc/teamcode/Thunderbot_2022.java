@@ -19,7 +19,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
-public class Thunderbot_2022 {
+public class Thunderbot_2022
+{
     /**
      * Public OpMode members
      */
@@ -29,40 +30,36 @@ public class Thunderbot_2022 {
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-    // DcMotor intakeMotor = null;
-    // pulling in the other areas
-    //LinearSlide linear = new LinearSlide();
-    // Carousel carousel = new Carousel();
-    // intake intake = new intake();
-    // DcMotor armMotor = null;
 
+
+    double initialPosition = 0;
+    boolean moving = false;
+    double startAngle = 0;
 
     // converts inches to motor ticks
-    static final double COUNTS_PER_MOTOR_REV = 28; // GoBilda Yellow Jacket 5202 312 rpm
-    static final double DRIVE_GEAR_REDUCTION = 20;
-    static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
-    static final double WHEEL_DIAMETER_CM = (WHEEL_DIAMETER_INCHES * 2.54);
+    static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
+    static final double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
+    static final double WHEEL_DIAMETER_CM = 9.6;  // goBilda mecanum wheels are 96mm in diameter
     static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
-            / (WHEEL_DIAMETER_CM * 3.1415);
+                                        / (WHEEL_DIAMETER_CM * Math.PI);
 
-    /**
-     * local OpMode members
-     */
-    HardwareMap hwMap = null;
-    private Telemetry telemetry;
+    private Telemetry telemetry = null;
 
     /**
      * Constructor
      */
-    public Thunderbot_2022() {
+    public Thunderbot_2022()
+    {
 
     }
 
     /**
      * Initialize standard Hardware interfaces
      */
-    public void init(HardwareMap ahwMap, Telemetry telem) {
-        try {
+    public void init(HardwareMap ahwMap, Telemetry telem)
+    {
+        try
+        {
             // Set up the parameters with which we will use our IMU. Note that integration
             // algorithm here just reports accelerations to the logcat log; it doesn't actually
             // provide positional information.
@@ -77,78 +74,106 @@ public class Thunderbot_2022 {
             // Retrieve and initialize the IMU.
             imu = ahwMap.get(BNO055IMU.class, "imu");
             imu.initialize(parameters);
-        } catch (Exception p_exeception)
-
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        }
+        catch (Exception p_exeception)
         {
             telemetry.addData("imu not found in config file", 0);
             imu = null;
         }
 
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        hwMap = ahwMap;
-        telemetry = telem;
-
-        hwMap = ahwMap;
+        /**
+         * local OpMode members
+         */
         telemetry = telem;
 
         // Define & Initialize Motors
-        rightFront = hwMap.dcMotor.get("rightFront");
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightRear = hwMap.dcMotor.get("rightRear");
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        try
+        {
+            rightFront = ahwMap.dcMotor.get("rightFront");
+            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("rightFront not found in config file", 0);
+        }
 
-        leftFront = hwMap.dcMotor.get("leftFront");
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        try
+        {
+            rightRear = ahwMap.dcMotor.get("rightRear");
+            rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("rightRear not found in config file", 0);
+        }
+
+        try
+        {
+            leftFront = ahwMap.dcMotor.get("leftFront");
+            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("leftFront not found in config file", 0);
+        }
+
+        try
+        {
+            leftRear = ahwMap.dcMotor.get("leftRear");
+            leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("leftRear not found in config file", 0);
+        }
 
 
-        leftRear = hwMap.dcMotor.get("leftRear");
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-// Initializing all of the other classes that are used in the robot
-     /*   linear.init(hwMap, telemetry);
-
-        carousel.init(hwMap, telemetry);
-
-        intake.init(hwMap, telemetry); */
     }
 
     /**
-     * This code go's through the math behind the mecanum wheel drive
+     * This code go's through the math behind the mecanum wheel drive.  Given the joystick values,
+     * it will calculate the motor commands needed for the mecanum drive.
      *
      * @param foward    - Any forward motion including backwards
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void joystickDrive(double foward, double right, double clockwise) {
+    public void joystickDrive(double foward, double right, double clockwise)
+    {
         double frontLeft = foward + clockwise + right;
         double frontRight = foward - clockwise - right;
         double backLeft = foward + clockwise - right;
         double backRight = foward - clockwise + right;
 
         double max = abs(frontLeft);
-        if (abs(frontRight) > max) {
+        if (abs(frontRight) > max)
+        {
             max = abs(frontRight);
         }
-        if (abs(backLeft) > max) {
+        if (abs(backLeft) > max)
+        {
             max = abs(backLeft);
         }
-        if (abs(backRight) > max) {
+        if (abs(backRight) > max)
+        {
             max = abs(backRight);
         }
-        if (max > 1) {
+        if (max > 1)
+        {
             frontLeft /= max;
             frontRight /= max;
             backLeft /= max;
@@ -161,217 +186,275 @@ public class Thunderbot_2022 {
         rightRear.setPower(backRight);
     }
 
-    double gyStartAngle = 0;
-    double initialPosition = 0;
-    boolean moving = false;
-    public boolean drive (double direction, double distance, double power) {
-
+    /**
+     * Make the robot drive a certain distance in a certain direction.
+     * @param direction
+     * @param distance
+     * @param power
+     * @return  boolean indicating true when the move is complete
+     */
+    public boolean drive(double direction, double distance, double power)
+    {
         // can it go diagonal left
         // 360 or 180 -180
 
         double xValue = Math.sin(toRadians(direction)) * power;
         double yValue = Math.cos(toRadians(direction)) * power;
+
+        // Get values from hardware
         double currentAngle = updateHeading();
+        double leftFrontPos = leftFront.getCurrentPosition();
+        double rightFrontPos = rightFront.getCurrentPosition();
+
         telemetry.addData("current angle", currentAngle);
-        telemetry.update();
 
-        // Set initial angle and position
-        if(!moving){
-            gyStartAngle = updateHeading();
-            if(direction == 45) {
-                initialPosition = leftFront.getCurrentPosition();
-            } else {
-                initialPosition = rightFront.getCurrentPosition();
-
+        // Set initial angle and distanceMoved
+        if (!moving)
+        {
+            startAngle = currentAngle;
+            if (direction == 45)
+            {
+                initialPosition = leftFrontPos;
+            }
+            else
+            {
+                initialPosition = rightFrontPos;
             }
             moving = true;
         }
 
-        double position = abs(rightFront.getCurrentPosition() - initialPosition);
-        if(direction == 45){
-            position = abs(leftFront.getCurrentPosition() - initialPosition);
-        } else{
-            position = abs(rightFront.getCurrentPosition() - initialPosition);
+        double distanceMoved;
+        if (direction == 45)
+        {
+            distanceMoved = abs(leftFrontPos - initialPosition);
         }
-        double positionInCM = position/COUNTS_PER_CM;
-        telemetry.addData("position", position);
+        else
+        {
+            distanceMoved = abs(rightFrontPos - initialPosition);
+        }
 
-        // calculates required speed to adjust to gyStartAngle
-        double adjust = (currentAngle - gyStartAngle) / 100;
-        // Setting range of adjustments
-        adjust = Range.clip(adjust, -1, 1);
+        double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
+        telemetry.addData("distanceMoved", distanceMoved);
 
-        // Stops when at the specified distance
-        if(positionInCM >= distance){
+        // calculates required amount to adjust the gyStartAngle
+        // Divide the adjustment by 100 to make the adjustments more gentle and prevent
+        // oscillations and over corrections.
+        double angleCorrection = (currentAngle - startAngle) / 100;
+
+        // Ensure the adjustment is not outside of +/-1
+        angleCorrection = Range.clip(angleCorrection, -1, 1);
+
+        if (distanceMovedInCM >= distance)
+        {
+            // Stops when at the specified distance
             stop();
             moving = false;
             return true;
-
+        }
+        else
+        {
             // Continues if not at the specified distance
-        } else {
-
-            joystickDrive(yValue, xValue, -adjust);
+            joystickDrive(yValue, xValue, -angleCorrection);
             return false;
         }
     }
-    double startAngle = 0;
-    double currentAngle = 0;
 
-    public boolean gyroDrive (double direction, double distance, double power) {
 
+
+    /**
+     * Drive the robot in the heading provided using the internal imu.  It will rotate to the heading
+     * and tank drive along that heading.
+     * @param direction  the heading the robot should drive
+     * @param distance the distance the robot should drive before stopping
+     * @param power the speed the robot should drive
+     * @return boolean indicating true when the move is complete
+     */
+    public boolean gyroDrive(double direction, double distance, double power)
+    {
         double currentAngle = updateHeading();
         telemetry.addData("current angle", currentAngle);
 
-// Set desired angle and initial position
-        if(!moving){
-            gyStartAngle = direction;
-// If my intended direction to drive is negative, and it's close enough to -180 to be worried,
-// add 360 degrees to it. This will prevent the angle from rolling over to +/-180.
-// For example, if my desired direction is -165, I would add 360 to that, and my new
-// desired direction would be 195.
-            if (gyStartAngle < 0.0 && Math.abs(gyStartAngle) > 130.0 )
+        // Set desired angle and initial distanceMoved
+        if (!moving)
+        {
+            startAngle = direction;
+            // If my intended direction to drive is negative, and it's close enough to -180 to be worried,
+            // add 360 degrees to it. This will prevent the angle from rolling over to +/-180.
+            // For example, if my desired direction is -165, I would add 360 to that, and my new
+            // desired direction would be 195.
+            if (startAngle < 0.0 && Math.abs(startAngle) > 130.0)
             {
-                gyStartAngle = gyStartAngle + 360;
+                startAngle = startAngle + 360;
             }
 
-            if(direction == 45) {
-// the rightFront wheel doesn't move at a desired direction of 45 degrees
+            if (direction == 45)
+            {
+                // the rightFront wheel doesn't move at a desired direction of 45 degrees
                 initialPosition = leftFront.getCurrentPosition();
-            } else {
+            }
+            else
+            {
                 initialPosition = rightFront.getCurrentPosition();
             }
             moving = true;
         }
 
-        double position;
-        if(direction == 45){
-            position = abs(leftFront.getCurrentPosition() - initialPosition);
-        } else{
-            position = abs(rightFront.getCurrentPosition() - initialPosition);
-        }
-        double positionInCM = position/COUNTS_PER_CM;
-        telemetry.addData("position", position);
-
-        if (Math.abs(gyStartAngle) > 130 && currentAngle < 0.0)
+        double distanceMoved;
+        if (direction == 45)
         {
-// Prevent the rollover of the currentAngle
+            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+        }
+        else
+        {
+            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+        }
+        double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
+        telemetry.addData("distanceMoved", distanceMoved);
+
+        if (Math.abs(startAngle) > 130 && currentAngle < 0.0)
+        {
+            // Prevent the rollover of the currentAngle
             currentAngle += 360;
         }
 
-// calculates required speed to adjust to gyStartAngle
-        double adjust = (gyStartAngle - currentAngle ) / 100;
-// Setting range of adjustments
-        adjust = Range.clip(adjust, -1, 1);
+        // calculates required speed to adjust to gyStartAngle
+        double angleCorrection = (startAngle - currentAngle) / 100;
+        // Setting range of adjustments
+        angleCorrection = Range.clip(angleCorrection, -1, 1);
 
-// Stops when at the specified distance
-        if(positionInCM >= distance){
+        if (distanceMovedInCM >= distance)
+        {
+            // Stops when at the specified distance
             stop();
             moving = false;
             return true;
-
-// Continues if not at the specified distance
-        } else {
-
-            joystickDrive(power, 0, adjust);
+        }
+        else
+        {
+            // Continues if not at the specified distance
+            joystickDrive(power, 0, angleCorrection);
             return false;
         }
     }
 
 
     /**
-     * Turns an Exact Angle in Degrees Using The Gyro
-     * @param degrees - Angle The Robot Will Turn
-     * @param power - Speed The Robot will Turn
-     * @return
+     * Turns the robot an amount of degrees using the imu
+     *
+     * @param degreesToTurn - Angle the robot will turn
+     * @param power   - Speed the robot will turn
+     *
+     * @return boolean indicating true when the move is complete
      */
-    public boolean turn (double degrees, double power) {
-        power = abs(power);
+    public boolean turn(double degreesToTurn, double power)
+    {
+        // Updates current angle
+        double currentAngle = updateHeading();
+        telemetry.addData("current angle", currentAngle);
+
         // Sets initial angle
-        if(!moving){
-            currentAngle = updateHeading();
+        if (!moving)
+        {
             startAngle = currentAngle;
             moving = true;
         }
 
-        // Updates current angle
-        currentAngle = updateHeading();
-        telemetry.addData("current angle", currentAngle);
-        telemetry.update();
-
-        if (0 > degrees){
+        power = abs(power);
+        if (degreesToTurn < 0)
+        {
+            // Make power a negative number if the degreesTo to turn is negative
             power = -power;
         }
 
-        // what happens if above 180
-
-        if (abs(degrees) == 180){
+        if (abs(degreesToTurn) == 180)
+        {
+            // TODO: fix the case where you want to turn exactly 180 degreesTo
             // avoid 180 somehow
         }
 
-        // Stops turning when at the specified angle
-        if(Math.abs(currentAngle - startAngle) >= abs(degrees)){
+        if (Math.abs(currentAngle - startAngle) >= abs(degreesToTurn))
+        {
+            // Stops turning when at the specified angle
             stop();
             moving = false;
             return true;
-
+        }
+        else
+        {
             // Continues to turn if not at the specified angle
-        }else{
             joystickDrive(0, 0, power);
             return false;
         }
     }
 
-    public boolean turnTo (double degrees, double power) {
-        power = abs(power);
+    /**
+     * Turns the robot to a face a desired heading
+     * @param targetHeading
+     * @param power
+     * @return boolean indicating true when the move is complete
+     */
+    public boolean turnTo(double targetHeading, double power)
+    {
+        // Updates current angle
+        double currentAngle = updateHeading();
+        telemetry.addData("current angle", currentAngle);
 
-        if(!moving){
+        if (!moving)
+        {
             moving = true;
         }
 
-        // Updates current angle
-        currentAngle = updateHeading();
-        telemetry.addData("current angle", currentAngle);
+        power = abs(power);
+        // If the difference between the current angle and the target angle is small (<10), scale
+        // the power proportionally to how far you have left to go.  But... don't let the power
+        // get too small because the robot won't have enough power to complete the turn if the
+        // power gets too small.
+        if (Math.abs(currentAngle - targetHeading) < 10)
+        {
+            power = power * Math.abs((Math.abs(currentAngle) - Math.abs(targetHeading)) / 100);
 
-        if(10 > Math.abs(currentAngle - degrees)){
-            //power = power * ((Math.abs(currentAngle) - Math.abs(degrees))/100);
-            power = power * Math.abs((Math.abs(currentAngle) - Math.abs(degrees))/100);
-
-            if(power > 0){
+            if (power > 0)
+            {
                 power = Range.clip(power, 0.1, 1);
-            } else{
+            }
+            else
+            {
                 power = Range.clip(power, -1, -0.1);
             }
         }
 
-
-        // Stops turning when at the specified angle
-        if(Math.abs(Math.abs(currentAngle) - Math.abs(degrees)) <= 0.5){ // forever increasing
+        if (Math.abs(Math.abs(currentAngle) - Math.abs(targetHeading)) <= 0.5)
+        {
+            // Stops turning when at the specified angle (or really close)
             stop();
             moving = false;
             return true;
-
+        }
+        else
+        {
             // Continues to turn if not at the specified angle
-        }else{
             joystickDrive(0, 0, power);
             return false;
         }
     }
 
-
-    // Gets the current angle of the robot
-    public double updateHeading() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+    /**
+     * Get the heading angle from the imu and convert it to degrees.
+     * @return the heading angle
+     */
+    public double updateHeading()
+    {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                                                       AngleUnit.DEGREES);
+        return -AngleUnit.DEGREES.normalize(
+                AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
 
-
-    // Stop all motors
-
-
-
-
-    // Stop all motors
-    public void stop() {
+    /**
+     * Stop all the motors.
+      */
+    public void stop()
+    {
         leftFront.setPower(0);
         rightFront.setPower(0);
         leftRear.setPower(0);
