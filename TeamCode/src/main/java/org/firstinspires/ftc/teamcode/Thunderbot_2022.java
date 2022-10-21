@@ -332,7 +332,7 @@ public class Thunderbot_2022
         else
         {
             // Continues if not at the specified distance
-            joystickDrive(power, 0, angleCorrection);
+            joystickDrive(power, 0, -angleCorrection);
             return false;
         }
     }

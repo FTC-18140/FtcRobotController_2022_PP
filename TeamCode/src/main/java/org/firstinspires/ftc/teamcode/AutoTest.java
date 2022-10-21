@@ -38,7 +38,7 @@ public class AutoTest extends OpMode
             case 0:
                 if (!done)
                 {
-                    done = robot.drive(0, 40, 0.2);
+                    done = robot.gyroDrive(0, 45, 0.2);
                 }
                 else
                 {
@@ -50,7 +50,8 @@ public class AutoTest extends OpMode
             case 1:
                 if (!done)
                 {
-                    done = robot.turnTo(90, 0.2);
+                    done = robot.turn(-45, -0.2);
+                    telemetry.addData("case 1", "is started");
                 }
                 else
                 {
@@ -62,7 +63,9 @@ public class AutoTest extends OpMode
             case 2:
                 if (!done)
                 {
-                    done = robot.gyroDrive(90, 40, 0.2);
+              //      done = robot.gyroDrive(90, 0, 0.2);
+                    telemetry.addData("case 2", "is started");
+                    done = true;
                 }
                 else
                 {
@@ -74,12 +77,31 @@ public class AutoTest extends OpMode
             case 3:
                 if (!done)
                 {
-                    done = robot.turnTo(0, 0.2);
+                    done = robot.gyroDrive(-45, 8, -0.2);
                 }
                 else
                 {
                     robot.stop();
                     done = false;
+                    state++;
+                }
+                break;
+            case 4:
+                if (!done) {
+                    done = robot.turn(45, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 5:
+                if (!done) {
+                    done = robot.drive(90, 41, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    telemetry.addData("program", "ended");
                     state++;
                 }
                 break;
