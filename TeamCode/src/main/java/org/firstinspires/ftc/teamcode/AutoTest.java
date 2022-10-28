@@ -18,6 +18,7 @@ public class AutoTest extends OpMode
     double stepD = 8;
     double stepE = 45;
     double stepF = 41;
+    int theZone = 2;
 
     @Override
     public void init()
@@ -29,19 +30,20 @@ public class AutoTest extends OpMode
     public void init_loop()
     {
        // TODO: add code to get the signal sleeve value from the Eyes class.
+        theZone = robot.vision.stageSwitchingPipeline.getSignalZone();
     }
 
     @Override
     public void start() {
 
-        if (robot.vision.stageSwitchingPipeline.getSignalZone() == 1) { // set the number to the value of black
+        if (theZone == 1) { // set the number to the value of black
             stepF = -41;
-        } else if (robot.vision.stageSwitchingPipeline.getSignalZone() == 2) { // set the number to the value of half black
+        } else if (theZone == 2) { // set the number to the value of half black
             stepF = 0;
-        } else if (robot.vision.stageSwitchingPipeline.getSignalZone() == 3 ) { // set the number to the value of white
+        } else if (theZone == 3 ) { // set the number to the value of white
             stepF = 41;
         } else {
-            telemetry.addData("Unknown Case", robot.vision.stageSwitchingPipeline.getSignalZone());
+            telemetry.addData("Unknown Case", theZone);
         }
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
