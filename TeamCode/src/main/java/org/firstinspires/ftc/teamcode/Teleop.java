@@ -15,6 +15,8 @@ public class Teleop extends OpMode
 
     Thunderbot_2022 robot = new Thunderbot_2022();
 
+    // Defining the Variables that will be used for the steps in the autonomous
+
     @Override
     public void init()
     {
@@ -27,8 +29,7 @@ public class Teleop extends OpMode
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         telemetry.addData("Starting", "...");
     }
 

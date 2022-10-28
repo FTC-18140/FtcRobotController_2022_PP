@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,12 +25,14 @@ public class Eyes
 
     OpenCvCamera phoneCam;
     StageSwitchingPipeline stageSwitchingPipeline;
-
-    public void init(HardwareMap hardwareMap)
+Telemetry telemetry;
+    public void init(HardwareMap hardwareMap,Telemetry telem)
     {
+        telemetry = telem;
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         stageSwitchingPipeline = new StageSwitchingPipeline();
+        stageSwitchingPipeline.telem = telemetry;
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -62,7 +65,7 @@ public class Eyes
         int signalZone;
         Scalar green = new Scalar(0,250,0);
         Scalar blue = new Scalar( 0, 0, 255);
-
+        Telemetry telem;
         @Override
         public Mat processFrame(Mat input)
         {
@@ -74,24 +77,36 @@ public class Eyes
             Imgproc.rectangle( input, new Point( 100,100), new Point( 300, 300), green, 4);
 
             // Step 2 - create a smaller, submatrix that only contains the pixels in the rectangle we are studying
-
+            smallerMatrix = input.submat(120,280, 120, 280);
 //            you can use the submat( .. ) method such as
 //            smallerMatrix = input.submat( ...... );
+
 
             // Step 3 - apply the OpenCV conversions, filters, thresholds, etc. to the submatrix
 
 //            Examples -- these will not work for our season -- but you can see the the kinds of things we might do
-
-//            Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
+              Mat grayMatrix = new Mat();
+             Imgproc.cvtColor(smallerMatrix, grayMatrix, Imgproc.COLOR_RGB2GRAY);
 //            Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
 //            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
 
+
             // Step 4 - add the values of the pixels in our submatrix
-
-
+           double sumColors = Core.sumElems(grayMatrix).val[0];
+           telem.addData("sum: ",sumColors);
             // Step 5 - store the answer in the signalZone variable.  Also can write it on the screen.
 
 //            signalZone = <our answer goes here>;
+            if (sumColors > 3300000) {
+                signalZone = 2;
+            }
+            else if (sumColors > 1960000) {
+                signalZone = 3;
+            }
+            else {
+                signalZone = 1;
+            }
+
             if (signalZone == 1)
             {
                 answer = "ONE";
@@ -106,6 +121,7 @@ public class Eyes
             }
             Imgproc.putText( input, answer, new Point( 100, 50), FONT_HERSHEY_SIMPLEX, 1, blue);
 
+            telem.addData("answer", answer);
             return input;
         }
 

@@ -30,7 +30,7 @@ public class Thunderbot_2022
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-
+    Eyes vision = new Eyes();
 
     double initialPosition = 0;
     boolean moving = false;
@@ -141,6 +141,7 @@ public class Thunderbot_2022
             telemetry.addData("leftRear not found in config file", 0);
         }
 
+        vision.init(ahwMap, telemetry);
 
     }
 

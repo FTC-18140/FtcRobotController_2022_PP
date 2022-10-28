@@ -11,6 +11,13 @@ public class AutoTest extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
     int state = 0;
+    // Defining the Variables that will be used for the steps in the autonomous
+    double stepA = 45;
+    double stepB = -45;
+    double stepC = 0;
+    double stepD = 8;
+    double stepE = 45;
+    double stepF = 41;
 
     @Override
     public void init()
@@ -25,8 +32,18 @@ public class AutoTest extends OpMode
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
+
+        if (robot.vision.stageSwitchingPipeline.getSignalZone() == 1) { // set the number to the value of black
+            stepF = -41;
+        } else if (robot.vision.stageSwitchingPipeline.getSignalZone() == 2) { // set the number to the value of half black
+            stepF = 0;
+        } else if (robot.vision.stageSwitchingPipeline.getSignalZone() == 3 ) { // set the number to the value of white
+            stepF = 41;
+        } else {
+            telemetry.addData("Unknown Case", robot.vision.stageSwitchingPipeline.getSignalZone());
+        }
+
         telemetry.addData("Robot Location: ", robot.updateHeading());
     }
 
@@ -38,7 +55,7 @@ public class AutoTest extends OpMode
             case 0:
                 if (!done)
                 {
-                    done = robot.gyroDrive(0, 45, 0.2);
+                    done = robot.gyroDrive(0, stepA, 0.2);
                 }
                 else
                 {
@@ -50,7 +67,7 @@ public class AutoTest extends OpMode
             case 1:
                 if (!done)
                 {
-                    done = robot.turn(-45, -0.2);
+                    done = robot.turn(stepB, -0.2);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -63,7 +80,7 @@ public class AutoTest extends OpMode
             case 2:
                 if (!done)
                 {
-              //      done = robot.gyroDrive(90, 0, 0.2);
+                    done = robot.gyroDrive(90, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
                     done = true;
                 }
@@ -77,7 +94,7 @@ public class AutoTest extends OpMode
             case 3:
                 if (!done)
                 {
-                    done = robot.gyroDrive(-45, 8, -0.2);
+                    done = robot.gyroDrive(-45, stepD, -0.2);
                 }
                 else
                 {
@@ -88,7 +105,7 @@ public class AutoTest extends OpMode
                 break;
             case 4:
                 if (!done) {
-                    done = robot.turn(45, 0.2);
+                    done = robot.turn(stepE, 0.2);
                 } else {
                     robot.stop();
                     done = false;
@@ -97,7 +114,7 @@ public class AutoTest extends OpMode
                 break;
             case 5:
                 if (!done) {
-                    done = robot.drive(90, 41, 0.2);
+                    done = robot.drive(90, stepF, 0.2);
                 } else {
                     robot.stop();
                     done = false;
