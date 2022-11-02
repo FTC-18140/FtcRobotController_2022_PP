@@ -29,13 +29,7 @@ public class Thunderbot_2022 {
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-    // DcMotor intakeMotor = null;
-    // pulling in the other areas
-    //LinearSlide linear = new LinearSlide();
-    // Carousel carousel = new Carousel();
-    // intake intake = new intake();
-    // DcMotor armMotor = null;
-
+    linearSlide slide = new linearSlide();
 
     // converts inches to motor ticks
     static final double COUNTS_PER_MOTOR_REV = 28; // GoBilda Yellow Jacket 5202 312 rpm
@@ -117,12 +111,8 @@ public class Thunderbot_2022 {
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-// Initializing all of the other classes that are used in the robot
-     /*   linear.init(hwMap, telemetry);
+        slide.init(hwMap, telemetry);
 
-        carousel.init(hwMap, telemetry);
-
-        intake.init(hwMap, telemetry); */
     }
 
     /**

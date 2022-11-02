@@ -45,5 +45,19 @@ public class Teleop extends OpMode {
         telemetry.addData("ly", gamepad1.left_stick_y);
         telemetry.addData("rx", gamepad1.right_stick_x);
         telemetry.addData("ry", gamepad1.right_stick_y);
+
+        if(gamepad1.a) {
+            robot.slide.extend();
+        } else if (gamepad1.b) {
+            robot.slide.reverse();
+        } else {
+            robot.slide.stopExtend();
+        }
+
+        if (gamepad1.right_bumper) {
+            robot.slide.open();
+        } else if (gamepad1.left_bumper) {
+            robot.slide.close();
+        }
     }
 }
