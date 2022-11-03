@@ -35,7 +35,7 @@ public class Teleop extends OpMode {
     public void loop() {
         robot.joystickDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-        //telemetry.addData("linearSlide Pos: ", robot.linear.linearSlide.getCurrentPosition()/robot.linear.COUNTS_PER_CM);
+        //telemetry.addData("LinearSlide Pos: ", robot.linear.LinearSlide.getCurrentPosition()/robot.linear.COUNTS_PER_CM);
 
         //telemetry.addData("Basket servo Pos:", robot.linear.basketServo.getPosition());
         //telemetry.addData("Right servo Pos:", robot.linear.linearSlideServoR.getPosition());

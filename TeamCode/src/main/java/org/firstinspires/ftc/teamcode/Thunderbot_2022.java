@@ -29,15 +29,15 @@ public class Thunderbot_2022 {
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-    linearSlide slide = new linearSlide();
+    LinearSlide slide = new LinearSlide();
 
     // converts inches to motor ticks
-    static final double COUNTS_PER_MOTOR_REV = 28; // GoBilda Yellow Jacket 5202 312 rpm
-    static final double DRIVE_GEAR_REDUCTION = 20;
-    static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
+    static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor counts per rev
+    static final double DRIVE_GEAR_REDUCTION = 2.89*3.6;  // REV ultra planetary 3:1 and 4:1
+    static final double WHEEL_DIAMETER_INCHES = 96.0/25.4; // goBilda 96mm mecanum wheels
     static final double WHEEL_DIAMETER_CM = (WHEEL_DIAMETER_INCHES * 2.54);
     static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
-            / (WHEEL_DIAMETER_CM * 3.1415);
+            / (WHEEL_DIAMETER_CM * Math.PI);
 
     /**
      * local OpMode members
@@ -79,8 +79,6 @@ public class Thunderbot_2022 {
         }
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        hwMap = ahwMap;
-        telemetry = telem;
 
         hwMap = ahwMap;
         telemetry = telem;
@@ -353,12 +351,6 @@ public class Thunderbot_2022 {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
-
-
-    // Stop all motors
-
-
-
 
     // Stop all motors
     public void stop() {
