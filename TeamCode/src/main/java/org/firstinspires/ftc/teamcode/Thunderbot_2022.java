@@ -83,10 +83,9 @@ public class Thunderbot_2022
             imu = null;
         }
 
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        /**
-         * local OpMode members
-         */
+
+        // local OpMode members
+
         telemetry = telem;
 
         // Define & Initialize Motors

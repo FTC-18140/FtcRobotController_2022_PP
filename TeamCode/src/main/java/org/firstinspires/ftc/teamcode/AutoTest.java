@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous
+/**
+ * AutoTest Class
+ */
 public class AutoTest extends OpMode
 {
     Thunderbot_2022 robot = new Thunderbot_2022();
@@ -29,20 +32,27 @@ public class AutoTest extends OpMode
     @Override
     public void init_loop()
     {
-       // TODO: add code to get the signal sleeve value from the Eyes class.
-        theZone = robot.vision.stageSwitchingPipeline.getSignalZone();
+        theZone = robot.vision.getSignalZone();
     }
 
     @Override
-    public void start() {
+    public void start()
+    {
 
-        if (theZone == 1) { // set the number to the value of black
+        if (theZone == 1)
+        { // set the number to the value of black
             stepF = -41;
-        } else if (theZone == 2) { // set the number to the value of half black
+        }
+        else if (theZone == 2)
+        { // set the number to the value of half black
             stepF = 0;
-        } else if (theZone == 3 ) { // set the number to the value of white
+        }
+        else if (theZone == 3)
+        { // set the number to the value of white
             stepF = 41;
-        } else {
+        }
+        else
+        {
             telemetry.addData("Unknown Case", theZone);
         }
 
@@ -106,18 +116,24 @@ public class AutoTest extends OpMode
                 }
                 break;
             case 4:
-                if (!done) {
+                if (!done)
+                {
                     done = robot.turn(stepE, 0.2);
-                } else {
+                }
+                else
+                {
                     robot.stop();
                     done = false;
                     state++;
                 }
                 break;
             case 5:
-                if (!done) {
+                if (!done)
+                {
                     done = robot.drive(90, stepF, 0.2);
-                } else {
+                }
+                else
+                {
                     robot.stop();
                     done = false;
                     telemetry.addData("program", "ended");

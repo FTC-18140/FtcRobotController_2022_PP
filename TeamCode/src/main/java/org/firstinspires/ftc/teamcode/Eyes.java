@@ -125,11 +125,15 @@ Telemetry telemetry;
             return input;
         }
 
-        protected int getSignalZone()
-        {
-            return signalZone;
-        }
+    }
 
+    /**
+     * Returns the zone number for the zone identified by the signal in the OpenCV code
+     * @return int zone number
+     */
+    int getSignalZone()
+    {
+        return stageSwitchingPipeline.signalZone;
     }
 
 }

@@ -26,11 +26,18 @@ public class LinearSlide
         hwMap = theHWMap;
         telemetry = telem;
 
-        linearSlide = hwMap.dcMotor.get("linear");
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        try
+        {
+            linearSlide = hwMap.dcMotor.get("linear");
+            linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+            linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("liner not found in config file", 0);
+        }
     }
 
     public void stopExtend()
