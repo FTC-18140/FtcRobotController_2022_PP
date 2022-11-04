@@ -30,8 +30,8 @@ public class Thunderbot_2022
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-    LinearSlide slide = new LinearSlide();
     Eyes vision = new Eyes();
+    linearSlide slide = new linearSlide();
 
     double initialPosition = 0;
     boolean moving = false;
@@ -82,9 +82,6 @@ public class Thunderbot_2022
             telemetry.addData("imu not found in config file", 0);
             imu = null;
         }
-
-
-        // local OpMode members
 
         telemetry = telem;
 
@@ -141,7 +138,6 @@ public class Thunderbot_2022
         {
             telemetry.addData("leftRear not found in config file", 0);
         }
-
         slide.init(ahwMap, telemetry);
         vision.init(ahwMap, telemetry);
 
