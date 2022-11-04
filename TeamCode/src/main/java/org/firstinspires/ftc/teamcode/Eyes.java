@@ -25,31 +25,38 @@ public class Eyes
 
     OpenCvCamera phoneCam;
     StageSwitchingPipeline stageSwitchingPipeline;
-Telemetry telemetry;
+    Telemetry telemetry;
     public void init(HardwareMap hardwareMap,Telemetry telem)
     {
-        telemetry = telem;
-        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
-        stageSwitchingPipeline = new StageSwitchingPipeline();
-        stageSwitchingPipeline.telem = telemetry;
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        try
         {
-            @Override
-            public void onOpened()
-            {
-                phoneCam.setPipeline(stageSwitchingPipeline);
-                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
+            telemetry = telem;
+            phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-            @Override
-            public void onError(int errorCode)
+            stageSwitchingPipeline = new StageSwitchingPipeline();
+            stageSwitchingPipeline.telem = telemetry;
+            phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
             {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+                @Override
+                public void onOpened()
+                {
+                    phoneCam.setPipeline(stageSwitchingPipeline);
+                    phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                }
+
+                @Override
+                public void onError(int errorCode)
+                {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("webcam 1 not found in config.", 0);
+        }
 
     }
     /*

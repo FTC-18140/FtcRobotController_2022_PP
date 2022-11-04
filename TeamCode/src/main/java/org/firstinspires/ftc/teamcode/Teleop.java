@@ -12,6 +12,9 @@ public class Teleop extends OpMode
 
     double wristPosition = 0;
     double clawPosition = 0;
+    double WRIST_INCREMENT = 0.0025;
+    double CLAW_INCREMENT = 0.0025;
+
     @Override
     public void init()
     {
@@ -44,19 +47,19 @@ public class Teleop extends OpMode
         telemetry.addData("ry", gamepad1.right_stick_y);
 
         if (gamepad1.dpad_up) {
-            wristPosition += 0.0025;
+            wristPosition += WRIST_INCREMENT;
         } else if (gamepad1.dpad_down) {
-            wristPosition -= 0.0025;
+            wristPosition -= WRIST_INCREMENT;
         }
-        wristPosition = Range.clip(wristPosition, 0, 0.625);
-        robot.linearSlide.wristMove(wristPosition); // corrects position
+        wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
+        robot.linearSlide.wristMove(wristPosition);
 
         if (gamepad1.left_bumper) {
-            clawPosition += 0.0025;
+            clawPosition += CLAW_INCREMENT;
         } else if (gamepad1.right_bumper) {
-            clawPosition -= 0.0025;
+            clawPosition -= CLAW_INCREMENT;
         }
-        clawPosition = Range.clip(clawPosition, 0.2, 1);
+        clawPosition = Range.clip(clawPosition, robot.linearSlide.getCLAW_MIN(), robot.linearSlide.getCLAW_MAX());
         robot.linearSlide.clawMove(clawPosition);
 
         if (gamepad1.y) {

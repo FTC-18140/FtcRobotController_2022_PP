@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,10 +13,22 @@ public class LinearSlide
     DcMotor elbow = null;
     Servo claw = null;
     Servo wrist = null;
-    HardwareMap hwMap = null;
+    private HardwareMap hwMap = null;
+    private Telemetry telemetry;
 
-    double INIT_CLAW = 1.0;
-    double INIT_WRIST = 0.625;
+    private int state;
+    private boolean done = false;
+    private long startTime = 0; // in nanoseconds
+
+    // Claw parameters
+    private double INIT_CLAW = 1.0;
+    private double CLAW_MAX = 1.0;
+    private double CLAW_MIN = 0.2;
+
+    // Wrist parameters
+    private double INIT_WRIST = 0.625;
+    private double WRIST_MAX = 0.625;
+    private double WRIST_MIN = 0.0;
 
 //    static final double COUNTS_PER_MOTOR_REV = 28; // rev robotics hd hex motors planetary 411600
 //    static final double DRIVE_GEAR_REDUCTION = 12;
@@ -27,10 +37,25 @@ public class LinearSlide
 //    static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
 //                                        / (WHEEL_DIAMETER_CM * 3.1415);
 
-    private Telemetry telemetry;
-    private int state;
-    boolean done = false;
-    private long startTime = 0; // in nanoseconds
+    public double getCLAW_MAX()
+    {
+        return CLAW_MAX;
+    }
+
+    public double getCLAW_MIN()
+    {
+        return CLAW_MIN;
+    }
+
+    public double getWRIST_MAX()
+    {
+        return WRIST_MAX;
+    }
+
+    public double getWRIST_MIN()
+    {
+        return WRIST_MIN;
+    }
 
     public void init(HardwareMap newhwMap, Telemetry telem)
     {
@@ -138,7 +163,6 @@ public class LinearSlide
         {
             claw.setPosition(position);
             telemetry.addData("Claw Position", claw.getPosition());
-
         }
     }
 
@@ -148,7 +172,6 @@ public class LinearSlide
         {
             wrist.setPosition(position);
             telemetry.addData("Wrist Position", wrist.getPosition());
-
         }
     }
 }

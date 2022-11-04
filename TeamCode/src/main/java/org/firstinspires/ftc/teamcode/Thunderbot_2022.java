@@ -21,10 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class Thunderbot_2022
 {
-    /**
-     * Public OpMode members
-     */
-    // defines all varibles setting them to null
+    // defines all variables
     BNO055IMU imu = null;
     DcMotor leftFront = null;
     DcMotor rightFront = null;
