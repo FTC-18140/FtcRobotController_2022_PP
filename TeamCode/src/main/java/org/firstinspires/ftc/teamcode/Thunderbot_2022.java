@@ -148,8 +148,7 @@ public class Thunderbot_2022
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void joystickDrive(double foward, double right, double clockwise)
-    {
+    public void joystickDrive(double foward, double right, double clockwise) {
         double frontLeft = foward + clockwise + right;
         double frontRight = foward - clockwise - right;
         double backLeft = foward + clockwise - right;
