@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @Autonomous
 /**
  * AutoTest Class
  */
-public class AutoTest extends OpMode
+public class AutoLeftSide extends OpMode
 {
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
