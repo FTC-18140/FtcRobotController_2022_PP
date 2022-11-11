@@ -14,12 +14,12 @@ public class AutoRightSide extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
     int state = 0;
-    // Defining the Variables that will be used for the steps in the autonomous
+
     double stepA = 45; // 45 What?
-    double stepB = -45; // 45 What?
+    double stepB = 45; // 45 What?
     double stepC = 0;
     double stepD = 8;
-    double stepE = 45;
+    double stepE = -45;
     double stepF = 41;
     int theZone = 2;
 
@@ -92,7 +92,7 @@ public class AutoRightSide extends OpMode
             case 2:
                 if (!done)
                 {
-                    done = robot.gyroDrive(90, stepC, 0.2);
+                    done = robot.gyroDrive(-90, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
                     done = true;
                 }
@@ -103,7 +103,43 @@ public class AutoRightSide extends OpMode
                     state++;
                 }
                 break;
-
+            case 3:
+                if (!done)
+                {
+                    done = robot.gyroDrive(45, stepD, -0.2);
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 4:
+                if (!done)
+                {
+                    done = robot.turn(stepE, 0.2);
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 5:
+                if (!done)
+                {
+                    done = robot.drive(90, stepF, 0.2);
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    telemetry.addData("program", "ended");
+                    state++;
+                }
+                break;
             default:
                 break;
         }
