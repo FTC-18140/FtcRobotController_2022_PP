@@ -30,8 +30,10 @@ public class LinearSlide
     private double WRIST_MAX = 0.625;
     private double WRIST_MIN = 0.0;
 
-//    static final double COUNTS_PER_MOTOR_REV = 28; // rev robotics hd hex motors planetary 411600
+//    static final double COUNTS_PER_MOTOR_REV for Motor = 28; // rev robotics hd hex motors planetary 411600
+//                                             for Core Hex = 288;
 //    static final double DRIVE_GEAR_REDUCTION = 12;
+//    distance from elbow to wrist = 16.5 cm;
 //    static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
 //    static final double WHEEL_DIAMETER_CM = (WHEEL_DIAMETER_INCHES * 2.54);
 //    static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)

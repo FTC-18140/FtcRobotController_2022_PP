@@ -14,7 +14,7 @@ public class AutoRightSide extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
     int state = 0;
-    // Defining the Variables that will be used for the steps in the autonomous
+
     double stepA = 45; // 45 What?
     double stepB = -45; // 45 What?
     double stepC = 0;
@@ -76,34 +76,19 @@ public class AutoRightSide extends OpMode
                     state++;
                 }
                 break;
-            case 1:
+            case 5:
                 if (!done)
                 {
-                    done = robot.turn(stepB, -0.2);
-                    telemetry.addData("case 1", "is started");
+                    done = robot.drive(90, stepF, 0.2);
                 }
                 else
                 {
                     robot.stop();
                     done = false;
+                    telemetry.addData("program", "ended");
                     state++;
                 }
                 break;
-            case 2:
-                if (!done)
-                {
-                    done = robot.gyroDrive(90, stepC, 0.2);
-                    telemetry.addData("case 2", "is started");
-                    done = true;
-                }
-                else
-                {
-                    robot.stop();
-                    done = false;
-                    state++;
-                }
-                break;
-
             default:
                 break;
         }
