@@ -28,8 +28,7 @@ public class Eyes
     Telemetry telemetry;
     public void init(HardwareMap hardwareMap,Telemetry telem)
     {
-        try
-        {
+        try {
             telemetry = telem;
             phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
@@ -52,10 +51,8 @@ public class Eyes
                      */
                 }
             });
-        }
-        catch (Exception e)
-        {
-            telemetry.addData("webcam 1 not found in config.", 0);
+        } catch (Exception e) {
+            telemetry.addData("camera", "not found");
         }
 
     }
