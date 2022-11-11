@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class linearSlide {
     DcMotor linearSlide = null;
     DcMotor clawArm = null;
+    TouchSensor limit;
     Servo claw = null;
     Servo wrist = null;
+
     HardwareMap hwMap = null;
 
     //Thunderbot_2022 robot = new Thunderbot_2022();  //remove from code??
@@ -33,53 +36,86 @@ public class linearSlide {
         hwMap = newhwMap;
         telemetry = telem;
 
-        linearSlide = hwMap.dcMotor.get("linear");
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        try {
+            linearSlide = hwMap.dcMotor.get("linear");
+            linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+            linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } catch (Exception e) {
+            telemetry.addData("linear", "not found");
+        }
 
-        clawArm = hwMap.dcMotor.get("elbow"); // change on hardware map
-        clawArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        clawArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        clawArm.setDirection(DcMotorSimple.Direction.FORWARD);
-        clawArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        try {
+            clawArm = hwMap.dcMotor.get("elbow"); // change on hardware map
+            clawArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            clawArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            clawArm.setDirection(DcMotorSimple.Direction.FORWARD);
+            clawArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } catch (Exception e) {
+            telemetry.addData("elbow", "not found");
+        }
 
-        claw = hwMap.servo.get("claw");
-        claw.setPosition(0.5);
+        try {
+            claw = hwMap.servo.get("claw");
+        } catch (Exception e) {
+            telemetry.addData("claw", "not found");
+        }
 
-        wrist = hwMap.servo.get("wrist"); //change on hardware map
+        try {
+            wrist = hwMap.servo.get("wrist"); //change on hardware map
+        } catch (Exception e) {
+            telemetry.addData("wrist", "not found");
+        }
+
+        limit = hwMap.touchSensor.get("limit");
     }
 
     public void stopExtend() {
-        linearSlide.setPower(0);
+        if (linearSlide != null) {
+            linearSlide.setPower(0);
+        }
     }
 
     public void reverse() {
-        linearSlide.setPower(1);
+        if (linearSlide != null) {
+            linearSlide.setPower(1);
+        }
     }
 
     public void extend() {
-        linearSlide.setPower(-1);
+        if (linearSlide != null) {
+            linearSlide.setPower(-1);
+        }
     }
 
     public void liftArm() {
-        clawArm.setPower(-1);
+        if (clawArm != null) {
+            clawArm.setPower(0.4);
+        }
     }
 
     public void lowerArm() {
-        clawArm.setPower(1);
+        if (clawArm != null) {
+            clawArm.setPower(-0.4);
+        }
     }
 
     public void armStop() {
-        clawArm.setPower(0);
+        if (clawArm != null) {
+            clawArm.setPower(0);
+        }
     }
 
     public void clawMove(double position) {
-        claw.setPosition(position);
+        if (claw != null) {
+            claw.setPosition(position);
+        }
     }
 
     public void wristMove(double position) {
-        wrist.setPosition(position);
+        if (wrist != null) {
+            wrist.setPosition(position);
+        }
     }
 }

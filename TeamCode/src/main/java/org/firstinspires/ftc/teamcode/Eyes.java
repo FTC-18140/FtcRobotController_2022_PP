@@ -28,28 +28,32 @@ public class Eyes
 Telemetry telemetry;
     public void init(HardwareMap hardwareMap,Telemetry telem)
     {
-        telemetry = telem;
-        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        try {
+            telemetry = telem;
+            phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-        stageSwitchingPipeline = new StageSwitchingPipeline();
-        stageSwitchingPipeline.telem = telemetry;
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
+            stageSwitchingPipeline = new StageSwitchingPipeline();
+            stageSwitchingPipeline.telem = telemetry;
+            phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
             {
-                phoneCam.setPipeline(stageSwitchingPipeline);
-                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
+                @Override
+                public void onOpened()
+                {
+                    phoneCam.setPipeline(stageSwitchingPipeline);
+                    phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                }
 
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+                @Override
+                public void onError(int errorCode)
+                {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
+                }
+            });
+        } catch (Exception e) {
+            telemetry.addData("camera", "not found");
+        }
 
     }
     /*

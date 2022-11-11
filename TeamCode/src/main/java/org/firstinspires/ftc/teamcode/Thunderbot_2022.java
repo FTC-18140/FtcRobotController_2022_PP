@@ -38,6 +38,7 @@ public class Thunderbot_2022
     double startAngle = 0;
 
     // converts inches to motor ticks
+    // Gear ratio defining
     static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
     static final double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
     static final double WHEEL_DIAMETER_CM = 9.6;  // goBilda mecanum wheels are 96mm in diameter
@@ -141,7 +142,9 @@ public class Thunderbot_2022
         {
             telemetry.addData("leftRear not found in config file", 0);
         }
+
         slide.init(ahwMap, telemetry);
+
         vision.init(ahwMap, telemetry);
 
     }
@@ -154,8 +157,7 @@ public class Thunderbot_2022
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void joystickDrive(double foward, double right, double clockwise)
-    {
+    public void joystickDrive(double foward, double right, double clockwise) {
         double frontLeft = foward + clockwise + right;
         double frontRight = foward - clockwise - right;
         double backLeft = foward + clockwise - right;
