@@ -36,8 +36,8 @@ public class Teleop extends OpMode
         try {
             wristPosition = 0.625;
             clawPosition = 1;
-            robot.slide.wristMove(wristPosition);
-            robot.slide.clawMove(clawPosition);
+            robot.linearSlide.wristMove(wristPosition);
+            robot.linearSlide.clawMove(clawPosition);
         } catch (Exception e) {
             telemetry.addData("cant", "run");
         }
