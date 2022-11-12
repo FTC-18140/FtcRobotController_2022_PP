@@ -36,6 +36,7 @@ public class LinearSlide
     final double SPOOL_DIAMETER_CM = 3.5;  // slide spool is 35mm in diameter
     final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
             / (SPOOL_DIAMETER_CM * Math.PI);
+//    distance from elbow to wrist = 16.5 cm;
 
     final double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
     final double COUNTS_PER_ELB_DEGREE = 288.0/360.0;
