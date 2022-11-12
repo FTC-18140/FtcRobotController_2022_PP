@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * This class controls the linear slide and all that is attached to it.
+ */
 public class LinearSlide
 {
     DcMotor lift = null;
@@ -20,9 +23,6 @@ public class LinearSlide
     private boolean done = false;
     private long startTime = 0; // in nanoseconds
 
-
-    private double elbowPosition = 0;
-
     // Claw parameters
     private double INIT_CLAW = 1.0;
     private double CLAW_MAX = 1.0;
@@ -33,16 +33,20 @@ public class LinearSlide
     final private double WRIST_MAX = 0.625;
     final private double WRIST_MIN = 0.0;
 
+    // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
     final private double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
     final private double SPOOL_DIAMETER_CM = 3.5;  // slide spool is 35mm in diameter
     final private double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
                                           / (SPOOL_DIAMETER_CM * Math.PI);
-//    distance from elbow to wrist = 16.5 cm;
 
+    // Elbow parameters
+    //    distance from elbow to wrist = 16.5 cm;
+    private double elbowPosition = 0;
     final private double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
     final private double COUNTS_PER_ELB_DEGREE = 288.0/360.0;
 
+    // Some getter methods to access values
     public double getCLAW_MAX()
     {
         return CLAW_MAX;
@@ -122,6 +126,9 @@ public class LinearSlide
         }
     }
 
+    /**
+     * Stops the lift motor.
+     */
     public void liftStop()
     {
         if (lift != null)
@@ -130,8 +137,16 @@ public class LinearSlide
         }
     }
 
-    public void liftDown()
+    /**
+     * Makes the lift go down at the power level specified.  This method handles the sign needed
+     * for the motor to turn the correct direction.
+     * @param power
+     */
+    public void liftDown( double power )
     {
+        // Down power is negative.  Make sure it's negative.
+        power = -1.0*Math.abs( power );
+
         if (lift != null)
         {
             if ( lift.getCurrentPosition()/COUNTS_PER_CM <= 0 )
@@ -144,19 +159,26 @@ public class LinearSlide
             }
             else
             {
-                lift.setPower(-0.5);
+                lift.setPower( power ); // -0.5
             }
         }
     }
 
-    public void liftUp()
+    /**
+     * Makes the lift go up at the power level specified.  This method handles the sign needed
+     * for the motor to turn the correct direction.
+     * @param power
+     */
+    public void liftUp( double power )
     {
+        // Up power is positive.  Make sure it's positive.
+        power = Math.abs( power );
+
         if (lift != null)
         {
             if ( lift.getCurrentPosition()/COUNTS_PER_CM >= 51)
             {
                 liftStop();
-                // lift.setPower(-0.2);
             }
             else if( lift.getCurrentPosition()/COUNTS_PER_CM > 45)
             {
@@ -164,13 +186,21 @@ public class LinearSlide
             }
             else
             {
-                lift.setPower(0.5);
+                lift.setPower( power ); // 0.5
             }
         }
     }
 
-    public void elbowRaise()
+    /**
+     * Raises the arm connected to the elbow. This method handles the sign needed
+     * for the motor to turn the correct direction.
+     * @param power
+     */
+    public void elbowRaise( double power )
     {
+        // Raise power is negative. Make sure it is so.
+        power = -1.0*Math.abs( power );
+
         if (elbow != null)
         {
             // Get the current position of the elbow
@@ -180,12 +210,20 @@ public class LinearSlide
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
             wrist.setPosition( elbowPosition/180 * WRIST_MAX);
-            elbow.setPower(-0.4);
+            elbow.setPower( power ); // -0.4
         }
     }
 
-    public void elbowLower()
+    /**
+     * Raises the arm connected to the elbow. This method handles the sign needed
+     * for the motor to turn the correct direction.
+     * @param power
+     */
+    public void elbowLower( double power )
     {
+        // Lower power is positive.  Make sure it is so.
+        power = Math.abs( power );
+
         if (elbow != null)
         {
             // Get the current position of the elbow
@@ -195,7 +233,7 @@ public class LinearSlide
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
             wrist.setPosition( elbowPosition/180 * WRIST_MIN);
-            elbow.setPower(0.4);
+            elbow.setPower( power );  // 0.4
         }
     }
 

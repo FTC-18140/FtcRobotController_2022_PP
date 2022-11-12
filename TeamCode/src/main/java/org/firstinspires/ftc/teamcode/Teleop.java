@@ -94,9 +94,9 @@ public class Teleop extends OpMode
         // LINEAR SLIDE
         /////////////////
         if (gamepad2.a) {
-            robot.linearSlide.liftDown();
+            robot.linearSlide.liftDown(0.5);
         } else if (gamepad2.y) {
-            robot.linearSlide.liftUp();
+            robot.linearSlide.liftUp(0.5);
         } else {
             robot.linearSlide.liftStop();
         }
@@ -105,9 +105,9 @@ public class Teleop extends OpMode
         // ELBOW
         /////////////////
         if (gamepad2.x) {
-            robot.linearSlide.elbowRaise();
+            robot.linearSlide.elbowRaise(1);
         } else if (gamepad2.b) {
-            robot.linearSlide.elbowLower();
+            robot.linearSlide.elbowLower(1);
         } else {
             robot.linearSlide.elbowStop();
         }
