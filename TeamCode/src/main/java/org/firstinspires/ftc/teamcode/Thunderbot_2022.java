@@ -33,6 +33,7 @@ public class Thunderbot_2022
     double initialPosition = 0;
     boolean moving = false;
     double startAngle = 0;
+    boolean angleWrap = false;
 
     // converts inches to motor ticks
     static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -183,106 +184,48 @@ public class Thunderbot_2022
 
     /**
      * Make the robot drive a certain distance in a certain direction.
-     * @param direction
+     * @param targetHeading
      * @param distance
      * @param power
      * @return  boolean indicating true when the move is complete
      */
-    public boolean drive(double direction, double distance, double power)
+    public boolean drive(double targetHeading, double distance, double power)
     {
-        // can it go diagonal left
-        // 360 or 180 -180
+        double xValue = Math.sin(toRadians(targetHeading)) * power;
+        double yValue = Math.cos(toRadians(targetHeading)) * power;
 
-        double xValue = Math.sin(toRadians(direction)) * power;
-        double yValue = Math.cos(toRadians(direction)) * power;
-
-        // Get values from hardware
         double currentAngle = updateHeading();
-        double leftFrontPos = leftFront.getCurrentPosition();
-        double rightFrontPos = rightFront.getCurrentPosition();
 
-        telemetry.addData("current angle", currentAngle);
-
-        // Set initial angle and distanceMoved
-        if (!moving)
-        {
-            startAngle = currentAngle;
-            if (direction == 45)
-            {
-                initialPosition = leftFrontPos;
-            }
-            else
-            {
-                initialPosition = rightFrontPos;
-            }
-            moving = true;
-        }
-
-        double distanceMoved;
-        if (direction == 45)
-        {
-            distanceMoved = abs(leftFrontPos - initialPosition);
-        }
-        else
-        {
-            distanceMoved = abs(rightFrontPos - initialPosition);
-        }
-
-        double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
-        telemetry.addData("distanceMoved", distanceMoved);
-
-        // calculates required amount to adjust the gyStartAngle
-        // Divide the adjustment by 100 to make the adjustments more gentle and prevent
-        // oscillations and over corrections.
-        double angleCorrection = (currentAngle - startAngle) / 100;
-
-        // Ensure the adjustment is not outside of +/-1
-        angleCorrection = Range.clip(angleCorrection, -1, 1);
-
-        if (distanceMovedInCM >= distance)
-        {
-            // Stops when at the specified distance
-            stop();
-            moving = false;
-            return true;
-        }
-        else
-        {
-            // Continues if not at the specified distance
-            joystickDrive(yValue, xValue, -angleCorrection);
-            return false;
-        }
-    }
-
-
-
-    /**
-     * Drive the robot in the heading provided using the internal imu.  It will rotate to the heading
-     * and tank drive along that heading.
-     * @param direction  the heading the robot should drive
-     * @param distance the distance the robot should drive before stopping
-     * @param power the speed the robot should drive
-     * @return boolean indicating true when the move is complete
-     */
-    public boolean gyroDrive(double direction, double distance, double power)
-    {
-        double currentAngle = updateHeading();
         telemetry.addData("current angle", currentAngle);
 
         // Set desired angle and initial distanceMoved
         if (!moving)
         {
-            startAngle = direction;
-            // If my intended direction to drive is negative, and it's close enough to -180 to be worried,
-            // add 360 degrees to it. This will prevent the angle from rolling over to +/-180.
-            // For example, if my desired direction is -165, I would add 360 to that, and my new
-            // desired direction would be 195.
-            if (startAngle < 0.0 && Math.abs(startAngle) > 130.0)
+            startAngle = currentAngle;
+            // Determine if I am in one of the scenarios where my gyro angle might wrap
+            //      Neg start -> neg degrees to turn
+            //      Pos start -> pos degrees to turn
+            if ( startAngle < 0.0 && targetHeading > 0.0  &&
+                 (startAngle+360) - targetHeading < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else if ( startAngle > 0.0 && targetHeading < 0.0 &&
+                      (targetHeading+360) - startAngle  < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else
+            {
+                angleWrap = false;
+            }
+
+            if (startAngle < 0.0 && angleWrap )
             {
                 startAngle = startAngle + 360;
             }
 
-            if (direction == 45)
+            if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
                 initialPosition = leftFront.getCurrentPosition();
@@ -294,8 +237,19 @@ public class Thunderbot_2022
             moving = true;
         }
 
+        if ( angleWrap && currentAngle < 0.0 )
+        {
+            // Prevent the rollover of the currentAngle
+            currentAngle += 360;
+        }
+
+        if ( angleWrap && targetHeading < 0.0 )
+        {
+            targetHeading += 360;
+        }
+
         double distanceMoved;
-        if (direction == 45)
+        if (targetHeading == 45 || targetHeading == -135)
         {
             distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
         }
@@ -306,16 +260,11 @@ public class Thunderbot_2022
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
 
-        if (Math.abs(startAngle) > 130 && currentAngle < 0.0)
-        {
-            // Prevent the rollover of the currentAngle
-            currentAngle += 360;
-        }
 
         // calculates required speed to adjust to gyStartAngle
-        double angleCorrection = (startAngle - currentAngle) / 100;
+        double angleError = (targetHeading - currentAngle) / 100;
         // Setting range of adjustments
-        angleCorrection = Range.clip(angleCorrection, -1, 1);
+        angleError = Range.clip(angleError, -1, 1);
 
         if (distanceMovedInCM >= distance)
         {
@@ -327,7 +276,103 @@ public class Thunderbot_2022
         else
         {
             // Continues if not at the specified distance
-            joystickDrive(power, 0, -angleCorrection);
+            joystickDrive(yValue, xValue, angleError);
+            return false;
+        }
+    }
+
+    /**
+     * Drive the robot in the heading provided using the internal imu.  It will rotate to the heading
+     * and tank drive along that heading.
+     * @param targetHeading  the heading the robot should drive
+     * @param distance the distance the robot should drive before stopping
+     * @param power the speed the robot should drive
+     * @return boolean indicating true when the move is complete
+     */
+    public boolean gyroDrive(double targetHeading, double distance, double power)
+    {
+        double currentAngle = updateHeading();
+        telemetry.addData("current angle", currentAngle);
+
+        // Set desired angle and initial distanceMoved
+        if (!moving)
+        {
+            startAngle = currentAngle;
+            // Determine if I am in one of the scenarios where my gyro angle might wrap
+            //      Neg start -> neg degrees to turn
+            //      Pos start -> pos degrees to turn
+            if ( startAngle < 0.0 && targetHeading > 0.0  &&
+                 (startAngle+360) - targetHeading < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else if ( startAngle > 0.0 && targetHeading < 0.0 &&
+                      (targetHeading+360) - startAngle  < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else
+            {
+                angleWrap = false;
+            }
+
+            if (startAngle < 0.0 && angleWrap )
+            {
+                startAngle = startAngle + 360;
+            }
+
+            if (targetHeading == 45 || targetHeading == -135)
+            {
+                // the rightFront wheel doesn't move at a desired direction of 45 degrees
+                initialPosition = leftFront.getCurrentPosition();
+            }
+            else
+            {
+                initialPosition = rightFront.getCurrentPosition();
+            }
+            moving = true;
+        }
+
+        if ( angleWrap && currentAngle < 0.0 )
+        {
+            // Prevent the rollover of the currentAngle
+            currentAngle += 360;
+        }
+
+        if ( angleWrap && targetHeading < 0.0 )
+        {
+            targetHeading += 360;
+        }
+
+        double distanceMoved;
+        if (targetHeading == 45 || targetHeading == -135)
+        {
+            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+        }
+        else
+        {
+            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+        }
+        double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
+        telemetry.addData("distanceMoved", distanceMoved);
+
+
+        // calculates required speed to adjust to gyStartAngle
+        double angleError = (targetHeading - currentAngle) / 100;
+        // Setting range of adjustments
+        angleError = Range.clip(angleError, -1, 1);
+
+        if (distanceMovedInCM >= distance)
+        {
+            // Stops when at the specified distance
+            stop();
+            moving = false;
+            return true;
+        }
+        else
+        {
+            // Continues if not at the specified distance
+            joystickDrive(power, 0, angleError);
             return false;
         }
     }
@@ -351,7 +396,34 @@ public class Thunderbot_2022
         if (!moving)
         {
             startAngle = currentAngle;
+
+            // Determine if I am in one of the scenarios where my gyro angle might wrap
+            //      Neg start -> neg degrees to turn
+            //      Pos start -> pos degrees to turn
+            if (startAngle < 0.0 && degreesToTurn < 0.0  ||
+                startAngle > 0.0 && degreesToTurn > 0.0 )
+            {
+                angleWrap = true;
+            }
+            else
+            {
+                angleWrap = false;
+            }
+
+           // if (startAngle < 0.0 && Math.abs(startAngle) > 130.0)
+            if (startAngle < 0.0 && angleWrap )
+            {
+                startAngle = startAngle + 360;
+            }
+
             moving = true;
+        }
+
+        //if (Math.abs(startAngle) > 130 && currentAngle < 0.0)
+        if ( angleWrap && currentAngle < 0.0 )
+        {
+            // Prevent the rollover of the currentAngle
+            currentAngle += 360;
         }
 
         power = abs(power);
@@ -359,12 +431,6 @@ public class Thunderbot_2022
         {
             // Make power a negative number if the degreesTo to turn is negative
             power = -power;
-        }
-
-        if (abs(degreesToTurn) == 180)
-        {
-            // TODO: fix the case where you want to turn exactly 180 degreesTo
-            // avoid 180 somehow
         }
 
         if (Math.abs(currentAngle - startAngle) >= abs(degreesToTurn))
@@ -396,17 +462,57 @@ public class Thunderbot_2022
 
         if (!moving)
         {
+            startAngle = currentAngle;
+            // Determine if I am in one of the scenarios where my gyro angle might wrap
+            //      Neg start -> neg degrees to turn
+            //      Pos start -> pos degrees to turn
+            if ( startAngle < 0.0 && targetHeading > 0.0  &&
+                 (startAngle+360) - targetHeading < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else if ( startAngle > 0.0 && targetHeading < 0.0 &&
+                      (targetHeading+360) - startAngle  < 180.0 )
+            {
+                angleWrap = true;
+            }
+            else
+            {
+                angleWrap = false;
+            }
+
+            if (startAngle < 0.0 && angleWrap )
+            {
+                startAngle = startAngle + 360;
+            }
             moving = true;
         }
+        if ( angleWrap && currentAngle < 0.0 )
+        {
+            // Prevent the rollover of the currentAngle
+            currentAngle += 360;
+        }
 
-        power = abs(power);
+        if ( angleWrap && targetHeading < 0.0 )
+        {
+            targetHeading += 360;
+        }
+
+        double angleError = targetHeading - currentAngle;
+        double angleErrorMagnitude = Math.abs(angleError);
+
+        if (angleError < 0.0)
+        {
+            power *= -1.0;
+        }
+
         // If the difference between the current angle and the target angle is small (<10), scale
         // the power proportionally to how far you have left to go.  But... don't let the power
         // get too small because the robot won't have enough power to complete the turn if the
         // power gets too small.
-        if (Math.abs(currentAngle - targetHeading) < 10)
+        if ( angleErrorMagnitude < 10)
         {
-            power = power * Math.abs((Math.abs(currentAngle) - Math.abs(targetHeading)) / 100);
+            power = power * angleErrorMagnitude / 100.0;
 
             if (power > 0)
             {
@@ -418,7 +524,7 @@ public class Thunderbot_2022
             }
         }
 
-        if (Math.abs(Math.abs(currentAngle) - Math.abs(targetHeading)) <= 0.5)
+        if ( angleErrorMagnitude <= 0.5)
         {
             // Stops turning when at the specified angle (or really close)
             stop();
@@ -455,5 +561,6 @@ public class Thunderbot_2022
         leftRear.setPower(0);
         rightRear.setPower(0);
     }
+    
 }
 
