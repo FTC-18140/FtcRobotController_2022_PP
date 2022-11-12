@@ -31,14 +31,14 @@ public class LinearSlide
     private double WRIST_MAX = 0.625;
     private double WRIST_MIN = 0.0;
 
-    static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
-    static final double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
-    static final double SPOOL_DIAMETER_CM = 3.5;  // slide spool is 35mm in diameter
-    static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
+    final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
+    final double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
+    final double SPOOL_DIAMETER_CM = 3.5;  // slide spool is 35mm in diameter
+    final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
             / (SPOOL_DIAMETER_CM * Math.PI);
 
-    static final double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
-    static final double COUNTS_PER_ELB_DEGREE = 288/360;
+    final double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
+    final double COUNTS_PER_ELB_DEGREE = 288.0/360.0;
 
     public double getCLAW_MAX()
     {
@@ -124,17 +124,18 @@ public class LinearSlide
     {
         if (lift != null)
         {
-            if ( lift.getCurrentPosition() < 0 )
+            if ( lift.getCurrentPosition()/COUNTS_PER_CM <= 0 )
             {
                 liftStop();
+               // lift.setPower(-0.2);
             }
-            else if( lift.getCurrentPosition()/COUNTS_PER_CM < 5 )
+            else if( lift.getCurrentPosition()/COUNTS_PER_CM < 8 )
             {
-                lift.setPower(0.25);
+                lift.setPower(-0.15);
             }
             else
             {
-                lift.setPower(1);
+                lift.setPower(-0.5);
             }
             telemetry.addData("LiftPos: ", lift.getCurrentPosition()/COUNTS_PER_CM);
         }
@@ -144,7 +145,19 @@ public class LinearSlide
     {
         if (lift != null)
         {
-            lift.setPower(-1);
+            if ( lift.getCurrentPosition()/COUNTS_PER_CM >= 51)
+            {
+                liftStop();
+                // lift.setPower(-0.2);
+            }
+            else if( lift.getCurrentPosition()/COUNTS_PER_CM > 45)
+            {
+                lift.setPower(0.15);
+            }
+            else
+            {
+                lift.setPower(0.5);
+            }
             telemetry.addData("LiftPos: ", lift.getCurrentPosition()/COUNTS_PER_CM);
         }
     }
@@ -159,7 +172,7 @@ public class LinearSlide
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition( elbowPosition * 2 + 10 ); // 2 and 10 are dummy values
+            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
             elbow.setPower(-0.4);
         }
     }
@@ -174,7 +187,7 @@ public class LinearSlide
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition( elbowPosition/180 * WRIST_MAX );
+            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
             elbow.setPower(0.4);
         }
     }

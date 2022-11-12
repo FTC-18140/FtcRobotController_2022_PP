@@ -68,26 +68,38 @@ public class Teleop extends OpMode
         telemetry.addData("rx", gamepad1.right_stick_x);
         telemetry.addData("ry", gamepad1.right_stick_y);
 
-        if (gamepad1.dpad_up) {
+        telemetry.addData("elbow position", robot.linearSlide.elbow.getCurrentPosition());
+        telemetry.addData("elbow conversion", robot.linearSlide.COUNTS_PER_ELB_DEGREE);
+        telemetry.addData("wrist position", robot.linearSlide.wrist.getPosition());
+        telemetry.addData("Wrist Increment", WRIST_INCREMENT);
+
+
+        if (gamepad2.dpad_up) {
             wristPosition += WRIST_INCREMENT;
+            wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
+            telemetry.addData("Wrist Position", wristPosition);
+
+            robot.linearSlide.wristMove(wristPosition);
         } else if (gamepad2.dpad_down) {
             wristPosition -= WRIST_INCREMENT;
-        }
-        wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
-        robot.linearSlide.wristMove(wristPosition);
+           wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
+            telemetry.addData("Wrist Position", wristPosition);
 
-        if (gamepad1.left_bumper) {
+            robot.linearSlide.wristMove(wristPosition);
+        }
+
+        if (gamepad2.left_bumper) {
             clawPosition += CLAW_INCREMENT;
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             clawPosition -= CLAW_INCREMENT;
         }
         clawPosition = Range.clip(clawPosition, robot.linearSlide.getCLAW_MIN(), robot.linearSlide.getCLAW_MAX());
         robot.linearSlide.clawMove(clawPosition);
 
         // Maps buttons for the linear slide up/down
-        if (gamepad2.y) {
+        if (gamepad2.a) {
             robot.linearSlide.liftDown();
-        } else if (gamepad2.a) {
+        } else if (gamepad2.y) {
             robot.linearSlide.liftUp();
         } else {
             robot.linearSlide.liftStop();
