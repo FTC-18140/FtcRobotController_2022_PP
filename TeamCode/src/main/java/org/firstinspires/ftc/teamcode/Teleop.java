@@ -60,10 +60,10 @@ public class Teleop extends OpMode
         /////////////////
         if (gamepad1.a) {
             // TURBO!!!
-            robot.joystickDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            robot.joystickDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         } else {
             // Normal Drive
-            robot.joystickDrive(-gamepad1.left_stick_y * 0.4, gamepad1.left_stick_x * 0.4, -gamepad1.right_stick_x * 0.4);
+            robot.joystickDrive(gamepad1.left_stick_y * 0.4, -gamepad1.left_stick_x * 0.4, -gamepad1.right_stick_x * 0.4);
         }
 
         /////////////////
