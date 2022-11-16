@@ -13,12 +13,19 @@ public class AutoLeftSide extends OpMode
     boolean done = false;
     int state = 0;
     // Defining the Variables that will be used for the steps in the autonomous
+
+    // stepA is a drive
     double stepA = 45;
-    double stepB = -45;
-    double stepC = 0;
-    double stepD = 8;
-    double stepE = 45;
-    double stepF = 41;
+    // stepB is a turn
+    double stepB = 45;
+    // stepC is a drive
+    double stepC = 5;
+    // stepD is a drive
+    double stepD = 5;
+    // stepE is a turn
+    double stepE = 0;
+    // stepF is a strafe
+    double stepF = 65;
     int theZone = 2;
 
     @Override
@@ -65,6 +72,7 @@ public class AutoLeftSide extends OpMode
             case 0:
                 if (!done)
                 {
+                    // stepA is 45
                     done = robot.gyroDrive(0, stepA, 0.2);
                 }
                 else
@@ -77,7 +85,8 @@ public class AutoLeftSide extends OpMode
             case 1:
                 if (!done)
                 {
-                    done = robot.turn(stepB, -0.2);
+                    // stepB is 45
+                    done = robot.turnTo(stepB, 0.2);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -90,9 +99,9 @@ public class AutoLeftSide extends OpMode
             case 2:
                 if (!done)
                 {
-                    done = robot.gyroDrive(90, stepC, 0.2);
+                    // stepC is 8
+                    done = robot.gyroDrive(45, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
-                    done = true;
                 }
                 else
                 {
@@ -104,7 +113,8 @@ public class AutoLeftSide extends OpMode
             case 3:
                 if (!done)
                 {
-                    done = robot.gyroDrive(-45, stepD, -0.2);
+                    // stepD is 8
+                    done = robot.drive(180, stepD, 0.2);
                 }
                 else
                 {
@@ -116,7 +126,8 @@ public class AutoLeftSide extends OpMode
             case 4:
                 if (!done)
                 {
-                    done = robot.turn(stepE, 0.2);
+                    // stepE is 0
+                    done = robot.turnTo(stepE, 0.2);
                 }
                 else
                 {
@@ -128,7 +139,8 @@ public class AutoLeftSide extends OpMode
             case 5:
                 if (!done)
                 {
-                    done = robot.drive(90, stepF, 0.2);
+                    // stepF is 65
+                    done = robot.drive(90, stepF, 0.4);
                 }
                 else
                 {
@@ -141,5 +153,6 @@ public class AutoLeftSide extends OpMode
             default:
                 break;
         }
+        telemetry.addData("State", state);
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -90,7 +91,7 @@ public class Thunderbot_2022
             rightFront = ahwMap.dcMotor.get("rightFront");
             rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
             rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         catch (Exception e)
@@ -103,7 +104,7 @@ public class Thunderbot_2022
             rightRear = ahwMap.dcMotor.get("rightRear");
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
             rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         catch (Exception e)
@@ -116,7 +117,7 @@ public class Thunderbot_2022
             leftFront = ahwMap.dcMotor.get("leftFront");
             leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         catch (Exception e)
@@ -129,7 +130,7 @@ public class Thunderbot_2022
             leftRear = ahwMap.dcMotor.get("leftRear");
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
             leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         catch (Exception e)
@@ -150,11 +151,11 @@ public class Thunderbot_2022
      * @param clockwise - Any turning movements
      */
     public void joystickDrive(double foward, double right, double clockwise) {
+     //   right = right * -1;
         double frontLeft = foward + clockwise + right;
         double frontRight = foward - clockwise - right;
         double backLeft = foward + clockwise - right;
         double backRight = foward - clockwise + right;
-
         double max = abs(frontLeft);
         if (abs(frontRight) > max)
         {
@@ -262,7 +263,7 @@ public class Thunderbot_2022
 
 
         // calculates required speed to adjust to gyStartAngle
-        double angleError = (targetHeading - currentAngle) / 100;
+        double angleError = (startAngle - currentAngle) / 25;
         // Setting range of adjustments
         angleError = Range.clip(angleError, -1, 1);
 
@@ -276,6 +277,10 @@ public class Thunderbot_2022
         else
         {
             // Continues if not at the specified distance
+            telemetry.addData("y value", yValue);
+            telemetry.addData("x value", xValue);
+            telemetry.addData("angle error", angleError);
+
             joystickDrive(yValue, xValue, angleError);
             return false;
         }
@@ -372,7 +377,8 @@ public class Thunderbot_2022
         else
         {
             // Continues if not at the specified distance
-            joystickDrive(-power, 0, -angleError);
+            joystickDrive(power, 0, angleError);
+            telemetry.addData("power: ", power);
             telemetry.addData("Angle error", angleError);
             return false;
         }
@@ -444,7 +450,7 @@ public class Thunderbot_2022
         else
         {
             // Continues to turn if not at the specified angle
-            joystickDrive(0, 0, -power);
+            joystickDrive(0, 0, power);
             return false;
         }
     }
@@ -535,7 +541,10 @@ public class Thunderbot_2022
         else
         {
             // Continues to turn if not at the specified angle
-            joystickDrive(0, 0, -power);
+            joystickDrive(0, 0, power);
+            telemetry.addData("power", power);
+            telemetry.addData("angle error", angleError);
+            telemetry.addData("target heading", targetHeading);
             return false;
         }
     }
