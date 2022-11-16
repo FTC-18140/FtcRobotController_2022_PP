@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @Autonomous
 /**
  * AutoTest Class
@@ -14,9 +12,9 @@ public class AutoRightSide extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
     int state = 0;
-
-    double stepA = 45; // 45 What?
-    double stepB = -45; // 45 What?
+    // Defining the Variables that will be used for the steps in the autonomous
+    double stepA = 45;
+    double stepB = -45;
     double stepC = 0;
     double stepD = 8;
     double stepE = 45;
@@ -77,6 +75,57 @@ public class AutoRightSide extends OpMode
                 }
                 break;
             case 1:
+                if (!done)
+                {
+                    done = robot.turn(stepB, -0.2);
+                    telemetry.addData("case 1", "is started");
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 2:
+                if (!done)
+                {
+                    done = robot.gyroDrive(90, stepC, 0.2);
+                    telemetry.addData("case 2", "is started");
+                    done = true;
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 3:
+                if (!done)
+                {
+                    done = robot.gyroDrive(-45, stepD, -0.2);
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 4:
+                if (!done)
+                {
+                    done = robot.turn(stepE, 0.2);
+                }
+                else
+                {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 5:
                 if (!done)
                 {
                     done = robot.drive(90, stepF, 0.2);
