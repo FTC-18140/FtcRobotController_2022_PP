@@ -76,7 +76,7 @@ public class AutoRightSide extends OpMode
                     state++;
                 }
                 break;
-            case 5:
+            case 1:
                 if (!done)
                 {
                     done = robot.drive(90, stepF, 0.2);
