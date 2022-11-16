@@ -47,8 +47,9 @@ public class LinearSlide
     static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
             / (SPOOL_DIAMETER_CM * Math.PI);
 
-    static final double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
-    static final double COUNTS_PER_ELB_DEGREE = 360/288;
+    // COUNTS_PER_ELB_REV = 288; REV Core Hex Motor
+    // ELB_DEGREES_PER_COUNT = 1.25; // 1.25 degrees per encoder tick -Aiden
+    // WRIST_DEGREES_ONE_ZERO = 0.0074; // 1/135 Degrees of the wrist movement expressed on a scale of one to zero
 
 
     public double getCLAW_MAX()
@@ -164,13 +165,15 @@ public class LinearSlide
     {
         if (elbow != null)
         {
+            // Counts per elbow degree = 0.8
+            // Elbow degree per count = 1.25
             // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition()/COUNTS_PER_ELB_DEGREE; // degrees
+            elbowPosition = ((elbow.getCurrentPosition() * 1.25) + 20); // degrees + 20 because of the rubber band's pressure.
 
             // Update the wrist servo position based on the elbow's position
-            // Right now the servo position is mapped between 0 and 1.
+            // Right now the servo position is mapped between 0 and 1, 135 degrees full range.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition( elbowPosition * 2 + 10 ); // 2 and 10 are dummy values
+            wrist.setPosition(elbowPosition * -0.0074);
             elbow.setPower(-0.4);
         }
     }
@@ -180,13 +183,13 @@ public class LinearSlide
         if (elbow != null)
         {
             // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition()/COUNTS_PER_ELB_DEGREE; // degrees
+            elbowPosition = ((elbow.getCurrentPosition() * 1.25) + 20); // degrees
 
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
 
-            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
+            wrist.setPosition(elbowPosition * 0.0074);
             elbow.setPower(0.4);
         }
     }

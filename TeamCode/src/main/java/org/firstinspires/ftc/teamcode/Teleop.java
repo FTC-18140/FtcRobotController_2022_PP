@@ -17,8 +17,8 @@ public class Teleop extends OpMode
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
-    double WRIST_INCREMENT = 0.0025;
-    double CLAW_INCREMENT = 0.003;
+    public double WRIST_INCREMENT = 0.0025;
+    public double CLAW_INCREMENT = 0.003;
 
     // All the things that happen when the init button is pressed
     @Override
