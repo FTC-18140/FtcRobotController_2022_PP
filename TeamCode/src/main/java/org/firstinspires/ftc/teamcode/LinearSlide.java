@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -30,6 +31,8 @@ public class LinearSlide
     private double INIT_WRIST = 0.625;
     private double WRIST_MAX = 0.625;
     private double WRIST_MIN = 0.0;
+
+    public final ElapsedTime mClock = new ElapsedTime();
 
 
 //    static final double COUNTS_PER_MOTOR_REV for Motor = 28; // rev robotics hd hex motors planetary 411600
@@ -168,7 +171,7 @@ public class LinearSlide
             // Counts per elbow degree = 0.8
             // Elbow degree per count = 1.25
             // Get the current position of the elbow
-            elbowPosition = ((elbow.getCurrentPosition() * 1.25) + 20); // degrees + 20 because of the rubber band's pressure.
+            elbowPosition = ((elbow.getCurrentPosition() * 1.25) + 30); // degrees + 20 because of the rubber band's pressure.
 
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1, 135 degrees full range.
@@ -218,5 +221,7 @@ public class LinearSlide
             wrist.setPosition(position);
             telemetry.addData("Wrist Position", wrist.getPosition());
         }
+
+        telemetry.addData("Time passed", mClock);
     }
 }
