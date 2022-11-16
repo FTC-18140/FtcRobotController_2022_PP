@@ -123,5 +123,8 @@ public class Teleop extends OpMode
         telemetry.addData("wrist pos (0..1): ", robot.linearSlide.wrist.getPosition());
         telemetry.addData("claw pos (0..1):", robot.linearSlide.claw.getPosition());
         telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
+
+        telemetry.addData("gyro sensor", robot.updateHeading());
+
     }
 }

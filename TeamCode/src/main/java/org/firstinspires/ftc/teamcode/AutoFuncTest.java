@@ -47,24 +47,42 @@ public class AutoFuncTest extends OpMode
                     state++;
                 }
                 break;
-//            case 1:
-//                if (!done) {
-//                    done = robot.gyroDrive(45, 20, 0.2);
-//                } else {
-//                    robot.stop();
-//                    done = false;
-//                    state++;
-//                }
-//                break;
-//            case 2:
-//                if (!done) {
-//                    done = robot.gyroDrive(90, 20, 0.2);
-//                } else {
-//                    robot.stop();
-//                    done = false;
-//                    state++;
-//                }
-//                break;
+            case 1:
+                if (!done) {
+                    done = robot.turnTo(-90, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 2:
+                if (!done) {
+                    done = robot.turnTo(-170, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 3:
+                if (!done) {
+                    done = robot.gyroDrive(-170, 15, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 4:
+                if (!done) {
+                    done = robot.gyroDrive(130, 50, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
             default:
                 break;
         }

@@ -358,7 +358,7 @@ public class Thunderbot_2022
 
 
         // calculates required speed to adjust to gyStartAngle
-        double angleError = (targetHeading - currentAngle) / 100;
+        double angleError = (targetHeading - currentAngle) / 20;
         // Setting range of adjustments
         angleError = Range.clip(angleError, -1, 1);
 
@@ -372,7 +372,8 @@ public class Thunderbot_2022
         else
         {
             // Continues if not at the specified distance
-            joystickDrive(power, 0, angleError);
+            joystickDrive(-power, 0, -angleError);
+            telemetry.addData("Angle error", angleError);
             return false;
         }
     }
@@ -443,7 +444,7 @@ public class Thunderbot_2022
         else
         {
             // Continues to turn if not at the specified angle
-            joystickDrive(0, 0, power);
+            joystickDrive(0, 0, -power);
             return false;
         }
     }
@@ -534,7 +535,7 @@ public class Thunderbot_2022
         else
         {
             // Continues to turn if not at the specified angle
-            joystickDrive(0, 0, power);
+            joystickDrive(0, 0, -power);
             return false;
         }
     }
