@@ -173,7 +173,7 @@ public class LinearSlide
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1, 135 degrees full range.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition(elbowPosition * -0.0074);
+            wrist.setPosition(elbowPosition * 0.0074);
             elbow.setPower(-0.4);
         }
     }
