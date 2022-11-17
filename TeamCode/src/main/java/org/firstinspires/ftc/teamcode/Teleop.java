@@ -17,8 +17,8 @@ public class Teleop extends OpMode
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
-    double WRIST_INCREMENT = 0.0025;
-    double CLAW_INCREMENT = 0.003;
+    double WRIST_INCREMENT = 0.005; // its 0.0025
+    double CLAW_INCREMENT = 0.01;
 
     // All the things that happen when the init button is pressed
     @Override
@@ -94,9 +94,9 @@ public class Teleop extends OpMode
         // LINEAR SLIDE
         /////////////////
         if (gamepad2.a) {
-            robot.linearSlide.liftDown(0.5);
+            robot.linearSlide.liftDown(0.75);
         } else if (gamepad2.y) {
-            robot.linearSlide.liftUp(0.5);
+            robot.linearSlide.liftUp(0.75);
         } else {
             robot.linearSlide.liftStop();
         }
@@ -122,9 +122,8 @@ public class Teleop extends OpMode
         telemetry.addData("elbow pos (deg): ", robot.linearSlide.getElbowPosition());
         telemetry.addData("wrist pos (0..1): ", robot.linearSlide.wrist.getPosition());
         telemetry.addData("claw pos (0..1):", robot.linearSlide.claw.getPosition());
-        telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
+      //  telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
 
         telemetry.addData("gyro sensor", robot.updateHeading());
-
     }
 }

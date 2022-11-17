@@ -40,7 +40,7 @@ public class Eyes
                 public void onOpened()
                 {
                     phoneCam.setPipeline(stageSwitchingPipeline);
-                    phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                    phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT); //width was on 640
                 }
 
                 @Override
@@ -69,7 +69,12 @@ public class Eyes
         int signalZone;
         Scalar green = new Scalar(0,250,0);
         Scalar blue = new Scalar( 0, 0, 255);
+        Scalar yellow = new Scalar(255, 255, 0);
         Telemetry telem;
+        int rowStart = 150;
+        int rowEnd = 250;
+        int colStart = 280;
+        int colEnd = 350;
         @Override
         public Mat processFrame(Mat input)
         {
@@ -78,10 +83,10 @@ public class Eyes
              */
 
             // Step 1 - identify the rectangle in the image that we want to study
-            Imgproc.rectangle( input, new Point( 100,100), new Point( 300, 300), green, 4);
+            Imgproc.rectangle( input, new Point( colStart,rowStart), new Point( colEnd, rowEnd), green, 4); // x = 100 x = 300
 
             // Step 2 - create a smaller, submatrix that only contains the pixels in the rectangle we are studying
-            smallerMatrix = input.submat(120,280, 120, 280);
+            smallerMatrix = input.submat(rowStart,rowEnd, colStart, colEnd);
 //            you can use the submat( .. ) method such as
 //            smallerMatrix = input.submat( ...... );
 
@@ -90,25 +95,26 @@ public class Eyes
 
 //            Examples -- these will not work for our season -- but you can see the the kinds of things we might do
               Mat grayMatrix = new Mat();
+              Mat thresholdMat =new Mat();
              Imgproc.cvtColor(smallerMatrix, grayMatrix, Imgproc.COLOR_RGB2GRAY);
 //            Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
-//            Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+            Imgproc.threshold(smallerMatrix, thresholdMat, 150, 255, Imgproc.THRESH_BINARY);
 
 
             // Step 4 - add the values of the pixels in our submatrix
-           double sumColors = Core.sumElems(grayMatrix).val[0];
+           double sumColors = Core.sumElems(thresholdMat).val[0];
            telem.addData("sum: ",sumColors);
             // Step 5 - store the answer in the signalZone variable.  Also can write it on the screen.
 
 //            signalZone = <our answer goes here>;
-            if (sumColors > 3300000) {
+            if (sumColors > 1200000) {
                 signalZone = 2;
             }
-            else if (sumColors > 1960000) {
-                signalZone = 3;
+            else if (sumColors < 500000) {
+                signalZone = 1;
             }
             else {
-                signalZone = 1;
+                signalZone = 3;
             }
 
             if (signalZone == 1)
@@ -123,7 +129,8 @@ public class Eyes
             {
                 answer = "THREE";
             }
-            Imgproc.putText( input, answer, new Point( 100, 50), FONT_HERSHEY_SIMPLEX, 1, blue);
+            Imgproc.putText( input, String.valueOf(sumColors), new Point( 10, 400), FONT_HERSHEY_SIMPLEX, 2, yellow, 3);
+            Imgproc.putText( input, answer, new Point( 10, 450), FONT_HERSHEY_SIMPLEX, 2, yellow, 3);
 
             telem.addData("answer", answer);
             return input;

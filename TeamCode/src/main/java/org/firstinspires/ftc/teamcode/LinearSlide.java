@@ -16,6 +16,9 @@ public class LinearSlide
     DcMotor elbow = null;
     Servo claw = null;
     Servo wrist = null;
+
+    double initLiftPosition = 0;
+    boolean moving = false;
     private HardwareMap hwMap = null;
     private Telemetry telemetry;
 
@@ -209,7 +212,7 @@ public class LinearSlide
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
+//            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
             elbow.setPower( power ); // -0.4
         }
     }
@@ -232,7 +235,7 @@ public class LinearSlide
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
-            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
+//            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
             elbow.setPower( power );  // 0.4
         }
     }
@@ -245,19 +248,50 @@ public class LinearSlide
         }
     }
 
-    public void clawMove(double position)
+    public boolean clawMove(double position)
     {
         if (claw != null)
         {
             claw.setPosition(position);
         }
+        return true;
     }
 
-    public void wristMove(double position)
-    {
-        if (wrist != null)
-        {
+    public boolean wristMove(double position) {
+        if (wrist != null) {
             wrist.setPosition(position);
         }
+        return true;
     }
-}
+    public boolean liftUpDistance(double distance, double power) {
+            if (!moving) {
+                initLiftPosition = getLiftPosition();
+                moving = true;
+            }
+            double slideDistanceMoved = Math.abs(initLiftPosition - getLiftPosition());
+            if (slideDistanceMoved > distance) {
+                liftStop();
+                moving = false;
+                return true;
+            } else {
+                liftUp(power);
+                return false;
+            }
+        }
+    public boolean liftDownDistance(double distance, double power) {
+        if (!moving) {
+            initLiftPosition = getLiftPosition();
+            moving = true;
+        }
+        double slideDistanceMoved = Math.abs(initLiftPosition - getLiftPosition());
+        if (slideDistanceMoved > distance) {
+            liftStop();
+            moving = false;
+            return true;
+        } else {
+            liftDown(Math.abs(power));
+            return false;
+        }
+    }
+    }
+

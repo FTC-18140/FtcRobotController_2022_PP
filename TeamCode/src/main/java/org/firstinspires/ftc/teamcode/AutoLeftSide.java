@@ -7,13 +7,30 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 /**
  * AutoTest Class
  */
-public class AutoLeftSide extends OpMode
-{
+public class AutoLeftSide extends OpMode {
+
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
     int state = 0;
     // Defining the Variables that will be used for the steps in the autonomous
 
+//    ** All of these values (A-F) work on the strafing to the left **
+//    double leftStepA = 45;
+//    double leftStepB = 45;
+//    double leftStepC = 5;
+//    double leftStepD = 5;
+//    double leftStepE = 0;
+//    double leftStepF = 50;
+//
+//   ** All of these values (A-F) work on staying still **
+//    double centerStepA = 45;
+//    double centerStepB = 45;
+//    double centerStepC = 5;
+//    double centerStepD = 5;
+//    double centerStepE = 0;
+//    double centerStepF = 0;
+
+    // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
     double stepA = 45;
     // stepB is a turn
@@ -26,6 +43,7 @@ public class AutoLeftSide extends OpMode
     double stepE = 0;
     // stepF is a strafe
     double stepF = 65;
+    double stepFPower = 0.4;
     int theZone = 2;
 
     @Override
@@ -46,7 +64,8 @@ public class AutoLeftSide extends OpMode
 
         if (theZone == 1)
         { // set the number to the value of black
-            stepF = -41;
+            stepF = 50;
+            stepFPower = -0.4;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -54,7 +73,8 @@ public class AutoLeftSide extends OpMode
         }
         else if (theZone == 3)
         { // set the number to the value of white
-            stepF = 41;
+            stepF = 50;
+            stepFPower = 0.4;
         }
         else
         {
@@ -140,7 +160,7 @@ public class AutoLeftSide extends OpMode
                 if (!done)
                 {
                     // stepF is 65
-                    done = robot.drive(90, stepF, 0.4);
+                    done = robot.drive(90, stepF, stepFPower); // the power changes to a negative when it is to the left
                 }
                 else
                 {
