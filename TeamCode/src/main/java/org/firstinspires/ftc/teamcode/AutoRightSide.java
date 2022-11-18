@@ -34,17 +34,18 @@ public class AutoRightSide extends OpMode {
 
     //  All of these values (A-F) work on the strafing to the left
     // stepA is a drive
-    double stepA = 45;
+    double stepA = 80;
     // stepB is a turn
-    double stepB = -45;
+    double stepB = -43.5;
     // stepC is a drive
-    double stepC = 5;
+    double stepC = 11;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
     double stepE = 0;
     // stepF is a strafe
     double stepF = 50;
+    double stepFPower = 0.4;
     int theZone = 2;
 
     @Override
@@ -62,10 +63,12 @@ public class AutoRightSide extends OpMode {
 
         if (theZone == 1) { // set the number to the value of black
             stepF = 50;
+            stepFPower = -0.4;
         } else if (theZone == 2) { // set the number to the value of half black
             stepF = 0;
         } else if (theZone == 3) { // set the number to the value of white
             stepF = 65;
+            stepFPower = 0.4;
         } else {
             telemetry.addData("Unknown Case", theZone);
         }
@@ -79,7 +82,7 @@ public class AutoRightSide extends OpMode {
             case 0:
                 if (!done) {
                     // stepA is 45
-                    done = robot.gyroDrive(0, rightStepA, 0.2);
+                    done = robot.gyroDrive(0, stepA, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -88,9 +91,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 1:
                 if (!done) {
-                    // stepB is 45
-                    done = robot.turnTo(rightStepB, 0.2);
-                    telemetry.addData("case 1", "is started");
+                    done = robot.drive(179, 23, 0.2);
                 } else {
                     robot.stop();
                     done = false;
@@ -99,19 +100,21 @@ public class AutoRightSide extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    // stepC is 8
-                    done = robot.gyroDrive(-45, rightStepC, 0.2);
-                    telemetry.addData("case 2", "is started");
+                    // stepB is -43.5
+                    done = robot.turnTo(stepB, 0.2);
+                    telemetry.addData("case 1", "is started");
                 } else {
                     robot.stop();
                     done = false;
                     state++;
                 }
                 break;
+
             case 3:
                 if (!done) {
-                    // stepD is 8
-                    done = robot.drive(179, rightStepD, 0.2);
+                    // stepC is 8
+                    done = robot.gyroDrive(-43.5, stepC, 0.2);
+                    telemetry.addData("case 2", "is started");
                 } else {
                     robot.stop();
                     done = false;
@@ -120,18 +123,109 @@ public class AutoRightSide extends OpMode {
                 break;
             case 4:
                 if (!done) {
-                    // stepE is 0
-                    done = robot.turnTo(rightStepE, 0.2);
+                    done = robot.linearSlide.liftUpDistance(20, 0.4);
+
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 5:
+                if (!done) {
+                    done = robot.linearSlide.elbowLowerDistance(3, 0.45);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 6:
+                if (!done) {
+                    done = robot.linearSlide.wristMove(0);
+                    done = done && (getRuntime() > 2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 7:
+                if (!done) {
+                    done = robot.linearSlide.liftDownDistance(3, 0.4);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 8:
+                if (!done) {
+                    done = robot.linearSlide.clawMove(0.5);
+                    done = done && (getRuntime() > 1);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 9:
+                if (!done) {
+                    done = robot.linearSlide.wristMove(0.5);
                 } else {
                     robot.stop();
                     done = false;
                     state++;
                 }
                 break;
-            case 5:
+            case 10:
+                if (!done) {
+                    done = robot.linearSlide.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 11:
+                if (!done) {
+                    done = robot.linearSlide.liftDownDistance(17, 0.5) || (getRuntime() > 1);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 12:
+                if (!done) {
+                    // stepD is 8
+                    done = robot.drive(179, stepD, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 13:
+                if (!done) {
+                    // stepE is 0
+                    done = robot.turnTo(stepE, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 14:
                 if (!done) {
                     // stepF is 65
-                    done = robot.drive(90, rightStepF,  0.4); // the power changes to a negative when it is to the left
+                    done = robot.drive(90, stepF,  stepFPower); // the power changes to a negative when it is to the left
                 } else {
                     robot.stop();
                     done = false;

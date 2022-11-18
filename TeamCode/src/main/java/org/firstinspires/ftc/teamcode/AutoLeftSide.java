@@ -36,13 +36,13 @@ public class AutoLeftSide extends OpMode {
     // stepB is a turn
     double stepB = 43.5;
     // stepC is a drive
-    double stepC = 11;
+    double stepC = 13;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
     double stepE = 0;
     // stepF is a strafe
-    double stepF = 65;
+    double stepF = 50;
     double stepFPower = 0.6;
     int theZone = 2;
 
@@ -129,7 +129,7 @@ public class AutoLeftSide extends OpMode {
                 if (!done)
                 {
                     // stepC is 8
-                    done = robot.gyroDrive(45, stepC, 0.2);
+                    done = robot.gyroDrive(43.5, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
                 }
                 else
@@ -173,8 +173,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 7:
                 if (!done) {
-                    done = robot.linearSlide.clawMove(0.5);
-                    done = done && (getRuntime() > 1);
+                    done = robot.linearSlide.liftDownDistance(3, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -184,21 +183,22 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 8:
                 if (!done) {
-                    done = robot.linearSlide.wristMove(0.5);
-                } else {
-                    robot.stop();
-                    done = false;
-                    state++;
-                }
-                break;
-            case 9:
-                if (!done) {
-                    done = robot.linearSlide.liftDownDistance(3, 0.4);
+                    done = robot.linearSlide.clawMove(0.5);
+                    done = done && (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;
                     state++;
                     resetRuntime();
+                }
+                break;
+            case 9:
+                if (!done) {
+                    done = robot.linearSlide.wristMove(0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
                 }
                 break;
             case 10:
@@ -208,11 +208,12 @@ public class AutoLeftSide extends OpMode {
                     robot.stop();
                     done = false;
                     state++;
+                    resetRuntime();
                 }
                 break;
             case 11:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(17, 0.4);
+                    done = robot.linearSlide.liftDownDistance(17, 0.5) || (getRuntime() > 2);
                 } else {
                     robot.stop();
                     done = false;
