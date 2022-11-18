@@ -519,7 +519,7 @@ public class Thunderbot_2022
         // power gets too small.
         if ( angleErrorMagnitude < 10)
         {
-            power = power * angleErrorMagnitude / 100.0;
+            power = power * angleErrorMagnitude / 50.0;
 
             if (power > 0)
             {

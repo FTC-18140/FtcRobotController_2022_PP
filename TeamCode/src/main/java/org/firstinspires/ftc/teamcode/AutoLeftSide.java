@@ -32,18 +32,18 @@ public class AutoLeftSide extends OpMode {
 
     // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
-    double stepA = 45;
+    double stepA = 72;
     // stepB is a turn
-    double stepB = 45;
+    double stepB = 43.5;
     // stepC is a drive
-    double stepC = 5;
+    double stepC = 11;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
     double stepE = 0;
     // stepF is a strafe
     double stepF = 65;
-    double stepFPower = 0.4;
+    double stepFPower = 0.6;
     int theZone = 2;
 
     @Override
@@ -93,7 +93,7 @@ public class AutoLeftSide extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.2);
+                    done = robot.gyroDrive(0, stepA, 0.3);
                 }
                 else
                 {
@@ -103,6 +103,15 @@ public class AutoLeftSide extends OpMode {
                 }
                 break;
             case 1:
+                if (!done) {
+                    done = robot.drive(179, 15, 0.2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 2:
                 if (!done)
                 {
                     // stepB is 45
@@ -116,7 +125,7 @@ public class AutoLeftSide extends OpMode {
                     state++;
                 }
                 break;
-            case 2:
+            case 3:
                 if (!done)
                 {
                     // stepC is 8
@@ -130,7 +139,87 @@ public class AutoLeftSide extends OpMode {
                     state++;
                 }
                 break;
-            case 3:
+            case 4:
+                if (!done) {
+                    done = robot.linearSlide.liftUpDistance(20, 0.4);
+
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 5:
+                if (!done) {
+                    done = robot.linearSlide.elbowLowerDistance(2, 0.4);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 6:
+                if (!done) {
+                    done = robot.linearSlide.wristMove(0);
+                    done = done && (getRuntime() > 2);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 7:
+                if (!done) {
+                    done = robot.linearSlide.clawMove(0.5);
+                    done = done && (getRuntime() > 1);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 8:
+                if (!done) {
+                    done = robot.linearSlide.wristMove(0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 9:
+                if (!done) {
+                    done = robot.linearSlide.liftDownDistance(3, 0.4);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                    resetRuntime();
+                }
+                break;
+            case 10:
+                if (!done) {
+                    done = robot.linearSlide.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 11:
+                if (!done) {
+                    done = robot.linearSlide.liftDownDistance(17, 0.4);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 12:
                 if (!done)
                 {
                     // stepD is 8
@@ -143,7 +232,7 @@ public class AutoLeftSide extends OpMode {
                     state++;
                 }
                 break;
-            case 4:
+            case 13:
                 if (!done)
                 {
                     // stepE is 0
@@ -156,7 +245,7 @@ public class AutoLeftSide extends OpMode {
                     state++;
                 }
                 break;
-            case 5:
+            case 14:
                 if (!done)
                 {
                     // stepF is 65

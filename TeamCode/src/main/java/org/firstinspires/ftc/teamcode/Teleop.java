@@ -104,9 +104,9 @@ public class Teleop extends OpMode
         /////////////////
         // ELBOW
         /////////////////
-        if (gamepad2.x) {
+        if (gamepad2.b) {
             robot.linearSlide.elbowRaise(1);
-        } else if (gamepad2.b) {
+        } else if (gamepad2.x) {
             robot.linearSlide.elbowLower(1);
         } else {
             robot.linearSlide.elbowStop();
@@ -122,7 +122,7 @@ public class Teleop extends OpMode
         telemetry.addData("elbow pos (deg): ", robot.linearSlide.getElbowPosition());
         telemetry.addData("wrist pos (0..1): ", robot.linearSlide.wrist.getPosition());
         telemetry.addData("claw pos (0..1):", robot.linearSlide.claw.getPosition());
-      //  telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
+//        telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
 
         telemetry.addData("gyro sensor", robot.updateHeading());
     }
