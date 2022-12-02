@@ -2,9 +2,12 @@
 package org.firstinspires.ftc.teamcode;
 
 // Specific Libraries of commands to import from the package
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
+
+import java.util.List;
 
 // Initializes the main framework for the program
 @TeleOp(name = "Teleop", group = "Teleop")
@@ -13,6 +16,9 @@ public class Teleop extends OpMode
 
     // Calls new Robot and gives it a name
     Thunderbot_2022 robot = new Thunderbot_2022();
+
+    // Calls new Motor Position Cache
+    long[] motorPosition = new long[4];
 
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
@@ -32,7 +38,8 @@ public class Teleop extends OpMode
         // Displays Init: Done
         telemetry.addData("Init", "Done");
 
-        // Makes sure the Claw and Wrist can move as free as they need to
+
+             // Makes sure the Claw and Wrist can move as free as they need to
         try {
             wristPosition = 0.625;
             clawPosition = 1;
@@ -45,10 +52,12 @@ public class Teleop extends OpMode
     }
 
     // All the things it does when you select Play button
+    //
     @Override
     public void start() {
         telemetry.addData("Starting", "...");
     }
+
 
     // All the things it does over and over during the period from when start is pressed to when stop is pressed.
     @Override
