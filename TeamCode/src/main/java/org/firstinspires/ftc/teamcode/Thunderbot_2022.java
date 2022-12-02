@@ -34,7 +34,12 @@ public class Thunderbot_2022
     DcMotorEx rightRear = null;
     Eyes vision = new Eyes();
     LinearSlide linearSlide = new LinearSlide();
-
+    long leftFrontPos = 0;
+    long rightFrontPos = 0;
+    long leftRearPos = 0;
+    long rightRearPos = 0;
+    double heading = 0;
+    List<LynxModule> allHubs;
 
     double initialPosition = 0;
     boolean moving = false;
@@ -94,15 +99,16 @@ public class Thunderbot_2022
         ///////////
         ///////////
         try {
-            List<LynxModule> allHubs = ahwMap.getAll(LynxModule);
+            allHubs = ahwMap.getAll(LynxModule.class);
+
+            for (LynxModule module : allHubs) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            }
         }
         catch (Exception p_exception) {
-            telemetry.addData("LinxModule not found")
+            telemetry.addData("Error: ", "LynxModule not found");
         }
 
-        for (LynxModule module : allHubs) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
 
 
         // Define & Initialize Motors
@@ -163,15 +169,22 @@ public class Thunderbot_2022
 
     }
 
-///code for Motor Data Caching
-    public long[] motorPosition() {
-        long[] motorPosition = new long[4];
-        motorPosition[0] = rightFront.getCurrentPosition();
-        motorPosition[1] = rightRear.getCurrentPosition();
-        motorPosition[2] = leftFront.getCurrentPosition();
-        motorPosition[3] = leftRear.getCurrentPosition();
+///code for Data Caching
+    public void update() {
 
-        return motorPosition;
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
+        rightFrontPos = rightFront.getCurrentPosition();
+        rightRearPos = rightRear.getCurrentPosition();
+        leftFrontPos = leftFront.getCurrentPosition();
+        leftRearPos = leftRear.getCurrentPosition();
+
+        heading = updateHeading();
+
+        // Update the linear slide motor positions too.
+        linearSlide.update();
     }
 
     /**
@@ -262,11 +275,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPos;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPos;
             }
             moving = true;
         }
@@ -285,11 +298,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPos - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPos - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
@@ -362,11 +375,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPos;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPos;
             }
             moving = true;
         }
@@ -385,11 +398,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPos - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPos - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);

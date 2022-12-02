@@ -17,9 +17,6 @@ public class Teleop extends OpMode
     // Calls new Robot and gives it a name
     Thunderbot_2022 robot = new Thunderbot_2022();
 
-    // Calls new Motor Position Cache
-    long[] motorPosition = new long[4];
-
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
@@ -63,6 +60,7 @@ public class Teleop extends OpMode
     @Override
     public void loop()
     {
+        robot.update();
 
         /////////////////
         // CHASSIS

@@ -87,6 +87,8 @@ public class AutoLeftSide extends OpMode {
     @Override
     public void loop()
     {
+        robot.update();
+
         switch (state)
         {
             case 0:
