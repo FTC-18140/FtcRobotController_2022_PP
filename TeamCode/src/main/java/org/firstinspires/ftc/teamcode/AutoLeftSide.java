@@ -21,6 +21,7 @@ public class AutoLeftSide extends OpMode
     double stepF = 41;
     int theZone = 2;
 
+    //
     @Override
     public void init()
     {
@@ -56,6 +57,7 @@ public class AutoLeftSide extends OpMode
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
     }
+
 
     @Override
     public void loop()
