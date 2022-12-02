@@ -21,6 +21,7 @@ public class LinearSlide {
     boolean moving = false;
     private HardwareMap hwMap = null;
     private Telemetry telemetry;
+    long liftPosition = 0;
 
     private int state;
     private boolean done = false;
@@ -71,7 +72,7 @@ public class LinearSlide {
     }
 
     public double getLiftPosition() {
-        return lift.getCurrentPosition() / COUNTS_PER_CM;
+        return liftPosition / COUNTS_PER_CM;
     }
 
     public void init(HardwareMap newhwMap, Telemetry telem) {
@@ -113,6 +114,13 @@ public class LinearSlide {
         }
     }
 
+    public void update()
+    {
+        liftPosition = lift.getCurrentPosition();
+        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+    }
+
+
     /**
      * Stops the lift motor.
      */
@@ -133,9 +141,9 @@ public class LinearSlide {
         power = -1.0 * Math.abs(power);
 
         if (lift != null) {
-            if (lift.getCurrentPosition() / COUNTS_PER_CM <= 0) {
+            if (liftPosition / COUNTS_PER_CM <= 0) {
                 liftStop();
-            } else if (lift.getCurrentPosition() / COUNTS_PER_CM < 8) {
+            } else if (liftPosition / COUNTS_PER_CM < 8) {
                 lift.setPower(-0.15);
             } else {
                 lift.setPower(power); // -0.5
@@ -154,9 +162,9 @@ public class LinearSlide {
         power = Math.abs(power);
 
         if (lift != null) {
-            if (lift.getCurrentPosition() / COUNTS_PER_CM >= 51) {
+            if (liftPosition / COUNTS_PER_CM >= 51) {
                 liftStop();
-            } else if (lift.getCurrentPosition() / COUNTS_PER_CM > 45) {
+            } else if (liftPosition / COUNTS_PER_CM > 45) {
                 lift.setPower(0.15);
             } else {
                 lift.setPower(power); // 0.5
@@ -176,7 +184,6 @@ public class LinearSlide {
 
         if (elbow != null) {
             // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
 
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
@@ -198,9 +205,6 @@ public class LinearSlide {
 
 
         if (elbow != null) {
-            // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-
             // Update the wrist servo position based on the elbow's position
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
@@ -261,7 +265,6 @@ public class LinearSlide {
         }
     }
         public boolean elbowRaiseDistance(double distance, double power) {
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
             if (!moving) {
                 initElbowPosition = elbowPosition;
                 moving = true;
@@ -277,7 +280,6 @@ public class LinearSlide {
             }
         }
     public boolean elbowLowerDistance(double distance, double power) {
-        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
         if (!moving) {
             initElbowPosition = elbowPosition;
             moving = true;

@@ -6,7 +6,9 @@ import static java.lang.Math.toRadians;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -19,17 +21,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.util.List;
+
 
 public class Thunderbot_2022
 {
     // defines all variables
     BNO055IMU imu = null;
-    DcMotor leftFront = null;
-    DcMotor rightFront = null;
-    DcMotor leftRear = null;
-    DcMotor rightRear = null;
+    DcMotorEx leftFront = null;
+    DcMotorEx rightFront = null;
+    DcMotorEx leftRear = null;
+    DcMotorEx rightRear = null;
     Eyes vision = new Eyes();
     LinearSlide linearSlide = new LinearSlide();
+    long leftFrontPos = 0;
+    long rightFrontPos = 0;
+    long leftRearPos = 0;
+    long rightRearPos = 0;
+    double heading = 0;
+    List<LynxModule> allHubs;
 
     double initialPosition = 0;
     boolean moving = false;
@@ -84,11 +94,28 @@ public class Thunderbot_2022
 
         telemetry = telem;
 
+        //////
+        //Addition of LyncModule for Motor Data Caching
+        ///////////
+        ///////////
+        try {
+            allHubs = ahwMap.getAll(LynxModule.class);
+
+            for (LynxModule module : allHubs) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            }
+        }
+        catch (Exception p_exception) {
+            telemetry.addData("Error: ", "LynxModule not found");
+        }
+
+
+
         // Define & Initialize Motors
 
         try
         {
-            rightFront = ahwMap.dcMotor.get("rightFront");
+            rightFront = ahwMap.get(DcMotorEx.class, "rightFront");
             rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -101,7 +128,7 @@ public class Thunderbot_2022
 
         try
         {
-            rightRear = ahwMap.dcMotor.get("rightRear");
+            rightRear = ahwMap.get(DcMotorEx.class,"rightRear");
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -114,7 +141,7 @@ public class Thunderbot_2022
 
         try
         {
-            leftFront = ahwMap.dcMotor.get("leftFront");
+            leftFront = ahwMap.get(DcMotorEx.class,"leftFront");
             leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -127,7 +154,7 @@ public class Thunderbot_2022
 
         try
         {
-            leftRear = ahwMap.dcMotor.get("leftRear");
+            leftRear = ahwMap.get(DcMotorEx.class,"leftRear");
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -142,6 +169,24 @@ public class Thunderbot_2022
 
     }
 
+///code for Data Caching
+    public void update() {
+
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
+        rightFrontPos = rightFront.getCurrentPosition();
+        rightRearPos = rightRear.getCurrentPosition();
+        leftFrontPos = leftFront.getCurrentPosition();
+        leftRearPos = leftRear.getCurrentPosition();
+
+        heading = updateHeading();
+
+        // Update the linear slide motor positions too.
+        linearSlide.update();
+    }
+
     /**
      * This code go's through the math behind the mecanum wheel drive.  Given the joystick values,
      * it will calculate the motor commands needed for the mecanum drive.
@@ -150,6 +195,7 @@ public class Thunderbot_2022
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
+
     public void joystickDrive(double foward, double right, double clockwise) {
      //   right = right * -1;
         double frontLeft = foward + clockwise + right;
@@ -229,11 +275,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPos;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPos;
             }
             moving = true;
         }
@@ -252,11 +298,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPos - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPos - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
@@ -329,11 +375,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPos;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPos;
             }
             moving = true;
         }
@@ -352,11 +398,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPos - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPos - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
