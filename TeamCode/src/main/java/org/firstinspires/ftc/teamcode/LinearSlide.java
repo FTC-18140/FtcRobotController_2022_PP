@@ -91,8 +91,8 @@ public class LinearSlide {
 
         try {
             elbow = hwMap.dcMotor.get("elbow"); // change on hardware map
+            elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elbow.setDirection(DcMotorSimple.Direction.FORWARD);
             elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } catch (Exception e) {
@@ -189,7 +189,8 @@ public class LinearSlide {
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
 //            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
-            elbow.setPower(power); // -0.4
+           // elbow.setPower(power); // -0.4
+            elbow.setTargetPosition( elbow.getCurrentPosition() + 10 );
         }
     }
 
@@ -209,7 +210,8 @@ public class LinearSlide {
             // Right now the servo position is mapped between 0 and 1.
             // TODO: Need to figure out the relation between elbow degrees and servo position.
 //            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
-            elbow.setPower(power);  // 0.4
+            //elbow.setPower(power);  // 0.4
+            elbow.setTargetPosition( elbow.getCurrentPosition() - 10 );
         }
     }
 

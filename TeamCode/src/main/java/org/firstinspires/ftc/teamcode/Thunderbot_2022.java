@@ -94,10 +94,10 @@ public class Thunderbot_2022
 
         telemetry = telem;
 
-        //////
-        //Addition of LyncModule for Motor Data Caching
         ///////////
+        // Addition of LyncModule for Motor Data Caching
         ///////////
+
         try {
             allHubs = ahwMap.getAll(LynxModule.class);
 
