@@ -58,7 +58,6 @@ public class LED {
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
 
-    Telemetry.Item patternName;
     Deadline teleopLimit;
     Deadline endgameLimit;
     Deadline lastFive;
@@ -74,6 +73,7 @@ public class LED {
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         pattern = TELEOP_PATTERN;
         blinkinLedDriver.setPattern(pattern);
+
 
 
         teleopLimit = new Deadline(TELEOP_TIME, TimeUnit.SECONDS);
@@ -97,19 +97,18 @@ public class LED {
         }
         if(lastFive.hasExpired()){
             pattern = GAME_OVER_PATTERN;
-            displayPattern();
+            setPattern();
         }else if(endgameLimit.hasExpired()){
             pattern = LAST_PATTERN;
-            displayPattern();
+            setPattern();
         }else if(teleopLimit.hasExpired()){
             pattern = ENDGAME_PATTERN;
-            displayPattern();
+            setPattern();
         }
     }
 
-    protected void displayPattern()
+    protected void setPattern()
     {
         blinkinLedDriver.setPattern(pattern);
-        patternName.setValue(pattern.toString());
     }
 }
