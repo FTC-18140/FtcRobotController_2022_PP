@@ -18,7 +18,7 @@ public class ProxSensor {
         telemetry = telem;
 
         try{
-            prox = (RevColorSensorV3) hwMap.i2cDevice.get("color 1");
+            prox = (RevColorSensorV3) hwMap.colorSensor.get("color 1");
         } catch (Exception e){
             telemetry.addData("color sensor not found",0);
         }
@@ -30,7 +30,7 @@ public class ProxSensor {
         } else {
             return -1.0;
         }
-        
+
     }
 
 
