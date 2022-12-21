@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,9 +13,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public class LinearSlide {
     DcMotor lift = null;
-    DcMotor elbow = null;
+//    DcMotor elbow = null;
+    Servo leftElbow = null;
+    Servo rightElbow = null;
+    Servo elbowServo = null;
     Servo claw = null;
     Servo wrist = null;
+    Servo twist = null;
 
     double initLiftPosition = 0;
     double initElbowPosition = 0;
@@ -35,6 +40,10 @@ public class LinearSlide {
     final private double INIT_WRIST = 0.625;
     final private double WRIST_MAX = 0.625;
     final private double WRIST_MIN = 0.0;
+
+    final private double INIT_ELB = 0.3;
+    final private double ELB_MIN = 1;
+    final private double ELB_MAX = 0.0;
 
     // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -65,6 +74,13 @@ public class LinearSlide {
     public double getWRIST_MIN() {
         return WRIST_MIN;
     }
+    public double getELB_MIN() {
+        return ELB_MIN;
+    }
+    public double getELB_MAX() {
+        return ELB_MAX;
+    }
+
 
     public double getElbowPosition() {
         return elbowPosition;
@@ -89,11 +105,11 @@ public class LinearSlide {
         }
 
         try {
-            elbow = hwMap.dcMotor.get("elbow"); // change on hardware map
-            elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            elbow.setDirection(DcMotorSimple.Direction.FORWARD);
-            elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            elbow = hwMap.dcMotor.get("elbow"); // change on hardware map
+//            elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            elbow.setDirection(DcMotorSimple.Direction.FORWARD);
+//            elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } catch (Exception e) {
             telemetry.addData("elbow not found in config file", 0);
         }
@@ -110,6 +126,23 @@ public class LinearSlide {
             wristMove(INIT_WRIST);
         } catch (Exception e) {
             telemetry.addData("wrist not found in config file", 0);
+        }
+        try {
+            leftElbow = hwMap.servo.get("lelbow");
+        } catch (Exception e) {
+            telemetry.addData("leftElbow", "not found");
+        }
+        try {
+            rightElbow = hwMap.servo.get("relbow");
+            rightElbow.setDirection(Servo.Direction.REVERSE);
+
+        } catch (Exception e) {
+            telemetry.addData("rightElbow", "not found");
+        }
+        try {
+            twist = hwMap.servo.get("twist");
+        } catch (Exception e) {
+            telemetry.addData("twist", "not found");
         }
     }
 
@@ -174,16 +207,16 @@ public class LinearSlide {
         // Raise power is negative. Make sure it is so.
         power = Math.abs(power);
 
-        if (elbow != null) {
-            // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-
-            // Update the wrist servo position based on the elbow's position
-            // Right now the servo position is mapped between 0 and 1.
-            // TODO: Need to figure out the relation between elbow degrees and servo position.
-//            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
-            elbow.setPower(power); // -0.4
-        }
+//        if (elbow != null) {
+//            // Get the current position of the elbow
+//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//
+//            // Update the wrist servo position based on the elbow's position
+//            // Right now the servo position is mapped between 0 and 1.
+//            // TODO: Need to figure out the relation between elbow degrees and servo position.
+////            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
+//            elbow.setPower(power); // -0.4
+//        }
     }
 
     /**
@@ -197,22 +230,29 @@ public class LinearSlide {
         power = -1.0 * Math.abs(power);
 
 
-        if (elbow != null) {
-            // Get the current position of the elbow
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-
-            // Update the wrist servo position based on the elbow's position
-            // Right now the servo position is mapped between 0 and 1.
-            // TODO: Need to figure out the relation between elbow degrees and servo position.
-//            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
-            elbow.setPower(power);  // 0.4
-        }
+//        if (elbow != null) {
+//            // Get the current position of the elbow
+//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//
+//            // Update the wrist servo position based on the elbow's position
+//            // Right now the servo position is mapped between 0 and 1.
+//            // TODO: Need to figure out the relation between elbow degrees and servo position.
+////            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
+//            elbow.setPower(power);  // 0.4
+//        }
     }
 
     public void elbowStop() {
-        if (elbow != null) {
-            elbow.setPower(0);
+//        if (elbow != null) {
+//            elbow.setPower(0);
+//        }
+    }
+    public boolean elbowServoTurn(double position) {
+        if (leftElbow != null && rightElbow != null) {
+            leftElbow.setPosition(position);
+            rightElbow.setPosition(position);
         }
+        return true;
     }
 
     public boolean clawMove(double position) {
@@ -260,37 +300,45 @@ public class LinearSlide {
             return false;
         }
     }
+    public boolean twistArm(double position) {
+        if (wrist != null) {
+            twist.setPosition(position);
+        }
+        return true;
+    }
         public boolean elbowRaiseDistance(double distance, double power) {
-            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-            if (!moving) {
-                initElbowPosition = elbowPosition;
-                moving = true;
-            }
-            double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
-            if (elbowDistanceMoved > distance) {
-                elbowStop();
-                moving = false;
-                return true;
-            } else {
-                elbowRaise(Math.abs(power));
-                return false;
-            }
+//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//            if (!moving) {
+//                initElbowPosition = elbowPosition;
+//                moving = true;
+//            }
+//            double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
+//            if (elbowDistanceMoved > distance) {
+//                elbowStop();
+//                moving = false;
+//                return true;
+//            } else {
+//                elbowRaise(Math.abs(power));
+//                return false;
+//            }
+            return true;
         }
     public boolean elbowLowerDistance(double distance, double power) {
-        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-        if (!moving) {
-            initElbowPosition = elbowPosition;
-            moving = true;
-        }
-        double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
-        if (elbowDistanceMoved > distance) {
-            elbowStop();
-            moving = false;
-            return true;
-        } else {
-            elbowLower(Math.abs(power));
-            return false;
-        }
+//        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//        if (!moving) {
+//            initElbowPosition = elbowPosition;
+//            moving = true;
+//        }
+//        double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
+//        if (elbowDistanceMoved > distance) {
+//            elbowStop();
+//            moving = false;
+//            return true;
+//        } else {
+//            elbowLower(Math.abs(power));
+//            return false;
+//        }
+        return true;
     }
     }
 

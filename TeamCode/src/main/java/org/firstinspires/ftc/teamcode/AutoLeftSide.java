@@ -34,7 +34,7 @@ public class AutoLeftSide extends OpMode {
     // stepA is a drive
     double stepA = 72;
     // stepB is a turn
-    double stepB = 43.5;
+    double stepB = 45;
     // stepC is a drive
     double stepC = 13;
     // stepD is a drive
@@ -128,7 +128,7 @@ public class AutoLeftSide extends OpMode {
             case 3:
                 if (!done)
                 {
-                    // stepC is 8
+                    // stepC is 10y
                     done = robot.gyroDrive(43.5, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
                 }

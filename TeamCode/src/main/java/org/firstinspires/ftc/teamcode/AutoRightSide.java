@@ -38,7 +38,7 @@ public class AutoRightSide extends OpMode {
     // stepB is a turn
     double stepB = -43.5;
     // stepC is a drive
-    double stepC = 11;
+    double stepC = 13;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
