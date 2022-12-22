@@ -17,9 +17,10 @@ public class Teleop extends OpMode
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
-    double elbowPosition = 0.3;
-    double ELBOW_INCREMENT = 0.0015;
-    double WRIST_INCREMENT = 0.005; // its 0.0025
+    double lelbowPosition = 0;
+    double relbowPosition = 0;
+    double ELBOW_INCREMENT = 0.0025;
+    double WRIST_INCREMENT = 0.0075; // its 0.0025
     double CLAW_INCREMENT = 0.01;
 
     // All the things that happen when the init button is pressed
@@ -36,11 +37,12 @@ public class Teleop extends OpMode
         // Makes sure the Claw and Wrist can move as free as they need to
         try {
             wristPosition = 0.625;
-            clawPosition = 1;
-            elbowPosition = 0.3;
-         //   robot.linearSlide.elbowServoTurn(elbowPosition);
-            robot.linearSlide.wristMove(wristPosition);
-            robot.linearSlide.clawMove(clawPosition);
+            clawPosition = 0.5;
+            lelbowPosition = robot.armstrong.leftElbow.getPosition();
+            relbowPosition = robot.armstrong.rightElbow.getPosition();
+            robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
+            robot.armstrong.wristMove(wristPosition);
+            robot.armstrong.clawMove(clawPosition);
         } catch (Exception e) {
             telemetry.addData("cant", "run");
         }
@@ -57,6 +59,7 @@ public class Teleop extends OpMode
     @Override
     public void loop()
     {
+        robot.update();
 
         /////////////////
         // CHASSIS
@@ -70,25 +73,13 @@ public class Teleop extends OpMode
         }
 
         /////////////////
-        // WRIST
+        // TWIST
         /////////////////
-//        if (gamepad2.dpad_up) {
-//            elbowPosition += ELBOW_INCREMENT;
-//            elbowPosition = Range.clip(elbowPosition, robot.linearSlide.getELB_MIN(), robot.linearSlide.getELB_MAX());
-//            robot.linearSlide.elbowServoTurn(elbowPosition);
-//
-////            wristPosition += WRIST_INCREMENT;
-////            wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
-////            robot.linearSlide.wristMove(wristPosition);
-//        } else if (gamepad2.dpad_down) {
-//            elbowPosition -= ELBOW_INCREMENT;
-//            elbowPosition = Range.clip(elbowPosition, robot.linearSlide.getELB_MIN(), robot.linearSlide.getELB_MAX());
-//            robot.linearSlide.elbowServoTurn(elbowPosition);
-////
-////            wristPosition -= WRIST_INCREMENT;
-////            wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
-////            robot.linearSlide.wristMove(wristPosition);
-//        }
+        if (gamepad2.dpad_left) {
+            robot.armstrong.armRotate(1);
+        } else if (gamepad2.dpad_right) {
+            robot.armstrong.armRotate(0);
+        }
 
         /////////////////
         // CLAW
@@ -98,49 +89,46 @@ public class Teleop extends OpMode
         } else if (gamepad2.right_bumper) {
             clawPosition -= CLAW_INCREMENT;
         }
-        clawPosition = Range.clip(clawPosition, robot.linearSlide.getCLAW_MIN(), robot.linearSlide.getCLAW_MAX());
-        robot.linearSlide.clawMove(clawPosition);
+        clawPosition = Range.clip(clawPosition, robot.armstrong.getCLAW_MIN(), robot.armstrong.getCLAW_MAX());
+        robot.armstrong.clawMove(clawPosition);
 
 
         /////////////////
         // ELBOW
         /////////////////
         if (gamepad2.x) {
-            elbowPosition -= ELBOW_INCREMENT;
+            lelbowPosition -= ELBOW_INCREMENT;
+            relbowPosition -= ELBOW_INCREMENT;
         } else if (gamepad2.b) {
-            elbowPosition += ELBOW_INCREMENT;
+            lelbowPosition += ELBOW_INCREMENT;
+            relbowPosition += ELBOW_INCREMENT;
         }
-//        } else {
-//            robot.linearSlide.elbowStop();
-//        }
-        elbowPosition = Range.clip(elbowPosition, 0, 0.28);
-        robot.linearSlide.elbowServoTurn(elbowPosition);
+
+        relbowPosition = Range.clip(relbowPosition, 0, 0.285);
+        lelbowPosition = Range.clip(lelbowPosition, 0, 0.285);
+        robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
 
         /////////////////
         // LINEAR SLIDE
         /////////////////
-//        if (gamepad2.a) {
-//            robot.linearSlide.liftUp(1);
-//        } else if (gamepad2.y) {
-//            robot.linearSlide.liftDown(1);
-//        } else {
-//            robot.linearSlide.liftStop();
-//        }
-
+        if (gamepad2.y) {
+            robot.armstrong.liftUp(1);
+        } else if (gamepad2.a) {
+            robot.armstrong.liftDown(1);
+        } else {
+            robot.armstrong.liftStop();
+        }
         /////////////////
-        // TELEMETRY
+        // WRIST
         /////////////////
-        telemetry.addData("lx", gamepad1.left_stick_x);
-        telemetry.addData("ly", gamepad1.left_stick_y);
-        telemetry.addData("rx", gamepad1.right_stick_x);
-
-        telemetry.addData("elbow pos (deg): ", robot.linearSlide.getElbowPosition());
-        telemetry.addData("wrist pos (0..1): ", robot.linearSlide.wrist.getPosition());
-        telemetry.addData("claw pos (0..1):", robot.linearSlide.claw.getPosition());
-        telemetry.addData("relbow Position: ", robot.linearSlide.rightElbow.getPosition());
-        telemetry.addData("lelbow Position: ", robot.linearSlide.leftElbow.getPosition());
-//        telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
-
-        telemetry.addData("gyro sensor", robot.updateHeading());
+        if(gamepad2.dpad_up) {
+            wristPosition += WRIST_INCREMENT;
+            wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
+            robot.armstrong.wristMove(wristPosition);
+        } else if (gamepad2.dpad_down) {
+            wristPosition -= WRIST_INCREMENT;
+            wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
+            robot.armstrong.wristMove(wristPosition);
+        }
     }
 }

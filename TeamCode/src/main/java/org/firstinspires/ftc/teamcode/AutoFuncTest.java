@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @Autonomous
 public class AutoFuncTest extends OpMode
 {
@@ -39,7 +37,7 @@ public class AutoFuncTest extends OpMode
                 if (!done)
                 {
                   //  done = robot.drive(0, 20, 0.2);
-                    done = robot.linearSlide.liftUpDistance(20, 0.4);
+                    done = robot.armstrong.liftUpDistance(20, 0.4);
                 }
                 else
                 {
@@ -50,7 +48,7 @@ public class AutoFuncTest extends OpMode
                 break;
             case 1:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(20, 0.4);
+                    done = robot.armstrong.liftDownDistance(20, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -59,7 +57,7 @@ public class AutoFuncTest extends OpMode
                 break;
             case 2:
                 if(!done) {
-                    done = robot.linearSlide.wristMove(0.5);
+                    done = robot.armstrong.wristMove(0.5);
                 } else {
                     robot.stop();
                     done = false;
@@ -68,7 +66,7 @@ public class AutoFuncTest extends OpMode
                 break;
             case 3:
                 if(!done) {
-                    done = robot.linearSlide.clawMove(0.5);
+                    done = robot.armstrong.clawMove(0.5);
 
                 } else {
                     robot.stop();

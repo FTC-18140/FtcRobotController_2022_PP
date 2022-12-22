@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,15 +10,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /**
  * This class controls the linear slide and all that is attached to it.
  */
-public class LinearSlide {
-    DcMotor lift = null;
-//    DcMotor elbow = null;
+public class ArmStrong {
+ //   DcMotor lift = null;
+    DcMotor leftLift = null;
+    DcMotor rightLift = null;
     Servo leftElbow = null;
     Servo rightElbow = null;
     Servo elbowServo = null;
     Servo claw = null;
     Servo wrist = null;
     Servo twist = null;
+
+    // Position Variables
+    long leftSlidePosition = 0;
+    long rightSlidePosition = 0;
+    double heading = 0;
 
     double initLiftPosition = 0;
     double initElbowPosition = 0;
@@ -32,8 +37,8 @@ public class LinearSlide {
     private long startTime = 0; // in nanoseconds
 
     // Claw parameters
-    private double INIT_CLAW = 1.0;
-    private double CLAW_MAX = 1.0;
+    private double INIT_CLAW = 0.5;
+    private double CLAW_MAX = 0.5;
     private double CLAW_MIN = 0.2;
 
     // Wrist parameters
@@ -87,7 +92,7 @@ public class LinearSlide {
     }
 
     public double getLiftPosition() {
-        return lift.getCurrentPosition() / COUNTS_PER_CM;
+        return leftSlidePosition / COUNTS_PER_CM;
     }
 
     public void init(HardwareMap newhwMap, Telemetry telem) {
@@ -95,13 +100,22 @@ public class LinearSlide {
         telemetry = telem;
 
         try {
-            lift = hwMap.dcMotor.get("linear");
-            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
-            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftLift = hwMap.dcMotor.get("leftLinear");
+            leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } catch (Exception e) {
-            telemetry.addData("linear not found in config file", 0);
+            telemetry.addData("Left linear slide not found in config file", 0);
+        }
+        try {
+            rightLift = hwMap.dcMotor.get("rightLinear");
+            rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } catch (Exception e) {
+            telemetry.addData(" Right linear slide not found in config file", 0);
         }
 
         try {
@@ -150,8 +164,11 @@ public class LinearSlide {
      * Stops the lift motor.
      */
     public void liftStop() {
-        if (lift != null) {
-            lift.setPower(0);
+        if (leftLift != null) {
+            leftLift.setPower(0);
+            if (rightLift != null) {
+            rightLift.setPower(0);
+            }
         }
     }
 
@@ -165,13 +182,22 @@ public class LinearSlide {
         // Down power is negative.  Make sure it's negative.
         power = -1.0 * Math.abs(power);
 
-        if (lift != null) {
-            if (lift.getCurrentPosition() / COUNTS_PER_CM <= 0) {
+        if (leftLift != null && rightLift != null) {
+            if (leftSlidePosition / COUNTS_PER_CM <= 0) {
                 liftStop();
-            } else if (lift.getCurrentPosition() / COUNTS_PER_CM < 8) {
-                lift.setPower(-0.15);
+            } else if (leftSlidePosition / COUNTS_PER_CM < 8) {
+                leftLift.setPower(-0.15);
             } else {
-                lift.setPower(power); // -0.5
+                leftLift.setPower(power);// -0.5
+            }
+            if (rightLift != null) {
+                if (rightSlidePosition / COUNTS_PER_CM <= 0) {
+                    liftStop();
+                } else if (rightSlidePosition / COUNTS_PER_CM < 8) {
+                    rightLift.setPower(-0.15);
+                } else {
+                    rightLift.setPower(power);
+                }
             }
         }
     }
@@ -182,75 +208,62 @@ public class LinearSlide {
      *
      * @param power
      */
-    public void liftUp(double power) {
-        // Up power is positive.  Make sure it's positive.
-        power = Math.abs(power);
+    public void liftUp(double power){
+            // Up power is positive.  Make sure it's positive.
+            power = Math.abs(power);
 
-        if (lift != null) {
-            if (lift.getCurrentPosition() / COUNTS_PER_CM >= 51) {
-                liftStop();
-            } else if (lift.getCurrentPosition() / COUNTS_PER_CM > 45) {
-                lift.setPower(0.15);
-            } else {
-                lift.setPower(power); // 0.5
+            if (leftLift != null) {
+                if (leftSlidePosition / COUNTS_PER_CM >= 51) {
+                    liftStop();
+                } else if (leftSlidePosition / COUNTS_PER_CM > 45) {
+                    leftLift.setPower(0.15);
+                } else {
+                    leftLift.setPower(power);
+                }
+                if (rightLift != null) {
+                    if (rightSlidePosition / COUNTS_PER_CM >= 51) {
+                        liftStop();
+                    } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
+                        rightLift.setPower(0.15);
+                    } else {
+                        rightLift.setPower(power);
+                    }
+                }
             }
         }
-    }
 
     /**
      * Raises the arm connected to the elbow. This method handles the sign needed
      * for the motor to turn the correct direction.
      *
-     * @param power
+     * @param position
      */
-    public void elbowRaise(double power) {
-        // Raise power is negative. Make sure it is so.
-        power = Math.abs(power);
-
-//        if (elbow != null) {
-//            // Get the current position of the elbow
-//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//    public void elbowRaise(double position) {
+//        // Raise power is negative. Make sure it is so.
+//        elbowServoTurn(position);
+//    }
 //
-//            // Update the wrist servo position based on the elbow's position
-//            // Right now the servo position is mapped between 0 and 1.
-//            // TODO: Need to figure out the relation between elbow degrees and servo position.
-////            wrist.setPosition( elbowPosition/180 * WRIST_MAX);
-//            elbow.setPower(power); // -0.4
-//        }
-    }
-
-    /**
-     * Raises the arm connected to the elbow. This method handles the sign needed
-     * for the motor to turn the correct direction.
-     *
-     * @param power
-     */
-    public void elbowLower(double power) {
-        // Lower power is positive.  Make sure it is so.
-        power = -1.0 * Math.abs(power);
-
-
-//        if (elbow != null) {
-//            // Get the current position of the elbow
-//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
+//    /**
+//     * Raises the arm connected to the elbow. This method handles the sign needed
+//     * for the motor to turn the correct direction.
+//     *
+//     * @param position
+//     */
+//    public void elbowLower(double position) {
+//        // Lower power is positive.  Make sure it is so.
+//        elbowServoTurn(position);
 //
-//            // Update the wrist servo position based on the elbow's position
-//            // Right now the servo position is mapped between 0 and 1.
-//            // TODO: Need to figure out the relation between elbow degrees and servo position.
-////            wrist.setPosition( elbowPosition/180 * WRIST_MIN);
-//            elbow.setPower(power);  // 0.4
-//        }
-    }
+//    }
 
     public void elbowStop() {
 //        if (elbow != null) {
 //            elbow.setPower(0);
 //        }
     }
-    public boolean elbowServoTurn(double position) {
+    public boolean elbowMove(double leftPosition, double rightPosition) {
         if (leftElbow != null && rightElbow != null) {
-            leftElbow.setPosition(position);
-            rightElbow.setPosition(position);
+            leftElbow.setPosition(leftPosition);
+            rightElbow.setPosition(rightPosition);
         }
         return true;
     }
@@ -269,6 +282,12 @@ public class LinearSlide {
         return true;
     }
 
+    public boolean armRotate(double position) {
+        if (twist != null) {
+            twist.setPosition(position);
+        }
+        return true;
+    }
     public boolean liftUpDistance(double distance, double power) {
         if (!moving) {
             initLiftPosition = getLiftPosition();
@@ -305,6 +324,10 @@ public class LinearSlide {
             twist.setPosition(position);
         }
         return true;
+    }
+    public void update() {
+        leftSlidePosition = leftLift.getCurrentPosition();
+        rightSlidePosition = rightLift.getCurrentPosition();
     }
         public boolean elbowRaiseDistance(double distance, double power) {
 //            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
