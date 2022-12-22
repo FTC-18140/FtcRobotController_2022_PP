@@ -55,7 +55,7 @@ public class LED {
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
-    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver blinkinLedDriver = null;
     RevBlinkinLedDriver.BlinkinPattern pattern;
 
     Deadline teleopLimit;
@@ -70,11 +70,16 @@ public class LED {
 
         hardwareMap = hMap;
         telemetry = telem;
-        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        pattern = TELEOP_PATTERN;
-        blinkinLedDriver.setPattern(pattern);
-
-
+        try
+        {
+            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+            pattern = TELEOP_PATTERN;
+            blinkinLedDriver.setPattern(pattern);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("blinkin not found in config file", 0);
+        }
 
         teleopLimit = new Deadline(TELEOP_TIME, TimeUnit.SECONDS);
         endgameLimit = new Deadline(ENDGAME_TIME, TimeUnit.SECONDS);
@@ -109,6 +114,9 @@ public class LED {
 
     protected void setPattern()
     {
-        blinkinLedDriver.setPattern(pattern);
+        if ( blinkinLedDriver != null )
+        {
+            blinkinLedDriver.setPattern(pattern);
+        }
     }
 }
