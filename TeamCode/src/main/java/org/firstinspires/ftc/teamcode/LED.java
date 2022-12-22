@@ -36,11 +36,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
-//•‿•
-/*
 
+/**
+ * Connects to the Blinkin LED Driver and is used to establish time-based LED displays for the robot to
+ * help the drivers know when end game is about to occur and when the match is about to be complete.
  */
-
 public class LED {
 
     private final static int TELEOP_TIME = 90;
@@ -62,12 +62,20 @@ public class LED {
     Deadline endgameLimit;
     Deadline lastFive;
 
+    /**
+     * Method which allows deadline timer values to be displayed in telemetry
+     */
     public void showTimers(){
         displayDeadlines = true;
     }
+
+    /**
+     * Initialize the Blinkin LED driver with the hardware map and setup the patters to display.
+     * @param hMap
+     * @param telem
+     */
     public void init(HardwareMap hMap, Telemetry telem)
     {
-
         hardwareMap = hMap;
         telemetry = telem;
         try
@@ -86,13 +94,18 @@ public class LED {
         lastFive = new Deadline(FINAL_TIME, TimeUnit.SECONDS);
     }
 
+    /**
+     * Batch reset of all timers so that they can begin timing in unison.
+     */
     public void startTimers(){
         teleopLimit.reset();
         endgameLimit.reset();
         lastFive.reset();
     }
 
-
+    /**
+     * Internal method which changes the LED pattern based on the state of the individual timers.
+     */
     protected void checkDeadlines()
     {
         if(displayDeadlines) {
@@ -112,6 +125,10 @@ public class LED {
         }
     }
 
+    /**
+     * Internal method which communicates with the Blinkin hardware and tells it the current pattern
+     * to display
+     */
     protected void setPattern()
     {
         if ( blinkinLedDriver != null )
