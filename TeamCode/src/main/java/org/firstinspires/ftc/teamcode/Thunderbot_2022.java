@@ -33,6 +33,7 @@ public class Thunderbot_2022
     DcMotorEx rightRear = null;
     Eyes vision = new Eyes();
     ArmStrong armstrong = new ArmStrong();
+    LED lights = new LED();
 
     // Position Variables
     long leftFrontPosition = 0;
@@ -162,6 +163,7 @@ public class Thunderbot_2022
 
         armstrong.init(ahwMap, telemetry);
         vision.init(ahwMap, telemetry);
+        lights.init(ahwMap, telemetry);
     }
 
     /**
@@ -593,8 +595,8 @@ public class Thunderbot_2022
         rightRearPosition = rightRear.getCurrentPosition();
 
         heading = updateHeading();
-
         armstrong.update();
+        lights.checkDeadlines();
 
         telemetry.addData("leftFrontPosition", leftFrontPosition);
         telemetry.addData("rightFrontPosition", rightFrontPosition);
@@ -606,6 +608,9 @@ public class Thunderbot_2022
         telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
         telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
 
+    }
+    public void start() {
+        lights.startTimers();
     }
 
     /**

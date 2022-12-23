@@ -51,8 +51,7 @@ public class Teleop extends OpMode
     // All the things it does when you select Play button
     @Override
     public void start() {
-
-
+        robot.start();
     }
 
     // All the things it does over and over during the period from when start is pressed to when stop is pressed.
