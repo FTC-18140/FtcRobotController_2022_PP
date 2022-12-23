@@ -17,13 +17,15 @@ public class Teleop extends OpMode
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
-    double WRIST_INCREMENT = 0.005; // its 0.0025
+    double lelbowPosition = 0;
+    double relbowPosition = 0;
+    double ELBOW_INCREMENT = 0.0025;
+    double WRIST_INCREMENT = 0.0075; // its 0.0025
     double CLAW_INCREMENT = 0.01;
 
     // All the things that happen when the init button is pressed
     @Override
-    public void init()
-    {
+    public void init() {
         telemetry.addData("Init", "Start");
 
         // Calls and initalizes all values and parts of the robot declared in ThunderBot_2022
@@ -35,25 +37,29 @@ public class Teleop extends OpMode
         // Makes sure the Claw and Wrist can move as free as they need to
         try {
             wristPosition = 0.625;
-            clawPosition = 1;
-            robot.linearSlide.wristMove(wristPosition);
-            robot.linearSlide.clawMove(clawPosition);
+            clawPosition = 0.5;
+            lelbowPosition = robot.armstrong.leftElbow.getPosition();
+            relbowPosition = robot.armstrong.rightElbow.getPosition();
+            robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
+            robot.armstrong.wristMove(wristPosition);
+            robot.armstrong.clawMove(clawPosition);
         } catch (Exception e) {
             telemetry.addData("cant", "run");
         }
-
     }
 
     // All the things it does when you select Play button
     @Override
     public void start() {
-        telemetry.addData("Starting", "...");
+
+
     }
 
     // All the things it does over and over during the period from when start is pressed to when stop is pressed.
     @Override
     public void loop()
     {
+        robot.update();
 
         /////////////////
         // CHASSIS
@@ -67,16 +73,12 @@ public class Teleop extends OpMode
         }
 
         /////////////////
-        // WRIST
+        // TWIST
         /////////////////
-        if (gamepad2.dpad_up) {
-            wristPosition += WRIST_INCREMENT;
-            wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
-            robot.linearSlide.wristMove(wristPosition);
-        } else if (gamepad2.dpad_down) {
-            wristPosition -= WRIST_INCREMENT;
-            wristPosition = Range.clip(wristPosition, robot.linearSlide.getWRIST_MIN(), robot.linearSlide.getWRIST_MAX());
-            robot.linearSlide.wristMove(wristPosition);
+        if (gamepad2.dpad_left) {
+            robot.armstrong.armRotate(1);
+        } else if (gamepad2.dpad_right) {
+            robot.armstrong.armRotate(0);
         }
 
         /////////////////
@@ -87,43 +89,46 @@ public class Teleop extends OpMode
         } else if (gamepad2.right_bumper) {
             clawPosition -= CLAW_INCREMENT;
         }
-        clawPosition = Range.clip(clawPosition, robot.linearSlide.getCLAW_MIN(), robot.linearSlide.getCLAW_MAX());
-        robot.linearSlide.clawMove(clawPosition);
+        clawPosition = Range.clip(clawPosition, robot.armstrong.getCLAW_MIN(), robot.armstrong.getCLAW_MAX());
+        robot.armstrong.clawMove(clawPosition);
 
-        /////////////////
-        // LINEAR SLIDE
-        /////////////////
-        if (gamepad2.a) {
-            robot.linearSlide.liftDown(0.75);
-        } else if (gamepad2.y) {
-            robot.linearSlide.liftUp(0.75);
-        } else {
-            robot.linearSlide.liftStop();
-        }
 
         /////////////////
         // ELBOW
         /////////////////
-        if (gamepad2.b) {
-            robot.linearSlide.elbowRaise(1);
-        } else if (gamepad2.x) {
-            robot.linearSlide.elbowLower(1);
-        } else {
-            robot.linearSlide.elbowStop();
+        if (gamepad2.x) {
+            lelbowPosition -= ELBOW_INCREMENT;
+            relbowPosition -= ELBOW_INCREMENT;
+        } else if (gamepad2.b) {
+            lelbowPosition += ELBOW_INCREMENT;
+            relbowPosition += ELBOW_INCREMENT;
         }
 
-        /////////////////
-        // TELEMETRY
-        /////////////////
-        telemetry.addData("lx", gamepad1.left_stick_x);
-        telemetry.addData("ly", gamepad1.left_stick_y);
-        telemetry.addData("rx", gamepad1.right_stick_x);
+        relbowPosition = Range.clip(relbowPosition, 0, 0.285);
+        lelbowPosition = Range.clip(lelbowPosition, 0, 0.285);
+        robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
 
-        telemetry.addData("elbow pos (deg): ", robot.linearSlide.getElbowPosition());
-        telemetry.addData("wrist pos (0..1): ", robot.linearSlide.wrist.getPosition());
-        telemetry.addData("claw pos (0..1):", robot.linearSlide.claw.getPosition());
-//        telemetry.addData("lift pos (cm): ", robot.linearSlide.getLiftPosition());
-
-        telemetry.addData("gyro sensor", robot.updateHeading());
+        /////////////////
+        // LINEAR SLIDE
+        /////////////////
+        if (gamepad2.y) {
+            robot.armstrong.liftUp(1);
+        } else if (gamepad2.a) {
+            robot.armstrong.liftDown(1);
+        } else {
+            robot.armstrong.liftStop();
+        }
+        /////////////////
+        // WRIST
+        /////////////////
+        if(gamepad2.dpad_up) {
+            wristPosition += WRIST_INCREMENT;
+            wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
+            robot.armstrong.wristMove(wristPosition);
+        } else if (gamepad2.dpad_down) {
+            wristPosition -= WRIST_INCREMENT;
+            wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
+            robot.armstrong.wristMove(wristPosition);
+        }
     }
 }
