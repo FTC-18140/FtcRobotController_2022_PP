@@ -11,12 +11,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * This class controls the linear slide and all that is attached to it.
  */
 public class ArmStrong {
- //   DcMotor lift = null;
+
     DcMotor leftLift = null;
     DcMotor rightLift = null;
+
     Servo leftElbow = null;
     Servo rightElbow = null;
-    Servo elbowServo = null;
+
     Servo claw = null;
     Servo wrist = null;
     Servo twist = null;
@@ -24,7 +25,6 @@ public class ArmStrong {
     // Position Variables
     long leftSlidePosition = 0;
     long rightSlidePosition = 0;
-    double heading = 0;
 
     double initLiftPosition = 0;
     double initElbowPosition = 0;
@@ -60,8 +60,6 @@ public class ArmStrong {
     // Elbow parameters
     //    distance from elbow to wrist = 16.5 cm;
     private double elbowPosition = 0;
-    final private double COUNTS_PER_ELB_REV = 288;  // REV Core Hex Motor
-    final private double COUNTS_PER_ELB_DEGREE = 288.0 / 360.0;
 
     // Some getter methods to access values
     public double getCLAW_MAX() {
@@ -92,7 +90,7 @@ public class ArmStrong {
     }
 
     public double getLiftPosition() {
-        return leftSlidePosition / COUNTS_PER_CM;
+        return 0.5*(leftSlidePosition+rightSlidePosition) / COUNTS_PER_CM;
     }
 
     public void init(HardwareMap newhwMap, Telemetry telem) {
@@ -118,15 +116,6 @@ public class ArmStrong {
             telemetry.addData(" Right linear slide not found in config file", 0);
         }
 
-        try {
-//            elbow = hwMap.dcMotor.get("elbow"); // change on hardware map
-//            elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            elbow.setDirection(DcMotorSimple.Direction.FORWARD);
-//            elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        } catch (Exception e) {
-            telemetry.addData("elbow not found in config file", 0);
-        }
 
         try {
             claw = hwMap.servo.get("claw");
@@ -141,11 +130,13 @@ public class ArmStrong {
         } catch (Exception e) {
             telemetry.addData("wrist not found in config file", 0);
         }
+
         try {
             leftElbow = hwMap.servo.get("lelbow");
         } catch (Exception e) {
             telemetry.addData("leftElbow", "not found");
         }
+
         try {
             rightElbow = hwMap.servo.get("relbow");
             rightElbow.setDirection(Servo.Direction.REVERSE);
@@ -153,6 +144,7 @@ public class ArmStrong {
         } catch (Exception e) {
             telemetry.addData("rightElbow", "not found");
         }
+
         try {
             twist = hwMap.servo.get("twist");
         } catch (Exception e) {
@@ -166,10 +158,10 @@ public class ArmStrong {
     public void liftStop() {
         if (leftLift != null) {
             leftLift.setPower(0);
-            if (rightLift != null) {
+        }
+        if (rightLift != null) {
             rightLift.setPower(0);
             }
-        }
     }
 
     /**
@@ -182,24 +174,31 @@ public class ArmStrong {
         // Down power is negative.  Make sure it's negative.
         power = -1.0 * Math.abs(power);
 
-        if (leftLift != null && rightLift != null) {
-            if (leftSlidePosition / COUNTS_PER_CM <= 0) {
+        if (leftLift != null && rightLift != null)
+        {
+            if (leftSlidePosition / COUNTS_PER_CM <= 0)
+            {
                 liftStop();
-            } else if (leftSlidePosition / COUNTS_PER_CM < 8) {
+            }
+            else if (leftSlidePosition / COUNTS_PER_CM < 8)
+            {
                 leftLift.setPower(-0.15);
-            } else {
+            }
+            else
+            {
                 leftLift.setPower(power);// -0.5
             }
-            if (rightLift != null) {
-                if (rightSlidePosition / COUNTS_PER_CM <= 0) {
-                    liftStop();
-                } else if (rightSlidePosition / COUNTS_PER_CM < 8) {
-                    rightLift.setPower(-0.15);
-                } else {
-                    rightLift.setPower(power);
-                }
+        }
+        if (rightLift != null) {
+            if (rightSlidePosition / COUNTS_PER_CM <= 0) {
+                liftStop();
+            } else if (rightSlidePosition / COUNTS_PER_CM < 8) {
+                rightLift.setPower(-0.15);
+            } else {
+                rightLift.setPower(power);
             }
         }
+
     }
 
     /**
@@ -212,54 +211,32 @@ public class ArmStrong {
             // Up power is positive.  Make sure it's positive.
             power = Math.abs(power);
 
-            if (leftLift != null) {
-                if (leftSlidePosition / COUNTS_PER_CM >= 51) {
+            if (leftLift != null)
+            {
+                if (leftSlidePosition / COUNTS_PER_CM >= 51)
+                {
                     liftStop();
-                } else if (leftSlidePosition / COUNTS_PER_CM > 45) {
+                }
+                else if (leftSlidePosition / COUNTS_PER_CM > 45)
+                {
                     leftLift.setPower(0.15);
-                } else {
+                }
+                else
+                {
                     leftLift.setPower(power);
                 }
-                if (rightLift != null) {
-                    if (rightSlidePosition / COUNTS_PER_CM >= 51) {
-                        liftStop();
-                    } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
-                        rightLift.setPower(0.15);
-                    } else {
-                        rightLift.setPower(power);
-                    }
+            }
+            if (rightLift != null) {
+                if (rightSlidePosition / COUNTS_PER_CM >= 51) {
+                    liftStop();
+                } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
+                    rightLift.setPower(0.15);
+                } else {
+                    rightLift.setPower(power);
                 }
             }
         }
 
-    /**
-     * Raises the arm connected to the elbow. This method handles the sign needed
-     * for the motor to turn the correct direction.
-     *
-     * @param position
-     */
-//    public void elbowRaise(double position) {
-//        // Raise power is negative. Make sure it is so.
-//        elbowServoTurn(position);
-//    }
-//
-//    /**
-//     * Raises the arm connected to the elbow. This method handles the sign needed
-//     * for the motor to turn the correct direction.
-//     *
-//     * @param position
-//     */
-//    public void elbowLower(double position) {
-//        // Lower power is positive.  Make sure it is so.
-//        elbowServoTurn(position);
-//
-//    }
-
-    public void elbowStop() {
-//        if (elbow != null) {
-//            elbow.setPower(0);
-//        }
-    }
     public boolean elbowMove(double leftPosition, double rightPosition) {
         if (leftElbow != null && rightElbow != null) {
             leftElbow.setPosition(leftPosition);
@@ -288,6 +265,7 @@ public class ArmStrong {
         }
         return true;
     }
+
     public boolean liftUpDistance(double distance, double power) {
         if (!moving) {
             initLiftPosition = getLiftPosition();
@@ -319,17 +297,12 @@ public class ArmStrong {
             return false;
         }
     }
-    public boolean twistArm(double position) {
-        if (wrist != null) {
-            twist.setPosition(position);
-        }
-        return true;
-    }
+
     public void update() {
         leftSlidePosition = leftLift.getCurrentPosition();
         rightSlidePosition = rightLift.getCurrentPosition();
     }
-        public boolean elbowRaiseDistance(double distance, double power) {
+    public boolean elbowRaiseDistance(double distance, double power) {
 //            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
 //            if (!moving) {
 //                initElbowPosition = elbowPosition;
@@ -344,8 +317,8 @@ public class ArmStrong {
 //                elbowRaise(Math.abs(power));
 //                return false;
 //            }
-            return true;
-        }
+        return true;
+    }
     public boolean elbowLowerDistance(double distance, double power) {
 //        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
 //        if (!moving) {
@@ -363,6 +336,6 @@ public class ArmStrong {
 //        }
         return true;
     }
-    }
+}
 
 

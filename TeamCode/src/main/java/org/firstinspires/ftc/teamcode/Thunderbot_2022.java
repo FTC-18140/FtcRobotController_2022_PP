@@ -103,9 +103,10 @@ public class Thunderbot_2022
             for (LynxModule module : allHubs) {
                 module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("Lynx Module not found", 0);
-    }
+        }
 
         try
         {
@@ -158,9 +159,9 @@ public class Thunderbot_2022
         {
             telemetry.addData("leftRear not found in config file", 0);
         }
+
         armstrong.init(ahwMap, telemetry);
         vision.init(ahwMap, telemetry);
-
     }
 
     /**
