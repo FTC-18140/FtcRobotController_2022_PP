@@ -56,6 +56,7 @@ public class AutoLeftSide extends OpMode {
     public void init_loop()
     {
         theZone = robot.vision.getSignalZone();
+        telemetry.addData("Zone", theZone);
     }
 
     @Override

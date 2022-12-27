@@ -31,7 +31,8 @@ public class Thunderbot_2022
     DcMotorEx rightFront = null;
     DcMotorEx leftRear = null;
     DcMotorEx rightRear = null;
-    Eyes vision = new Eyes();
+//    Eyes vision = new Eyes();
+    AprilEyes vision = new AprilEyes();
     ArmStrong armstrong = new ArmStrong();
     LED lights = new LED();
 
