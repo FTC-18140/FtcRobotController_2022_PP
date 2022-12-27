@@ -28,7 +28,8 @@ public class Thunderbot_2022
     DcMotor rightFront = null;
     DcMotor leftRear = null;
     DcMotor rightRear = null;
-    Eyes vision = new Eyes();
+//    Eyes vision = new Eyes();
+    AprilEyes vision = new AprilEyes();
     LinearSlide linearSlide = new LinearSlide();
 
     double initialPosition = 0;

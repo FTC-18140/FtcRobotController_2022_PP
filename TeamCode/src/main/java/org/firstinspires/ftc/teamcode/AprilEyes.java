@@ -62,9 +62,12 @@ Telemetry telemetry;
             }
         });
     }
-}
 
-
+    public int getSignalZone() {
+        if ( aprilEyesDetectionPipeline != null) {
+            return aprilEyesDetectionPipeline.getSignalZone();
+        } else {
+            return 0;
+        }
     }
-
 }

@@ -132,6 +132,13 @@ class AprilEyesDetectionPipeline extends OpenCvPipeline
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
 
+        signalZone = 0;
+
+        for(AprilTagDetection detection : detections)
+        {
+            signalZone = detection.id;
+        }
+
         return input;
     }
 
