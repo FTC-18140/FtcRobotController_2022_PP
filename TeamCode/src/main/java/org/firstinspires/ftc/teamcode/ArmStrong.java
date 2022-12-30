@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.hardware.Sensor;
+
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This class controls the linear slide and all that is attached to it.
@@ -21,6 +27,9 @@ public class ArmStrong {
     Servo claw = null;
     Servo wrist = null;
     Servo twist = null;
+
+    ColorSensor color = null;
+    DistanceSensor distance = null;
 
     // Position Variables
     long leftSlidePosition = 0;
@@ -46,9 +55,9 @@ public class ArmStrong {
     final private double WRIST_MAX = 0.625;
     final private double WRIST_MIN = 0.0;
 
-    final private double INIT_ELB = 0.3;
+    final private double INIT_ELB = 0.535;
     final private double ELB_MIN = 1;
-    final private double ELB_MAX = 0.0;
+    final private double ELB_MAX = 0.535;
 
     // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -150,18 +159,60 @@ public class ArmStrong {
         } catch (Exception e) {
             telemetry.addData("twist", "not found");
         }
+        try {
+            color = hwMap.colorSensor.get("color");
+        } catch (Exception e) {
+            telemetry.addData("Color Sensor", "not found");
+        }
+        try {
+            distance = (DistanceSensor) hwMap.opticalDistanceSensor.get("distance");
+        } catch (Exception e) {
+            telemetry.addData("Color Sensor", "not found");
+        }
+
     }
 
     /**
      * Stops the lift motor.
      */
-    public void liftStop() {
-        if (leftLift != null) {
-            leftLift.setPower(0);
+    /////////////////
+    // LINEAR SLIDE
+    /////////////////
+
+    /**
+     * Makes the lift go up at the power level specified.  This method handles the sign needed
+     * for the motor to turn the correct direction.
+     *
+     * @param power
+     */
+    public void liftUp(double power){
+        // Up power is positive.  Make sure it's positive.
+        power = Math.abs(power);
+
+        if (leftLift != null)
+        {
+            if (leftSlidePosition / COUNTS_PER_CM >= 51)
+            {
+                liftStop();
+            }
+            else if (leftSlidePosition / COUNTS_PER_CM > 45)
+            {
+                leftLift.setPower(0.15);
+            }
+            else
+            {
+                leftLift.setPower(power);
+            }
         }
         if (rightLift != null) {
-            rightLift.setPower(0);
+            if (rightSlidePosition / COUNTS_PER_CM >= 51) {
+                liftStop();
+            } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
+                rightLift.setPower(0.15);
+            } else {
+                rightLift.setPower(power);
             }
+        }
     }
 
     /**
@@ -201,71 +252,14 @@ public class ArmStrong {
 
     }
 
-    /**
-     * Makes the lift go up at the power level specified.  This method handles the sign needed
-     * for the motor to turn the correct direction.
-     *
-     * @param power
-     */
-    public void liftUp(double power){
-            // Up power is positive.  Make sure it's positive.
-            power = Math.abs(power);
-
-            if (leftLift != null)
-            {
-                if (leftSlidePosition / COUNTS_PER_CM >= 51)
-                {
-                    liftStop();
-                }
-                else if (leftSlidePosition / COUNTS_PER_CM > 45)
-                {
-                    leftLift.setPower(0.15);
-                }
-                else
-                {
-                    leftLift.setPower(power);
-                }
+    public void liftStop() {
+        if (leftLift != null) {
+            leftLift.setPower(0);
+        }
+        if (rightLift != null) {
+            rightLift.setPower(0);
             }
-            if (rightLift != null) {
-                if (rightSlidePosition / COUNTS_PER_CM >= 51) {
-                    liftStop();
-                } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
-                    rightLift.setPower(0.15);
-                } else {
-                    rightLift.setPower(power);
-                }
-            }
-        }
-
-    public boolean elbowMove(double leftPosition, double rightPosition) {
-        if (leftElbow != null && rightElbow != null) {
-            leftElbow.setPosition(leftPosition);
-            rightElbow.setPosition(rightPosition);
-        }
-        return true;
     }
-
-    public boolean clawMove(double position) {
-        if (claw != null) {
-            claw.setPosition(position);
-        }
-        return true;
-    }
-
-    public boolean wristMove(double position) {
-        if (wrist != null) {
-            wrist.setPosition(position);
-        }
-        return true;
-    }
-
-    public boolean armRotate(double position) {
-        if (twist != null) {
-            twist.setPosition(position);
-        }
-        return true;
-    }
-
     public boolean liftUpDistance(double distance, double power) {
         if (!moving) {
             initLiftPosition = getLiftPosition();
@@ -298,10 +292,18 @@ public class ArmStrong {
         }
     }
 
-    public void update() {
-        leftSlidePosition = leftLift.getCurrentPosition();
-        rightSlidePosition = rightLift.getCurrentPosition();
+    /////////////////
+    // ELBOW
+    /////////////////
+
+    public boolean elbowMove(double leftPosition, double rightPosition) {
+        if (leftElbow != null && rightElbow != null) {
+            leftElbow.setPosition(leftPosition);
+            rightElbow.setPosition(rightPosition);
+        }
+        return true;
     }
+
     public boolean elbowRaiseDistance(double distance, double power) {
 //            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
 //            if (!moving) {
@@ -336,6 +338,56 @@ public class ArmStrong {
 //        }
         return true;
     }
+
+    /////////////////
+    // CLAW
+    /////////////////
+    public boolean clawMove(double position) {
+        if (claw != null) {
+            claw.setPosition(position);
+        }
+        return true;
+    }
+
+    /////////////////
+    // WRIST
+    /////////////////
+    public boolean wristMove(double position) {
+        if (wrist != null) {
+            wrist.setPosition(position);
+        }
+        return true;
+    }
+    /////////////////
+    // ROTATE ARM
+    /////////////////
+    public boolean armRotate(double position) {
+        if (twist != null) {
+            twist.setPosition(position);
+        }
+        return true;
+    }
+    /////////////////
+    // COLOR SENSOR
+    /////////////////
+    public void detect() {
+        telemetry.addData("Color Sensor Red Value", color.red());
+        telemetry.addData("Color Sensor Green Value", color.green());
+        telemetry.addData("Color Sensor Blue Value", color.blue());
+    }
+
+    public void detectDistance() {
+        telemetry.addData("Distance", distance.getDistance(DistanceUnit.CM));
+    }
+    /////////////////
+    // TELEMETRY
+    /////////////////
+    public void update() {
+        leftSlidePosition = leftLift.getCurrentPosition();
+        rightSlidePosition = rightLift.getCurrentPosition();
+    }
+
+
 }
 
 
