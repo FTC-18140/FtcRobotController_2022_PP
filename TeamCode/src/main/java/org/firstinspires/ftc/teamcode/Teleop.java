@@ -17,16 +17,17 @@ public class Teleop extends OpMode
     // Calls two new variables for the positions for claw/wrist
     double wristPosition = 0;
     double clawPosition = 0;
-    double lelbowPosition = 0;
-    double relbowPosition = 0;
-    double ELBOW_INCREMENT = 0.0025;
-    double WRIST_INCREMENT = 0.0075; // its 0.0025
+    double lelbowPosition = 0.535;
+    double relbowPosition = 0.535;
+    double ELBOW_INCREMENT = 0.005;
+    double WRIST_INCREMENT = 0.009; // its 0.0025
     double CLAW_INCREMENT = 0.01;
 
     // All the things that happen when the init button is pressed
     @Override
     public void init() {
         telemetry.addData("Init", "Start");
+
 
         // Calls and initalizes all values and parts of the robot declared in ThunderBot_2022
         robot.init(hardwareMap, telemetry);
@@ -40,12 +41,19 @@ public class Teleop extends OpMode
             clawPosition = 0.5;
             lelbowPosition = robot.armstrong.leftElbow.getPosition();
             relbowPosition = robot.armstrong.rightElbow.getPosition();
-            robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
+            robot.armstrong.elbowMove(0.535, 0.535);
             robot.armstrong.wristMove(wristPosition);
             robot.armstrong.clawMove(clawPosition);
         } catch (Exception e) {
             telemetry.addData("cant", "run");
         }
+
+    }
+    public void init_loop() {
+        lelbowPosition = robot.armstrong.leftElbow.getPosition();
+        relbowPosition = robot.armstrong.rightElbow.getPosition();
+        telemetry.addData("Lelbow Position", lelbowPosition);
+        telemetry.addData("Relbow Position", relbowPosition);
     }
 
     // All the things it does when you select Play button
@@ -56,8 +64,7 @@ public class Teleop extends OpMode
 
     // All the things it does over and over during the period from when start is pressed to when stop is pressed.
     @Override
-    public void loop()
-    {
+    public void loop() {
         robot.update();
 
         /////////////////
@@ -74,11 +81,15 @@ public class Teleop extends OpMode
         /////////////////
         // TWIST
         /////////////////
-        if (gamepad2.dpad_left) {
+        if (lelbowPosition < 0.31) {
             robot.armstrong.armRotate(1);
-        } else if (gamepad2.dpad_right) {
+//            if (lelbowPosition < 0.45) {
+//                robot.armstrong.armRotate(1);
+        } else if (lelbowPosition > 0.31) {
             robot.armstrong.armRotate(0);
         }
+        // less than 0.31 twist reverse
+        // more 0.31 untwist
 
         /////////////////
         // CLAW
@@ -95,16 +106,16 @@ public class Teleop extends OpMode
         /////////////////
         // ELBOW
         /////////////////
-        if (gamepad2.x) {
+        if (gamepad2.b) {
             lelbowPosition -= ELBOW_INCREMENT;
             relbowPosition -= ELBOW_INCREMENT;
-        } else if (gamepad2.b) {
+        } else if (gamepad2.x) {
             lelbowPosition += ELBOW_INCREMENT;
             relbowPosition += ELBOW_INCREMENT;
         }
 
-        relbowPosition = Range.clip(relbowPosition, 0, 0.285);
-        lelbowPosition = Range.clip(lelbowPosition, 0, 0.285);
+        relbowPosition = Range.clip(relbowPosition, 0.24, 0.53);
+        lelbowPosition = Range.clip(lelbowPosition, 0.24, 0.53);
         robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
 
         /////////////////
@@ -129,5 +140,17 @@ public class Teleop extends OpMode
             wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
             robot.armstrong.wristMove(wristPosition);
         }
+        /////////////////
+        // Sensors
+        /////////////////
+        robot.armstrong.detect();
+        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
+                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400){
+            telemetry.addData("yellow", "is detected");
+        } else {
+            telemetry.addData("yellow", "is not detected");
+        }
+
+        robot.armstrong.detectDistance();
     }
 }
