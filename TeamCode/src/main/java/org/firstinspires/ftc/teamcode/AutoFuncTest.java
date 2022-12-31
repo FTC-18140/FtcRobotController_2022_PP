@@ -13,7 +13,7 @@ public class AutoFuncTest extends OpMode
     @Override
     public void init()
     {
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap, telemetry, true);
     }
 
     @Override
@@ -31,6 +31,7 @@ public class AutoFuncTest extends OpMode
     @Override
     public void loop()
     {
+        robot.update();
         switch (state)
         {
             case 0:

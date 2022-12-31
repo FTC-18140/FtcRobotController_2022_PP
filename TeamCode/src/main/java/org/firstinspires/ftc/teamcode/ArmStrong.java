@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.hardware.Sensor;
-
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -56,7 +54,7 @@ public class ArmStrong {
     final private double WRIST_MIN = 0.0;
 
     final private double INIT_ELB = 0.535;
-    final private double ELB_MIN = 1;
+    final private double ELB_MIN = 0.24;
     final private double ELB_MAX = 0.535;
 
     // Lift parameters
@@ -105,6 +103,7 @@ public class ArmStrong {
     public void init(HardwareMap newhwMap, Telemetry telem) {
         hwMap = newhwMap;
         telemetry = telem;
+        elbowPosition = INIT_ELB;
 
         try {
             leftLift = hwMap.dcMotor.get("leftLinear");
@@ -112,7 +111,8 @@ public class ArmStrong {
             leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftLift.setDirection(DcMotorSimple.Direction.FORWARD);
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("Left linear slide not found in config file", 0);
         }
         try {
@@ -121,28 +121,31 @@ public class ArmStrong {
             rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightLift.setDirection(DcMotorSimple.Direction.FORWARD);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData(" Right linear slide not found in config file", 0);
         }
-
 
         try {
             claw = hwMap.servo.get("claw");
             clawMove(INIT_CLAW);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("claw not found in config file", 0);
         }
 
         try {
             wrist = hwMap.servo.get("wrist");
             wristMove(INIT_WRIST);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("wrist not found in config file", 0);
         }
 
         try {
             leftElbow = hwMap.servo.get("lelbow");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("leftElbow", "not found");
         }
 
@@ -150,23 +153,28 @@ public class ArmStrong {
             rightElbow = hwMap.servo.get("relbow");
             rightElbow.setDirection(Servo.Direction.REVERSE);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("rightElbow", "not found");
         }
 
         try {
             twist = hwMap.servo.get("twist");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("twist", "not found");
         }
+
         try {
-            color = hwMap.colorSensor.get("color");
-        } catch (Exception e) {
+            color = hwMap.get(ColorSensor.class, "distance");
+        }
+        catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
         try {
             distance = (DistanceSensor) hwMap.opticalDistanceSensor.get("distance");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
 
@@ -252,6 +260,9 @@ public class ArmStrong {
 
     }
 
+    /**
+     *
+     */
     public void liftStop() {
         if (leftLift != null) {
             leftLift.setPower(0);
@@ -260,6 +271,13 @@ public class ArmStrong {
             rightLift.setPower(0);
             }
     }
+
+    /**
+     *
+     * @param distance
+     * @param power
+     * @return
+     */
     public boolean liftUpDistance(double distance, double power) {
         if (!moving) {
             initLiftPosition = getLiftPosition();
@@ -276,6 +294,12 @@ public class ArmStrong {
         }
     }
 
+    /**
+     *
+     * @param distance
+     * @param power
+     * @return
+     */
     public boolean liftDownDistance(double distance, double power) {
         if (!moving) {
             initLiftPosition = getLiftPosition();
@@ -296,10 +320,24 @@ public class ArmStrong {
     // ELBOW
     /////////////////
 
-    public boolean elbowMove(double leftPosition, double rightPosition) {
+    /**
+     *
+     * @param elbPosition
+     * @return
+     */
+    public boolean elbowMove(double elbPosition) {
         if (leftElbow != null && rightElbow != null) {
-            leftElbow.setPosition(leftPosition);
-            rightElbow.setPosition(rightPosition);
+            leftElbow.setPosition(elbPosition);
+            rightElbow.setPosition(elbPosition);
+            elbowPosition = elbPosition;
+
+            // less than 0.31, twist reverse
+            // more than 0.31, untwist
+            if (elbowPosition < 0.31) {
+                armRotate(1);
+            } else if (elbowPosition > 0.31) {
+                armRotate(0);
+            }
         }
         return true;
     }
@@ -319,6 +357,7 @@ public class ArmStrong {
 //                elbowRaise(Math.abs(power));
 //                return false;
 //            }
+        telemetry.addData("TODO: ", "FIXME!!!!!!");
         return true;
     }
     public boolean elbowLowerDistance(double distance, double power) {
@@ -336,12 +375,19 @@ public class ArmStrong {
 //            elbowLower(Math.abs(power));
 //            return false;
 //        }
+        telemetry.addData("TODO: ", "FIXME!!!!!!");
         return true;
     }
 
     /////////////////
     // CLAW
     /////////////////
+
+    /**
+     *
+     * @param position
+     * @return
+     */
     public boolean clawMove(double position) {
         if (claw != null) {
             claw.setPosition(position);
@@ -352,6 +398,12 @@ public class ArmStrong {
     /////////////////
     // WRIST
     /////////////////
+
+    /**
+     *
+     * @param position
+     * @return
+     */
     public boolean wristMove(double position) {
         if (wrist != null) {
             wrist.setPosition(position);
@@ -361,6 +413,12 @@ public class ArmStrong {
     /////////////////
     // ROTATE ARM
     /////////////////
+
+    /**
+     *
+     * @param position
+     * @return
+     */
     public boolean armRotate(double position) {
         if (twist != null) {
             twist.setPosition(position);
@@ -370,6 +428,10 @@ public class ArmStrong {
     /////////////////
     // COLOR SENSOR
     /////////////////
+
+    /**
+     *
+     */
     public void detect() {
         telemetry.addData("Color Sensor Red Value", color.red());
         telemetry.addData("Color Sensor Green Value", color.green());

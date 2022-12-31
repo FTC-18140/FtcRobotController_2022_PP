@@ -14,23 +14,22 @@ public class Teleop extends OpMode
     // Calls new Robot and gives it a name
     Thunderbot_2022 robot = new Thunderbot_2022();
 
-    // Calls two new variables for the positions for claw/wrist
+    // Variables for the positions for claw, wrist, and elbow
     double wristPosition = 0;
     double clawPosition = 0;
-    double lelbowPosition = 0.535;
-    double relbowPosition = 0.535;
+    double elbowPosition = 0.535;
+
     double ELBOW_INCREMENT = 0.005;
     double WRIST_INCREMENT = 0.009; // its 0.0025
-    double CLAW_INCREMENT = 0.01;
+    double CLAW_INCREMENT = 0.0125;
 
     // All the things that happen when the init button is pressed
     @Override
     public void init() {
         telemetry.addData("Init", "Start");
 
-
-        // Calls and initalizes all values and parts of the robot declared in ThunderBot_2022
-        robot.init(hardwareMap, telemetry);
+        // Calls and initializes all values and parts of the robot declared in ThunderBot_2022
+        robot.init(hardwareMap, telemetry, false);
 
         // Displays Init: Done
         telemetry.addData("Init", "Done");
@@ -39,9 +38,7 @@ public class Teleop extends OpMode
         try {
             wristPosition = 0.625;
             clawPosition = 0.5;
-            lelbowPosition = robot.armstrong.leftElbow.getPosition();
-            relbowPosition = robot.armstrong.rightElbow.getPosition();
-            robot.armstrong.elbowMove(0.535, 0.535);
+            robot.armstrong.elbowMove(elbowPosition);
             robot.armstrong.wristMove(wristPosition);
             robot.armstrong.clawMove(clawPosition);
         } catch (Exception e) {
@@ -49,11 +46,12 @@ public class Teleop extends OpMode
         }
 
     }
+
     public void init_loop() {
-        lelbowPosition = robot.armstrong.leftElbow.getPosition();
-        relbowPosition = robot.armstrong.rightElbow.getPosition();
-        telemetry.addData("Lelbow Position", lelbowPosition);
-        telemetry.addData("Relbow Position", relbowPosition);
+        telemetry.addData("Lelbow Position", robot.armstrong.leftElbow.getPosition());
+        telemetry.addData("Relbow Position", robot.armstrong.rightElbow.getPosition());
+        telemetry.addData("Wrist Position", robot.armstrong.wrist.getPosition());
+        telemetry.addData("Claw Position: ", robot.armstrong.claw.getPosition());
     }
 
     // All the things it does when you select Play button
@@ -81,13 +79,16 @@ public class Teleop extends OpMode
         /////////////////
         // TWIST
         /////////////////
-        if (lelbowPosition < 0.31) {
-            robot.armstrong.armRotate(1);
-//            if (lelbowPosition < 0.45) {
-//                robot.armstrong.armRotate(1);
-        } else if (lelbowPosition > 0.31) {
-            robot.armstrong.armRotate(0);
-        }
+
+        // TODO: Add manual control/tweaking of twist here.  The automatic twist is now being handled
+        // by the Armstrong class.
+        //
+//        if (elbowPosition < 0.31) {
+//            robot.armstrong.armRotate(1);
+//        }
+//        else if (elbowPosition > 0.31) {
+//            robot.armstrong.armRotate(0);
+//        }
         // less than 0.31 twist reverse
         // more 0.31 untwist
 
@@ -107,16 +108,13 @@ public class Teleop extends OpMode
         // ELBOW
         /////////////////
         if (gamepad2.b) {
-            lelbowPosition -= ELBOW_INCREMENT;
-            relbowPosition -= ELBOW_INCREMENT;
+            elbowPosition -= ELBOW_INCREMENT;
         } else if (gamepad2.x) {
-            lelbowPosition += ELBOW_INCREMENT;
-            relbowPosition += ELBOW_INCREMENT;
+            elbowPosition += ELBOW_INCREMENT;
         }
 
-        relbowPosition = Range.clip(relbowPosition, 0.24, 0.53);
-        lelbowPosition = Range.clip(lelbowPosition, 0.24, 0.53);
-        robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
+        elbowPosition = Range.clip(elbowPosition, robot.armstrong.getELB_MIN(), robot.armstrong.getELB_MAX());
+        robot.armstrong.elbowMove(elbowPosition);
 
         /////////////////
         // LINEAR SLIDE

@@ -67,9 +67,12 @@ public class Thunderbot_2022
     }
 
     /**
-     * Initialize standard Hardware interfaces
+     * Initializes the Thunderbot and connects its hardware to the HardwareMap
+     * @param ahwMap
+     * @param telem
+     * @param withVision
      */
-    public void init(HardwareMap ahwMap, Telemetry telem)
+    public void init(HardwareMap ahwMap, Telemetry telem, boolean withVision)
     {
         try
         {
@@ -163,7 +166,10 @@ public class Thunderbot_2022
         }
 
         armstrong.init(ahwMap, telemetry);
-        vision.init(ahwMap, telemetry);
+        if ( withVision )
+        {
+            vision.init(ahwMap, telemetry);
+        }
         lights.init(ahwMap, telemetry);
     }
 

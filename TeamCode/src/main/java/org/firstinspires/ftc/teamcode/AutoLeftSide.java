@@ -49,7 +49,7 @@ public class AutoLeftSide extends OpMode {
     @Override
     public void init()
     {
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap, telemetry, true);
     }
 
     @Override
