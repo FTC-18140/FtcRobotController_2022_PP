@@ -103,7 +103,7 @@ public class Eyes
 
             // Step 4 - add the values of the pixels in our submatrix
            double sumColors = Core.sumElems(thresholdMat).val[0];
-           telem.addData("sum: ",sumColors);
+      //     telem.addData("sum: ",sumColors);
             // Step 5 - store the answer in the signalZone variable.  Also can write it on the screen.
 
 //            signalZone = <our answer goes here>;
@@ -132,7 +132,7 @@ public class Eyes
             Imgproc.putText( input, String.valueOf(sumColors), new Point( 10, 400), FONT_HERSHEY_SIMPLEX, 2, yellow, 3);
             Imgproc.putText( input, answer, new Point( 10, 450), FONT_HERSHEY_SIMPLEX, 2, yellow, 3);
 
-            telem.addData("answer", answer);
+          //  telem.addData("answer", answer);
             return input;
         }
 

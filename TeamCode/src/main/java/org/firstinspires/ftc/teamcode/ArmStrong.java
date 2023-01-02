@@ -160,12 +160,13 @@ public class ArmStrong {
             telemetry.addData("twist", "not found");
         }
         try {
-            color = hwMap.colorSensor.get("color");
+            color = hwMap.colorSensor.get("distance");
         } catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
         try {
-            distance = (DistanceSensor) hwMap.opticalDistanceSensor.get("distance");
+          //  distance = hwMap.get(DistanceSensor.class, "distance");
+            distance = (DistanceSensor) color;
         } catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
