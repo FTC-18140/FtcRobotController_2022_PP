@@ -114,8 +114,8 @@ public class Teleop extends OpMode
             relbowPosition += ELBOW_INCREMENT;
         }
 
-        relbowPosition = Range.clip(relbowPosition, 0.24, 0.53);
-        lelbowPosition = Range.clip(lelbowPosition, 0.24, 0.53);
+        relbowPosition = Range.clip(relbowPosition, 0.275, 0.535);
+        lelbowPosition = Range.clip(lelbowPosition, 0.275, 0.535);
         robot.armstrong.elbowMove(lelbowPosition, relbowPosition);
 
         /////////////////
