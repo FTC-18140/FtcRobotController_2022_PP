@@ -44,8 +44,8 @@ public class ArmStrong {
     private long startTime = 0; // in nanoseconds
 
     // Claw parameters
-    private double INIT_CLAW = 0.5;
-    private double CLAW_MAX = 0.5;
+    private double INIT_CLAW = 0.45;
+    private double CLAW_MAX = 0.45;
     private double CLAW_MIN = 0.2;
 
     // Wrist parameters
@@ -54,7 +54,7 @@ public class ArmStrong {
     final private double WRIST_MIN = 0.0;
 
     final private double INIT_ELB = 0.535;
-    final private double ELB_MIN = 0.24;
+    final private double ELB_MIN = 0.275;
     final private double ELB_MAX = 0.535;
 
     // Lift parameters
@@ -172,7 +172,7 @@ public class ArmStrong {
             telemetry.addData("Color Sensor", "not found");
         }
         try {
-            distance = (DistanceSensor) hwMap.opticalDistanceSensor.get("distance");
+            distance = (DistanceSensor) color;
         }
         catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
@@ -433,13 +433,19 @@ public class ArmStrong {
      *
      */
     public void detect() {
-        telemetry.addData("Color Sensor Red Value", color.red());
-        telemetry.addData("Color Sensor Green Value", color.green());
-        telemetry.addData("Color Sensor Blue Value", color.blue());
+        if ( color != null )
+        {
+            telemetry.addData("Color Sensor Red Value", color.red());
+            telemetry.addData("Color Sensor Green Value", color.green());
+            telemetry.addData("Color Sensor Blue Value", color.blue());
+        }
     }
 
     public void detectDistance() {
-        telemetry.addData("Distance", distance.getDistance(DistanceUnit.CM));
+        if (distance != null )
+        {
+            telemetry.addData("Distance", distance.getDistance(DistanceUnit.CM));
+        }
     }
     /////////////////
     // TELEMETRY
