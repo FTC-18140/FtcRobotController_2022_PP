@@ -614,6 +614,7 @@ public class Thunderbot_2022
         telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
         telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
         telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
+        telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
 
     }
     public void start() {

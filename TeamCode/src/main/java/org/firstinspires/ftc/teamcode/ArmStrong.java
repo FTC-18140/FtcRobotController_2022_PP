@@ -44,9 +44,9 @@ public class ArmStrong {
     private long startTime = 0; // in nanoseconds
 
     // Claw parameters
-    private double INIT_CLAW = 0.45;
-    private double CLAW_MAX = 0.45;
-    private double CLAW_MIN = 0.2;
+    private double INIT_CLAW = 0.525;
+    private double CLAW_MAX = 0.525;
+    private double CLAW_MIN = 0.3;
 
     // Wrist parameters
     final private double INIT_WRIST = 0.625;

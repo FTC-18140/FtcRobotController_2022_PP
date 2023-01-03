@@ -138,6 +138,10 @@ public class Teleop extends OpMode
             wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
             robot.armstrong.wristMove(wristPosition);
         }
+
+        if (elbowPosition > 0.495) {
+            robot.armstrong.wristMove(0.5);
+        }
         /////////////////
         // Sensors
         /////////////////
