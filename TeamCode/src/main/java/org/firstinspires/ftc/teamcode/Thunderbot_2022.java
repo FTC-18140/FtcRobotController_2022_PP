@@ -261,11 +261,13 @@ public class Thunderbot_2022
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
 
+        double currentPower = 0.1;
+
         if (distanceMovedInCM <= 0.1 * distance){
-            currentPower += 0.002;
+            currentPower += 0.0001;
             currentPower = Range.clip(currentPower, 0.1, 1.0);
         } else if (distanceMovedInCM > 0.9 * distance){
-            currentPower -= 0.002;
+            currentPower -= 0.0001;
             currentPower = Range.clip(currentPower, 0.1, 1.0);
         } else {
             currentPower=power;
