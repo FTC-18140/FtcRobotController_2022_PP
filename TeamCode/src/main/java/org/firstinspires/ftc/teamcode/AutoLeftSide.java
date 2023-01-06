@@ -34,7 +34,7 @@ public class AutoLeftSide extends OpMode {
     // stepA is a drive
     double stepA = 72;
     // stepB is a turn
-    double stepB = 43.5;
+    double stepB = 45;
     // stepC is a drive
     double stepC = 13;
     // stepD is a drive
@@ -49,13 +49,14 @@ public class AutoLeftSide extends OpMode {
     @Override
     public void init()
     {
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap, telemetry, true);
     }
 
     @Override
     public void init_loop()
     {
         theZone = robot.vision.getSignalZone();
+        telemetry.addData("Zone", theZone);
     }
 
     @Override
@@ -87,6 +88,8 @@ public class AutoLeftSide extends OpMode {
     @Override
     public void loop()
     {
+        robot.update();
+
         switch (state)
         {
             case 0:
@@ -128,7 +131,7 @@ public class AutoLeftSide extends OpMode {
             case 3:
                 if (!done)
                 {
-                    // stepC is 8
+                    // stepC is 10y
                     done = robot.gyroDrive(43.5, stepC, 0.2);
                     telemetry.addData("case 2", "is started");
                 }
@@ -141,7 +144,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 4:
                 if (!done) {
-                    done = robot.linearSlide.liftUpDistance(20, 0.4);
+                    done = robot.armstrong.liftUpDistance(20, 0.4);
 
                 } else {
                     robot.stop();
@@ -152,7 +155,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 5:
                 if (!done) {
-                    done = robot.linearSlide.elbowLowerDistance(2, 0.4);
+                    done = robot.armstrong.elbowLowerDistance(2, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -162,7 +165,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 6:
                 if (!done) {
-                    done = robot.linearSlide.wristMove(0);
+                    done = robot.armstrong.wristMove(0);
                     done = done && (getRuntime() > 2);
                 } else {
                     robot.stop();
@@ -173,7 +176,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 7:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(3, 0.4);
+                    done = robot.armstrong.liftDownDistance(3, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -183,7 +186,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 8:
                 if (!done) {
-                    done = robot.linearSlide.clawMove(0.5);
+                    done = robot.armstrong.clawMove(0.5);
                     done = done && (getRuntime() > 1);
                 } else {
                     robot.stop();
@@ -194,7 +197,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 9:
                 if (!done) {
-                    done = robot.linearSlide.wristMove(0.5);
+                    done = robot.armstrong.wristMove(0.5);
                 } else {
                     robot.stop();
                     done = false;
@@ -203,7 +206,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 10:
                 if (!done) {
-                    done = robot.linearSlide.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
+                    done = robot.armstrong.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;
@@ -213,7 +216,7 @@ public class AutoLeftSide extends OpMode {
                 break;
             case 11:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(17, 0.5) || (getRuntime() > 2);
+                    done = robot.armstrong.liftDownDistance(17, 0.5) || (getRuntime() > 2);
                 } else {
                     robot.stop();
                     done = false;

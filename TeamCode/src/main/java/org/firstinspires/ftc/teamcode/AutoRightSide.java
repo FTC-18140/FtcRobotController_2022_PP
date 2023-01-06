@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 @Autonomous
 /**
  * AutoTest Class
@@ -38,7 +36,7 @@ public class AutoRightSide extends OpMode {
     // stepB is a turn
     double stepB = -43.5;
     // stepC is a drive
-    double stepC = 11;
+    double stepC = 13;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -50,7 +48,7 @@ public class AutoRightSide extends OpMode {
 
     @Override
     public void init() {
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap, telemetry, true);
     }
 
     @Override
@@ -78,6 +76,9 @@ public class AutoRightSide extends OpMode {
 
     @Override
     public void loop() {
+
+        robot.update();
+
         switch (state) {
             case 0:
                 if (!done) {
@@ -123,7 +124,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 4:
                 if (!done) {
-                    done = robot.linearSlide.liftUpDistance(20, 0.4);
+                    done = robot.armstrong.liftUpDistance(20, 0.4);
 
                 } else {
                     robot.stop();
@@ -134,7 +135,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 5:
                 if (!done) {
-                    done = robot.linearSlide.elbowLowerDistance(3, 0.45);
+                    done = robot.armstrong.elbowLowerDistance(3, 0.45);
                 } else {
                     robot.stop();
                     done = false;
@@ -144,7 +145,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 6:
                 if (!done) {
-                    done = robot.linearSlide.wristMove(0);
+                    done = robot.armstrong.wristMove(0);
                     done = done && (getRuntime() > 2);
                 } else {
                     robot.stop();
@@ -155,7 +156,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 7:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(3, 0.4);
+                    done = robot.armstrong.liftDownDistance(3, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -165,7 +166,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 8:
                 if (!done) {
-                    done = robot.linearSlide.clawMove(0.5);
+                    done = robot.armstrong.clawMove(0.5);
                     done = done && (getRuntime() > 1);
                 } else {
                     robot.stop();
@@ -176,7 +177,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 9:
                 if (!done) {
-                    done = robot.linearSlide.wristMove(0.5);
+                    done = robot.armstrong.wristMove(0.5);
                 } else {
                     robot.stop();
                     done = false;
@@ -185,7 +186,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 10:
                 if (!done) {
-                    done = robot.linearSlide.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
+                    done = robot.armstrong.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;
@@ -195,7 +196,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 11:
                 if (!done) {
-                    done = robot.linearSlide.liftDownDistance(17, 0.5) || (getRuntime() > 1);
+                    done = robot.armstrong.liftDownDistance(17, 0.5) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;

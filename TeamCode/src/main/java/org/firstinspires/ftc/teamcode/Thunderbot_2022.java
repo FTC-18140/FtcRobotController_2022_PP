@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -19,17 +20,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.util.List;
+
 
 public class Thunderbot_2022
 {
     // defines all variables
     BNO055IMU imu = null;
-    DcMotor leftFront = null;
-    DcMotor rightFront = null;
-    DcMotor leftRear = null;
-    DcMotor rightRear = null;
-    Eyes vision = new Eyes();
-    LinearSlide linearSlide = new LinearSlide();
+    DcMotorEx leftFront = null;
+    DcMotorEx rightFront = null;
+    DcMotorEx leftRear = null;
+    DcMotorEx rightRear = null;
+//    Eyes vision = new Eyes();
+    AprilEyes vision = new AprilEyes();
+    ArmStrong armstrong = new ArmStrong();
+    LED lights = new LED();
+
+    // Position Variables
+    long leftFrontPosition = 0;
+    long rightFrontPosition = 0;
+    long leftRearPosition = 0;
+    long rightRearPosition = 0;
+    double heading = 0;
+    List<LynxModule> allHubs;
 
     double initialPosition = 0;
     boolean moving = false;
@@ -54,9 +67,12 @@ public class Thunderbot_2022
     }
 
     /**
-     * Initialize standard Hardware interfaces
+     * Initializes the Thunderbot and connects its hardware to the HardwareMap
+     * @param ahwMap
+     * @param telem
+     * @param withVision
      */
-    public void init(HardwareMap ahwMap, Telemetry telem)
+    public void init(HardwareMap ahwMap, Telemetry telem, boolean withVision)
     {
         try
         {
@@ -86,9 +102,20 @@ public class Thunderbot_2022
 
         // Define & Initialize Motors
 
+        try {
+            allHubs = ahwMap.getAll(LynxModule.class);
+
+            for (LynxModule module : allHubs) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            }
+        }
+        catch (Exception e) {
+            telemetry.addData("Lynx Module not found", 0);
+        }
+
         try
         {
-            rightFront = ahwMap.dcMotor.get("rightFront");
+            rightFront = ahwMap.get(DcMotorEx.class, "rightFront");
             rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -101,7 +128,7 @@ public class Thunderbot_2022
 
         try
         {
-            rightRear = ahwMap.dcMotor.get("rightRear");
+            rightRear = ahwMap.get(DcMotorEx.class, "rightRear");
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -114,7 +141,7 @@ public class Thunderbot_2022
 
         try
         {
-            leftFront = ahwMap.dcMotor.get("leftFront");
+            leftFront = ahwMap.get(DcMotorEx.class, "leftFront");
             leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -127,7 +154,7 @@ public class Thunderbot_2022
 
         try
         {
-            leftRear = ahwMap.dcMotor.get("leftRear");
+            leftRear = ahwMap.get(DcMotorEx.class, "leftRear");
             leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -137,9 +164,13 @@ public class Thunderbot_2022
         {
             telemetry.addData("leftRear not found in config file", 0);
         }
-        linearSlide.init(ahwMap, telemetry);
-        vision.init(ahwMap, telemetry);
 
+        armstrong.init(ahwMap, telemetry);
+        if ( withVision )
+        {
+            vision.init(ahwMap, telemetry);
+        }
+        lights.init(ahwMap, telemetry);
     }
 
     /**
@@ -229,11 +260,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPosition;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPosition;
             }
             moving = true;
         }
@@ -252,11 +283,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPosition - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPosition - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
@@ -340,11 +371,11 @@ public class Thunderbot_2022
             if (targetHeading == 45 || targetHeading == -135)
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
-                initialPosition = leftFront.getCurrentPosition();
+                initialPosition = leftFrontPosition;
             }
             else
             {
-                initialPosition = rightFront.getCurrentPosition();
+                initialPosition = rightFrontPosition;
             }
             moving = true;
         }
@@ -363,11 +394,11 @@ public class Thunderbot_2022
         double distanceMoved;
         if (targetHeading == 45 || targetHeading == -135)
         {
-            distanceMoved = abs(leftFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(leftFrontPosition - initialPosition);
         }
         else
         {
-            distanceMoved = abs(rightFront.getCurrentPosition() - initialPosition);
+            distanceMoved = abs(rightFrontPosition - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
         telemetry.addData("distanceMoved", distanceMoved);
@@ -570,6 +601,35 @@ public class Thunderbot_2022
                                                        AngleUnit.DEGREES);
         return -AngleUnit.DEGREES.normalize(
                 AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+    }
+    public void update() {
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
+        leftFrontPosition = leftFront.getCurrentPosition();
+        rightFrontPosition = rightFront.getCurrentPosition();
+        leftRearPosition = leftRear.getCurrentPosition();
+        rightRearPosition = rightRear.getCurrentPosition();
+
+        heading = updateHeading();
+        armstrong.update();
+        lights.checkDeadlines();
+
+        telemetry.addData("leftFrontPosition", leftFrontPosition);
+        telemetry.addData("rightFrontPosition", rightFrontPosition);
+        telemetry.addData("leftRearPosition", leftRearPosition);
+        telemetry.addData("rightRearPosition", rightRearPosition);
+
+        telemetry.addData("leftLinearSlide", armstrong.leftSlidePosition);
+        telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
+        telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
+        telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
+        telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
+
+    }
+    public void start() {
+        lights.startTimers();
     }
 
     /**
