@@ -135,7 +135,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 5:
                 if (!done) {
-                    done = robot.armstrong.elbowLowerDistance(3, 0.45);
+                    done = robot.armstrong.elbowMove(0.375);
                 } else {
                     robot.stop();
                     done = false;
@@ -186,7 +186,7 @@ public class AutoRightSide extends OpMode {
                 break;
             case 10:
                 if (!done) {
-                    done = robot.armstrong.elbowRaiseDistance(35, 0.7) || (getRuntime() > 1);
+                    done = robot.armstrong.elbowMove(0.535) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;

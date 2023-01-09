@@ -615,7 +615,8 @@ public class Thunderbot_2022
         telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
         telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
         telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
-
+        telemetry.addData("Claw Position", armstrong.claw.getPosition());
+        telemetry.addData("Twist Position", armstrong.twist.getPosition());
     }
     public void start() {
         lights.startTimers();

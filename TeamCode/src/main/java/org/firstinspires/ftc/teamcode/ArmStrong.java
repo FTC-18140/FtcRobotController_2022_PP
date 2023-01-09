@@ -166,17 +166,18 @@ public class ArmStrong {
         }
 
         try {
-            color = hwMap.get(ColorSensor.class, "distance");
+            // color = hwMap.get(ColorSensor.class, "distance");
+            color = hwMap.colorSensor.get("distance");
         }
         catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
-        try {
-            distance = (DistanceSensor) color;
-        }
-        catch (Exception e) {
-            telemetry.addData("Color Sensor", "not found");
-        }
+//        try {
+//            distance = (DistanceSensor) color;
+//        }
+//        catch (Exception e) {
+//            telemetry.addData("Color Sensor", "not found");
+//        }
 
     }
 
@@ -342,43 +343,6 @@ public class ArmStrong {
         return true;
     }
 
-    public boolean elbowRaiseDistance(double distance, double power) {
-//            elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-//            if (!moving) {
-//                initElbowPosition = elbowPosition;
-//                moving = true;
-//            }
-//            double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
-//            if (elbowDistanceMoved > distance) {
-//                elbowStop();
-//                moving = false;
-//                return true;
-//            } else {
-//                elbowRaise(Math.abs(power));
-//                return false;
-//            }
-        telemetry.addData("TODO: ", "FIXME!!!!!!");
-        return true;
-    }
-    public boolean elbowLowerDistance(double distance, double power) {
-//        elbowPosition = elbow.getCurrentPosition() / COUNTS_PER_ELB_DEGREE; // degrees
-//        if (!moving) {
-//            initElbowPosition = elbowPosition;
-//            moving = true;
-//        }
-//        double elbowDistanceMoved = Math.abs(initElbowPosition - elbowPosition);
-//        if (elbowDistanceMoved > distance) {
-//            elbowStop();
-//            moving = false;
-//            return true;
-//        } else {
-//            elbowLower(Math.abs(power));
-//            return false;
-//        }
-        telemetry.addData("TODO: ", "FIXME!!!!!!");
-        return true;
-    }
-
     /////////////////
     // CLAW
     /////////////////
@@ -432,8 +396,8 @@ public class ArmStrong {
     /**
      *
      */
-    public void detect() {
-        if ( color != null )
+    public void detectColor() {
+        if ( color != null)
         {
             telemetry.addData("Color Sensor Red Value", color.red());
             telemetry.addData("Color Sensor Green Value", color.green());
@@ -441,12 +405,13 @@ public class ArmStrong {
         }
     }
 
-    public void detectDistance() {
-        if (distance != null )
-        {
-            telemetry.addData("Distance", distance.getDistance(DistanceUnit.CM));
-        }
-    }
+//    public void detectDistance() {
+//        if (distance != null)
+//        {
+//            telemetry.addData("Distance", distance.getDistance(DistanceUnit.CM));
+//        }
+//    }
+
     /////////////////
     // TELEMETRY
     /////////////////
