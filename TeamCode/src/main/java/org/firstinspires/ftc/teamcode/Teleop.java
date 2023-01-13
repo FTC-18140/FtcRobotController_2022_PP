@@ -20,7 +20,7 @@ public class Teleop extends OpMode
     double elbowPosition = 0.535;
 
     double ELBOW_INCREMENT = 0.005;
-    double WRIST_INCREMENT = 0.009; // its 0.0025
+    double WRIST_INCREMENT = 0.015; // its 0.0025
     double CLAW_INCREMENT = 0.0125;
 
     // All the things that happen when the init button is pressed
@@ -83,14 +83,19 @@ public class Teleop extends OpMode
         // TODO: Add manual control/tweaking of twist here.  The automatic twist is now being handled
         // by the Armstrong class.
         //
+        if (gamepad2.left_stick_button) {
+            robot.armstrong.armRotate(1);
+        } else if (gamepad2.right_stick_button) {
+            robot.armstrong.armRotate(0);
+        }
 //        if (elbowPosition < 0.31) {
 //            robot.armstrong.armRotate(1);
 //        }
 //        else if (elbowPosition > 0.31) {
 //            robot.armstrong.armRotate(0);
 //        }
-        // less than 0.31 twist reverse
-        // more 0.31 untwist
+//         less than 0.31 twist reverse
+//         more 0.31 untwist
 
         /////////////////
         // CLAW
@@ -145,14 +150,15 @@ public class Teleop extends OpMode
         /////////////////
         // Sensors
         /////////////////
-       // robot.armstrong.detect();
-        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
-                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400){
-            telemetry.addData("yellow", "is detected");
-        } else {
-            telemetry.addData("yellow", "is not detected");
-        }
 
-        robot.armstrong.detectDistance();
+//        robot.armstrong.detectColor();
+//        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
+//                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400) {
+//            telemetry.addData("yellow", "is detected");
+//        } else {
+//            telemetry.addData("yellow", "is not detected");
+//        }
+
+       // robot.armstrong.detectDistance();
     }
 }

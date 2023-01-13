@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.opencv.imgproc.Imgproc.FONT_HERSHEY_SIMPLEX;
+
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -133,11 +135,26 @@ class AprilEyesDetectionPipeline extends OpenCvPipeline
         }
 
         signalZone = 0;
+        String answer = "Null";
+        Scalar yellow = new Scalar(255, 255, 0);
 
         for(AprilTagDetection detection : detections)
         {
             signalZone = detection.id;
         }
+        if (signalZone == 1)
+        {
+            answer = "ONE";
+        }
+        else if ( signalZone == 2)
+        {
+            answer = "TWO";
+        }
+        else
+        {
+            answer = "THREE";
+        }
+        Imgproc.putText( input, answer, new Point( 10, 450), FONT_HERSHEY_SIMPLEX, 2, yellow, 3);
 
         return input;
     }
