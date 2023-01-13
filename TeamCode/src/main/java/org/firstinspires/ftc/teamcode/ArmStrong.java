@@ -167,7 +167,7 @@ public class ArmStrong {
 
         try {
             // color = hwMap.get(ColorSensor.class, "distance");
-            color = hwMap.colorSensor.get("distance");
+           // color = hwMap.colorSensor.get("distance");
         }
         catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
@@ -399,9 +399,9 @@ public class ArmStrong {
     public void detectColor() {
         if ( color != null)
         {
-            telemetry.addData("Color Sensor Red Value", color.red());
-            telemetry.addData("Color Sensor Green Value", color.green());
-            telemetry.addData("Color Sensor Blue Value", color.blue());
+//            telemetry.addData("Color Sensor Red Value", color.red());
+//            telemetry.addData("Color Sensor Green Value", color.green());
+//            telemetry.addData("Color Sensor Blue Value", color.blue());
         }
     }
 

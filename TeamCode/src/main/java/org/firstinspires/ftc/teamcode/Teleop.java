@@ -151,13 +151,13 @@ public class Teleop extends OpMode
         // Sensors
         /////////////////
 
-        robot.armstrong.detectColor();
-        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
-                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400) {
-            telemetry.addData("yellow", "is detected");
-        } else {
-            telemetry.addData("yellow", "is not detected");
-        }
+//        robot.armstrong.detectColor();
+//        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
+//                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400) {
+//            telemetry.addData("yellow", "is detected");
+//        } else {
+//            telemetry.addData("yellow", "is not detected");
+//        }
 
        // robot.armstrong.detectDistance();
     }
