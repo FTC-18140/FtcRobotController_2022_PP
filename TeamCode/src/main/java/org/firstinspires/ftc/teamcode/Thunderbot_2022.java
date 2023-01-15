@@ -338,6 +338,7 @@ public class Thunderbot_2022
      */
     public boolean gyroDrive(double targetHeading, double distance, double power)
     {
+
         double currentAngle = updateHeading();
         telemetry.addData("current angle", currentAngle);
 
@@ -392,6 +393,7 @@ public class Thunderbot_2022
         }
 
         double distanceMoved;
+
         if (targetHeading == 45 || targetHeading == -135)
         {
             distanceMoved = abs(leftFrontPosition - initialPosition);
@@ -401,6 +403,20 @@ public class Thunderbot_2022
             distanceMoved = abs(rightFrontPosition - initialPosition);
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
+
+        double distanceRemaining = Math.abs(distanceMovedInCM - distance);
+if (distance > 30) {
+    if (distanceRemaining < 30) {
+        power = (distanceRemaining / 30) * power;
+        if (power < 0) {
+            power = Range.clip(power, -1.0, -0.1);
+        } else {
+            power = Range.clip(power, 0.1, 1.0);
+        }
+
+    }
+}
+
         telemetry.addData("distanceMoved", distanceMoved);
 
 

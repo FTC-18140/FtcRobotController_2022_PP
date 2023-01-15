@@ -19,7 +19,7 @@ public class AutoRightMid extends OpMode {
     // stepB is a turn
     double stepB = -87.75;
     // stepC is a drive
-    double stepC = 1.5;
+    double stepC = 2;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -56,15 +56,12 @@ public class AutoRightMid extends OpMode {
             stepF = 0;
             stepFPower = 0;
         }
-        else if (theZone == 3)
+        else
         { // set the number to the value of white
             stepF = 42.5;
             stepFPower = -0.3;
         }
-        else
-        {
-            telemetry.addData("Unknown Case", theZone);
-        }
+
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
     }
