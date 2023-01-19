@@ -19,16 +19,12 @@ import java.util.List;
 
 public class FTClib_ThunderBot
 {
+    public ChassisSubsystem myChassis;
+    public DiffOdometrySubsystem myOdometry;
 
-        ChassisSubsystem myChassis;
-        DiffOdometrySubsystem myOdometry;
-
-
-
-    void init( HardwareMap hMap )
+    public void init( HardwareMap hMap, Telemetry telem )
     {
-        myChassis = new ChassisSubsystem(hMap,"leftFront", "rightFront", "leftRear", "rightRear", 96.0/25.4 );
-
+        myChassis = new ChassisSubsystem(hMap,"leftFront", "rightFront", "leftRear", "rightRear", 96.0/25.4, telem);
         myOdometry = new DiffOdometrySubsystem( myChassis::getLeftEncoderDistance, myChassis::getRightEncoderDistance, 15.0 );
     }
 
@@ -44,46 +40,9 @@ public class FTClib_ThunderBot
         myChassis.joystickDrive( foward, right, clockwise);
     }
 
-
-
-    public static boolean isDisabled = false;
-
-    /**
-     * Cancels all previous commands
-     */
-    public void reset() {
-        CommandScheduler.getInstance().reset();
+    public void stop()
+    {
+        myChassis.stop();
     }
-
-    /**
-     * Runs the {@link CommandScheduler} instance
-     */
-    public void run() {
-        CommandScheduler.getInstance().run();
-    }
-
-    /**
-     * Schedules {@link com.arcrobotics.ftclib.command.Command} objects to the scheduler
-     */
-    public void schedule(Command... commands) {
-        CommandScheduler.getInstance().schedule(commands);
-    }
-
-    /**
-     * Registers {@link com.arcrobotics.ftclib.command.Subsystem} objects to the scheduler
-     */
-    public void register(Subsystem... subsystems) {
-        CommandScheduler.getInstance().registerSubsystem(subsystems);
-    }
-
-    public static void disable() {
-        isDisabled = true;
-    }
-
-    public static void enable() {
-        isDisabled = false;
-    }
-
-
 
 }

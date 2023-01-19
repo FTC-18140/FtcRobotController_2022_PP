@@ -8,6 +8,8 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 public class ChassisSubsystem extends SubsystemBase
 {
@@ -18,16 +20,25 @@ public class ChassisSubsystem extends SubsystemBase
 
     private final double WHEEL_DIAMETER;
 
+    Telemetry telemetry;
+
     /**
      * Creates a new DriveSubsystem.
      */
-    public ChassisSubsystem(MotorEx lF, MotorEx rF, MotorEx lR, MotorEx rR, final double diameter) {
+    public ChassisSubsystem(MotorEx lF,
+                            MotorEx rF,
+                            MotorEx lR,
+                            MotorEx rR,
+                            double diameter,
+                            Telemetry telem )
+    {
         lfEncoder = lF.encoder;
         rfEncoder = rF.encoder;
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
         WHEEL_DIAMETER = diameter;
+        telemetry = telem;
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
@@ -37,8 +48,20 @@ public class ChassisSubsystem extends SubsystemBase
     /**
      * Creates a new DriveSubsystem with the hardware map and configuration names.
      */
-    public ChassisSubsystem(HardwareMap hMap, final String leftFrontName, String rightFrontName, String leftRearName, String rightRearName, final double diameter) {
-        this(new MotorEx(hMap, leftFrontName),  new MotorEx(hMap, rightFrontName), new MotorEx(hMap, leftRearName), new MotorEx(hMap, rightRearName), diameter);
+    public ChassisSubsystem(HardwareMap hMap,
+                            String leftFrontName,
+                            String rightFrontName,
+                            String leftRearName,
+                            String rightRearName,
+                            double diameter,
+                            Telemetry telem)
+    {
+        this(new MotorEx(hMap, leftFrontName),
+             new MotorEx(hMap, rightFrontName),
+             new MotorEx(hMap, leftRearName),
+             new MotorEx(hMap, rightRearName),
+             diameter,
+             telem);
     }
 
     /**
@@ -51,7 +74,7 @@ public class ChassisSubsystem extends SubsystemBase
      */
     public void joystickDrive(double forward, double right, double clockwise)
     {
-        myDrive.arcadeDrive( forward, clockwise);
+        myDrive.arcadeDrive(forward, clockwise);
     }
 
     public void stop()
@@ -64,7 +87,8 @@ public class ChassisSubsystem extends SubsystemBase
     }
 
     public double getLeftEncoderDistance() {
-        return (lfEncoder.getRevolutions() + lrEncoder.getRevolutions())/2.0 * WHEEL_DIAMETER * Math.PI;
+        return (lfEncoder.getDistance() + lrEncoder.getDistance()) / 2.0;
+
     }
 
     public double getRightEncoderVal() {
@@ -72,7 +96,7 @@ public class ChassisSubsystem extends SubsystemBase
     }
 
     public double getRightEncoderDistance() {
-        return (rfEncoder.getRevolutions() + rrEncoder.getRevolutions())/2.0 * WHEEL_DIAMETER * Math.PI;
+        return (rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
     }
 
     public void resetEncoders() {
