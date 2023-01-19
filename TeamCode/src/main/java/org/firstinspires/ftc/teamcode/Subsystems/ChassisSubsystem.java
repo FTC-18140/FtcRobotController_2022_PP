@@ -1,19 +1,20 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 public class ChassisSubsystem extends SubsystemBase
 {
 
-    Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
-    MotorEx leftFront, rightFront, leftRear, rightRear;
+    private final DifferentialDrive myDrive;
 
-    MecanumDrive mecanum = null;
+    Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
 
     private final double WHEEL_DIAMETER;
 
@@ -26,14 +27,11 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-        leftFront = lF;
-        rightFront = rF;
-        leftRear = lR;
-        rightRear = rR;
-
         WHEEL_DIAMETER = diameter;
 
-        mecanum = new MecanumDrive(lF, rF, lR,rR);
+        MotorGroup leftMotors = new MotorGroup(lF, lR);
+        MotorGroup rightMotors = new MotorGroup(rF, rR);
+        myDrive = new DifferentialDrive(leftMotors, rightMotors);
     }
 
     /**
@@ -47,30 +45,34 @@ public class ChassisSubsystem extends SubsystemBase
      * This code go's through the math behind the mecanum wheel drive.  Given the joystick values,
      * it will calculate the motor commands needed for the mecanum drive.
      *
-     * @param foward    - Any forward motion including backwards
+     * @param forward    - Any forward motion including backwards
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void joystickDrive(double foward, double right, double clockwise) {
-
-        mecanum.driveRobotCentric( right, foward, clockwise);
+    public void joystickDrive(double forward, double right, double clockwise)
+    {
+        myDrive.arcadeDrive( forward, clockwise);
     }
 
+    public void stop()
+    {
+        myDrive.stop();
+    }
 
     public double getLeftEncoderVal() {
-        return lfEncoder.getPosition();
+        return (lfEncoder.getPosition() + lrEncoder.getPosition()) / 2.0;
     }
 
     public double getLeftEncoderDistance() {
-        return lfEncoder.getRevolutions() * WHEEL_DIAMETER * Math.PI;
+        return (lfEncoder.getRevolutions() + lrEncoder.getRevolutions())/2.0 * WHEEL_DIAMETER * Math.PI;
     }
 
     public double getRightEncoderVal() {
-        return rfEncoder.getPosition();
+        return (rfEncoder.getPosition() + rrEncoder.getPosition()) / 2.0;
     }
 
     public double getRightEncoderDistance() {
-        return rfEncoder.getRevolutions() * WHEEL_DIAMETER * Math.PI;
+        return (rfEncoder.getRevolutions() + rrEncoder.getRevolutions())/2.0 * WHEEL_DIAMETER * Math.PI;
     }
 
     public void resetEncoders() {
