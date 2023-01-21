@@ -21,11 +21,15 @@ public class FTClib_ThunderBot
 {
     public ChassisSubsystem myChassis;
     public DiffOdometrySubsystem myOdometry;
+    public ArmSubsystem myArmstrong;
+    public ClawSubsystem myClaw;
 
     public void init( HardwareMap hMap, Telemetry telem )
     {
         myChassis = new ChassisSubsystem(hMap,"leftFront", "rightFront", "leftRear", "rightRear", 96.0/25.4, telem);
         myOdometry = new DiffOdometrySubsystem( myChassis::getLeftEncoderDistance, myChassis::getRightEncoderDistance, 15.0 );
+        myArmstrong = new ArmSubsystem( hMap, "lelbow", "relbow", "twist", "wrist", telem);
+        myClaw = new ClawSubsystem( hMap, "claw", telem);
     }
 
     /**
@@ -36,7 +40,8 @@ public class FTClib_ThunderBot
      * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void joystickDrive(double foward, double right, double clockwise) {
+    public void joystickDrive(double foward, double right, double clockwise)
+    {
         myChassis.joystickDrive( foward, right, clockwise);
     }
 
