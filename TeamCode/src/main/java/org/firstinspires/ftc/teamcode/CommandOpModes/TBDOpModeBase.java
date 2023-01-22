@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-public class TBDOpMode extends OpMode
+public class TBDOpModeBase extends OpMode
 {
 
     /**

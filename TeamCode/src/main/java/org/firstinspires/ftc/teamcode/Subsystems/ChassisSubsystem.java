@@ -15,11 +15,8 @@ public class ChassisSubsystem extends SubsystemBase
 {
 
     private final DifferentialDrive myDrive;
-
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
-
     private final double WHEEL_DIAMETER;
-
     Telemetry telemetry;
 
     /**
