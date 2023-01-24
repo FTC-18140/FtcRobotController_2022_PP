@@ -17,15 +17,20 @@ public class ClawSubsystem extends SubsystemBase
     public static double clawMinAngle = 100;    // 0.3
     public static double clawMaxAngle = 157.5;  // 0.525
 
-    ClawSubsystem( ServoEx servo, Telemetry telem)
+    public ClawSubsystem( ServoEx servo, Telemetry telem)
     {
         theClaw = servo;
         telemetry = telem;
     }
 
-    ClawSubsystem(HardwareMap hwMap, String servo, Telemetry telem)
+    public ClawSubsystem(HardwareMap hwMap, String servo, Telemetry telem)
     {
         this( new SimpleServo( hwMap, servo, 0, 300), telem );
+    }
+
+    public ClawSubsystem(HardwareMap hwMap, Telemetry telem)
+    {
+        this( hwMap, "claw", telem);
     }
 
     public boolean clawMove(double angle) {

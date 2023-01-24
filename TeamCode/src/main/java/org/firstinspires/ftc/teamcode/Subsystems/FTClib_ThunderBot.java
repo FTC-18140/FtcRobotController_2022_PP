@@ -9,20 +9,22 @@ public class FTClib_ThunderBot
     public ChassisSubsystem myChassis;
     public DiffOdometrySubsystem myOdometry;
     public ArmSubsystem myArmstrong;
+    public LiftSubsystem myLift;
     public ClawSubsystem myClaw;
 
     public void init( HardwareMap hMap, Telemetry telem )
     {
         try
         {
-            myChassis = new ChassisSubsystem(hMap,"leftFront", "rightFront", "leftRear", "rightRear", 96.0/25.4, telem);
-            myOdometry = new DiffOdometrySubsystem( myChassis::getLeftEncoderDistance, myChassis::getRightEncoderDistance, 15.0, telem );
-            myArmstrong = new ArmSubsystem( hMap, "lelbow", "relbow", "twist", "wrist", telem);
-            myClaw = new ClawSubsystem( hMap, "claw", telem);
+            myChassis = new ChassisSubsystem(hMap, telem);
+            myOdometry = new DiffOdometrySubsystem( myChassis::getLeftEncoderDistance, myChassis::getRightEncoderDistance, telem );
+            myArmstrong = new ArmSubsystem( hMap, telem);
+            myLift = new LiftSubsystem( hMap, telem);
+            myClaw = new ClawSubsystem( hMap, telem);
         } catch (Exception e)
         {
-            e.printStackTrace();
             telem.addData("Something did not initialize properly.", 0);
+            telem.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3]);
         }
     }
 

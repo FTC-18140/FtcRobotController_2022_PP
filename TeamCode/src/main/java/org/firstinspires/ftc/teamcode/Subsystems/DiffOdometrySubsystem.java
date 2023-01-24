@@ -14,12 +14,14 @@ public class DiffOdometrySubsystem extends SubsystemBase
     protected DifferentialOdometry m_odometry;
     Telemetry telemetry;
 
+    private final double TRACK_WIDTH = 28.2;
+
     /**
      * Make sure you are using the supplier version of the constructor
      */
-    public DiffOdometrySubsystem(DoubleSupplier leftEncoder, DoubleSupplier rightEncoder,
-                                 double trackWidth, Telemetry telem) {
-        m_odometry = new DifferentialOdometry( leftEncoder, rightEncoder, trackWidth);
+    public DiffOdometrySubsystem(DoubleSupplier leftEncoderDistance, DoubleSupplier rightEncoderDistance,
+                                 Telemetry telem) {
+        m_odometry = new DifferentialOdometry( leftEncoderDistance, rightEncoderDistance, TRACK_WIDTH);
         telemetry = telem;
     }
 

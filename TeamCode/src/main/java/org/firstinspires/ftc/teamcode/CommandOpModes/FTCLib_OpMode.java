@@ -10,33 +10,37 @@ import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
 
 public class FTCLib_OpMode extends TBDOpModeBase
 {
-    ChassisSubsystem chassis;
-    DiffOdometrySubsystem odometry;
+    ChassisSubsystem chassis = null;
+    DiffOdometrySubsystem odometry = null;
 
     @Override
     public void init()
     {
-        chassis = new ChassisSubsystem(hardwareMap,
-                "leftFront",
-                "rightFront",
-                "leftRear",
-                "rightRear",
-                96.0/25.4,
-                telemetry);
-        odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
-                chassis::getRightEncoderDistance,
-                15.0,
-                telemetry );
+        try
+        {
+            chassis = new ChassisSubsystem(hardwareMap, telemetry);
+            register( chassis );
 
-        DriveDistanceCommand step1 = new DriveDistanceCommand( 25, 0.5, chassis);
-        schedule( step1 );
-        register(chassis, odometry);
+            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
+                      chassis::getRightEncoderDistance,
+                      telemetry );
+            register( odometry );
+
+            DriveDistanceCommand step1 = new DriveDistanceCommand( 25, 0.4, chassis);
+            schedule( step1 );
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Something did not initialize properly.", 0);
+            telemetry.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3]);
+        }
     }
 
     @Override
     public void init_loop()
     {
-
+        if (odometry != null) { odometry.update(); }
+        telemetry.addData("Init Loop is running... ", 1);
     }
 
     @Override

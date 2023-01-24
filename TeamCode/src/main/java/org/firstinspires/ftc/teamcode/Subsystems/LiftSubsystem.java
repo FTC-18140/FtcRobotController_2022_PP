@@ -46,6 +46,11 @@ public class LiftSubsystem extends SubsystemBase
              telem);
     }
 
+    public LiftSubsystem( HardwareMap hwMap, Telemetry telem )
+    {
+        this( hwMap, "leftLinear", "rightLinear", telem);
+    }
+
 
     /**
      * Makes the lift go up at the power level specified.  This method handles the sign needed
@@ -59,11 +64,11 @@ public class LiftSubsystem extends SubsystemBase
 
         if (motors != null)
         {
-            if ((leftSlidePosition + rightSlidePosition / 2.0)  >= 51)
+            if ( getAverageEncoderDistance() >= 51)
             {
                 motors.stopMotor();
             }
-            else if ((leftSlidePosition + rightSlidePosition / 2.0)  > 45)
+            else if ( getAverageEncoderDistance() > 45)
             {
                 motors.set(0.15);
             }
@@ -87,11 +92,11 @@ public class LiftSubsystem extends SubsystemBase
 
         if ( motors != null)
         {
-            if ((leftSlidePosition + rightSlidePosition / 2.0) <= 0)
+            if ( getAverageEncoderDistance() <= 0)
             {
                 motors.stopMotor();
             }
-            else if ((leftSlidePosition + rightSlidePosition / 2.0)  < 8)
+            else if ( getAverageEncoderDistance() < 8)
             {
                  motors.set(-0.15);
             }
@@ -111,8 +116,8 @@ public class LiftSubsystem extends SubsystemBase
     }
 
     public void update() {
-        leftSlidePosition = leftEncoder.getDistance();
-        rightSlidePosition = rightEncoder.getDistance();
+        leftSlidePosition = leftEncoder.getDistance() / COUNTS_PER_CM;
+        rightSlidePosition = rightEncoder.getDistance() / COUNTS_PER_CM;
     }
 
     @Override

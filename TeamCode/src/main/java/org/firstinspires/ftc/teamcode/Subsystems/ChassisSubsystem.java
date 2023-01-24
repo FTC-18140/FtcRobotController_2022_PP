@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -16,8 +15,16 @@ public class ChassisSubsystem extends SubsystemBase
 
     private final DifferentialDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
-    private final double WHEEL_DIAMETER;
     Telemetry telemetry;
+
+    // converts inches to motor ticks
+    static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
+    static final double DRIVE_GEAR_REDUCTION = 3.61 * 2.89;  // actual gear ratios of the 4:1 and 3:1 UltraPlanetary gear box modules
+    static final double WHEEL_DIAMETER_CM = 9.6;  // goBilda mecanum wheels are 96mm in diameter
+    static final double SPROCKET_REDUCTION = 1.4;  // drive train has a 10 tooth sprocket driving a 14 tooth sprocket
+    static final double CPR = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION;
+    static final double RPM = 6000.0/(DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION);  // max RPM of REV HD motor is 6000
+    static final double CM_PER_COUNT = (WHEEL_DIAMETER_CM * Math.PI) / CPR;
 
     /**
      * Creates a new DriveSubsystem.
@@ -26,7 +33,6 @@ public class ChassisSubsystem extends SubsystemBase
                             MotorEx rF,
                             MotorEx lR,
                             MotorEx rR,
-                            double diameter,
                             Telemetry telem )
     {
         lfEncoder = lF.encoder;
@@ -34,7 +40,11 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-        WHEEL_DIAMETER = diameter;
+        lfEncoder.setDistancePerPulse( CM_PER_COUNT );
+        rfEncoder.setDistancePerPulse( CM_PER_COUNT );
+        lrEncoder.setDistancePerPulse( CM_PER_COUNT );
+        rrEncoder.setDistancePerPulse( CM_PER_COUNT );
+
         telemetry = telem;
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
@@ -50,15 +60,18 @@ public class ChassisSubsystem extends SubsystemBase
                             String rightFrontName,
                             String leftRearName,
                             String rightRearName,
-                            double diameter,
                             Telemetry telem)
     {
-        this(new MotorEx(hMap, leftFrontName),
-             new MotorEx(hMap, rightFrontName),
-             new MotorEx(hMap, leftRearName),
-             new MotorEx(hMap, rightRearName),
-             diameter,
+        this(new MotorEx(hMap, leftFrontName, CPR, RPM),
+             new MotorEx(hMap, rightFrontName, CPR, RPM),
+             new MotorEx(hMap, leftRearName, CPR, RPM),
+             new MotorEx(hMap, rightRearName, CPR, RPM),
              telem);
+    }
+
+    public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
+    {
+        this( hMap, "leftFront", "rightFront", "leftRear", "rightRear", telem);
     }
 
     /**

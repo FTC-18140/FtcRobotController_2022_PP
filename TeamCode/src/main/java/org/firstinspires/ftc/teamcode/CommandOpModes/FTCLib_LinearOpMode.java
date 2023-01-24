@@ -21,4 +21,11 @@ public class FTCLib_LinearOpMode extends CommandOpMode
         schedule( step1, step2 );
         register(robot.myChassis);
     }
+
+    @Override
+    public void waitForStart()
+    {
+        super.waitForStart();
+        robot.myOdometry.update();
+    }
 }

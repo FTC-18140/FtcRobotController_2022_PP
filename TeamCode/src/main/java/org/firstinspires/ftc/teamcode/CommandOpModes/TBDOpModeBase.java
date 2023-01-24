@@ -8,6 +8,25 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 public class TBDOpModeBase extends OpMode
 {
 
+    @Override
+    public void init()
+    {
+
+    }
+
+    @Override
+    public void loop()
+    {
+        run();
+    }
+
+    @Override
+    public void stop()
+    {
+        super.stop();
+        reset();
+    }
+
     /**
      * Cancels all previous commands
      */
@@ -36,22 +55,4 @@ public class TBDOpModeBase extends OpMode
         CommandScheduler.getInstance().registerSubsystem(subsystems);
     }
 
-    @Override
-    public void init()
-    {
-
-    }
-
-    @Override
-    public void loop()
-    {
-        run();
-    }
-
-    @Override
-    public void stop()
-    {
-        super.stop();
-        reset();
-    }
 }

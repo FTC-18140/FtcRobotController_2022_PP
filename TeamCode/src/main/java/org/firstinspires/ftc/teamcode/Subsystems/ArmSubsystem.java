@@ -27,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase
     public static double minTwistAngle = 0;
     public static double maxTwistAngle = 180;
 
-    ArmSubsystem( ServoEx leftServo, ServoEx rightServo, ServoEx twistS, ServoEx wristS, Telemetry telem)
+    public ArmSubsystem( ServoEx leftServo, ServoEx rightServo, ServoEx twistS, ServoEx wristS, Telemetry telem)
     {
         leftElbow = leftServo;
         rightElbow = rightServo;
@@ -36,13 +36,18 @@ public class ArmSubsystem extends SubsystemBase
         telemetry = telem;
     }
 
-    ArmSubsystem(HardwareMap hwMap, String leftServo, String rightServo, String twist, String wrist, Telemetry telem)
+    public ArmSubsystem(HardwareMap hwMap, String leftServo, String rightServo, String twist, String wrist, Telemetry telem)
     {
         this( new SimpleServo( hwMap, leftServo, 0, 900, AngleUnit.DEGREES),
               new SimpleServo( hwMap, rightServo, 0, 900, AngleUnit.DEGREES),
               new SimpleServo( hwMap, twist, 0, 180, AngleUnit.DEGREES),
               new SimpleServo( hwMap, wrist, 0, 270, AngleUnit.DEGREES),
               telem );
+    }
+
+    public ArmSubsystem( HardwareMap hwMap, Telemetry telem )
+    {
+        this( hwMap, "lelbow", "relbow", "twist", "wrist", telem);
     }
 
     public boolean elbowMove(double elbAng) {
