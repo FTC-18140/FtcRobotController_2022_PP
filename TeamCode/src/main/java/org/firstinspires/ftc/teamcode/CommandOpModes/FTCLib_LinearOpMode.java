@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
 
-@TeleOp(name = "Test Linear OpMode")
+@TeleOp(name = "Test Linear FTCLib OpMode")
 
 public class FTCLib_LinearOpMode extends CommandOpMode
 {

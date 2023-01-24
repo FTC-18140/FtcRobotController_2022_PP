@@ -40,6 +40,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
     @Override
     public void periodic() {
         m_odometry.updatePose();
+        telemetry.addData("Robot Pose: ", getPose() );
     }
 
 }
