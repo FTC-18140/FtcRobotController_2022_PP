@@ -5,9 +5,12 @@ import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.List;
 
 
 public class ChassisSubsystem extends SubsystemBase
@@ -16,6 +19,7 @@ public class ChassisSubsystem extends SubsystemBase
     private final DifferentialDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
     Telemetry telemetry;
+    List<LynxModule> allHubs;
 
     // converts inches to motor ticks
     static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -26,10 +30,12 @@ public class ChassisSubsystem extends SubsystemBase
     static final double RPM = 6000.0/(DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION);  // max RPM of REV HD motor is 6000
     static final double CM_PER_COUNT = (WHEEL_DIAMETER_CM * Math.PI) / CPR;
 
+
+
     /**
      * Creates a new DriveSubsystem.
      */
-    public ChassisSubsystem(MotorEx lF,
+    private ChassisSubsystem(MotorEx lF,
                             MotorEx rF,
                             MotorEx lR,
                             MotorEx rR,
@@ -50,6 +56,7 @@ public class ChassisSubsystem extends SubsystemBase
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
         myDrive = new DifferentialDrive(leftMotors, rightMotors);
+
     }
 
     /**
@@ -67,6 +74,20 @@ public class ChassisSubsystem extends SubsystemBase
              new MotorEx(hMap, leftRearName, CPR, RPM),
              new MotorEx(hMap, rightRearName, CPR, RPM),
              telem);
+
+        try
+        {
+            allHubs = hMap.getAll(LynxModule.class);
+
+            for (LynxModule module : allHubs)
+            {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            }
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Lynx Module not found", 0);
+        }
     }
 
     public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
@@ -118,6 +139,15 @@ public class ChassisSubsystem extends SubsystemBase
 
     public double getAverageEncoderDistance() {
         return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
+    }
+
+    @Override
+    public void periodic()
+    {
+        for (LynxModule module : allHubs)
+        {
+            module.clearBulkCache();
+        }
     }
 
 }

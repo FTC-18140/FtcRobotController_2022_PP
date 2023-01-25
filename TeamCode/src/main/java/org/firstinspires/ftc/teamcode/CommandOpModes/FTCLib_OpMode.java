@@ -46,6 +46,12 @@ public class FTCLib_OpMode extends TBDOpModeBase
     @Override
     public void start()
     {
+    }
 
+    @Override
+    public void stop()
+    {
+        super.stop();
+        chassis.stop();
     }
 }
