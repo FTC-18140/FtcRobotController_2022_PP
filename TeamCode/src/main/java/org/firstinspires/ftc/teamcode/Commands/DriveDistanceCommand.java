@@ -26,6 +26,12 @@ public class DriveDistanceCommand extends CommandBase {
     @Override
     public void initialize() {
         myChassisSubsystem.resetEncoders();
+    }
+
+    @Override
+    public void execute()
+    {
+        super.execute();
         myChassisSubsystem.joystickDrive(theSpeed, 0, 0);
     }
 
