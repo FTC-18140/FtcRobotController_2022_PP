@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.DefaultDriveCommand;
+import org.firstinspires.ftc.teamcode.Commands.TurboDriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
@@ -29,6 +32,10 @@ public class FTCLIb_Teleop extends TBDOpModeBase
             DefaultDriveCommand driveChassis = new DefaultDriveCommand( chassis, pad1::getLeftY, pad1::getLeftX, pad1::getRightX);
             register(chassis);
             chassis.setDefaultCommand(driveChassis);
+
+            GamepadButton buttonA =  pad1.getGamepadButton(GamepadKeys.Button.A);
+            buttonA.whenPressed( new TurboDriveCommand( chassis, pad1::getLeftY, pad1::getLeftX, pad1::getRightX) );
+
 
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
                                                   chassis::getRightEncoderDistance,

@@ -12,14 +12,13 @@ import java.util.function.DoubleSupplier;
  * explicitly for pedagogical purposes.
  */
 @Config
-public class DefaultDriveCommand extends CommandBase {
+public class TurboDriveCommand extends CommandBase {
 
     private final ChassisSubsystem m_drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier myStrafe;
     private final DoubleSupplier m_rotation;
     private final boolean myTurbo;
-    public static double NON_TURBO_FACTOR = 0.45;
 
     /**
      * Creates a new DefaultDriveCommand.
@@ -28,7 +27,7 @@ public class DefaultDriveCommand extends CommandBase {
      * @param forward   The control input for driving forwards/backwards
      * @param rotation  The control input for turning
      */
-    public DefaultDriveCommand(ChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation) {
+    public TurboDriveCommand(ChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation ) {
         m_drive = subsystem;
         m_forward = forward;
         m_rotation = rotation;
@@ -45,9 +44,9 @@ public class DefaultDriveCommand extends CommandBase {
         }
         else
         {
-            m_drive.joystickDrive(m_forward.getAsDouble()*NON_TURBO_FACTOR,
-                                    myStrafe.getAsDouble()*NON_TURBO_FACTOR,
-                                 m_rotation.getAsDouble()*NON_TURBO_FACTOR);
+            m_drive.joystickDrive(m_forward.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR,
+                                    myStrafe.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR,
+                                 m_rotation.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR);
         }
     }
 
