@@ -43,12 +43,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class LED {
 
-    private final static int TELEOP_TIME = 90;
-    private final static int ENDGAME_TIME = TELEOP_TIME+25;
-    private final static int FINAL_TIME = ENDGAME_TIME+5;
-    private final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+    private final static int TELEOP_TIME = 75;
+    private final static int ENDGAME_TIME = TELEOP_TIME+15;
+    private final static int FINAL_TIME = ENDGAME_TIME+15;
+    private final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GRAY; // GRAY
     private final static RevBlinkinLedDriver.BlinkinPattern ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-    private final static RevBlinkinLedDriver.BlinkinPattern LAST_PATTERN = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
+    private final static RevBlinkinLedDriver.BlinkinPattern LAST_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
     private final static RevBlinkinLedDriver.BlinkinPattern GAME_OVER_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED;
 
     boolean displayDeadlines = false;
