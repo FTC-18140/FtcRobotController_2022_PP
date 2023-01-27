@@ -34,8 +34,14 @@ public class FTCLIb_Teleop extends TBDOpModeBase
             chassis.setDefaultCommand(driveChassis);
 
             GamepadButton buttonA =  pad1.getGamepadButton(GamepadKeys.Button.A);
-            buttonA.whenPressed( new TurboDriveCommand( chassis, pad1::getLeftY, pad1::getLeftX, pad1::getRightX) );
+            buttonA.toggleWhenPressed( new TurboDriveCommand( chassis, pad1::getLeftY, pad1::getLeftX, pad1::getRightX) );
 
+            ////////
+            // works
+            //   |
+            //   V
+//            buttonA.whileHeld( new TurboDriveCommand( chassis, pad1::getLeftY, pad1::getLeftX, pad1::getRightX) );
+            //
 
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
                                                   chassis::getRightEncoderDistance,

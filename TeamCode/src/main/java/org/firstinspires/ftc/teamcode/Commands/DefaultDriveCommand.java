@@ -33,7 +33,7 @@ public class DefaultDriveCommand extends CommandBase {
         m_forward = forward;
         m_rotation = rotation;
         myStrafe = strafe;
-        myTurbo = true;
+        myTurbo = false;
         addRequirements(m_drive);
     }
 
@@ -47,7 +47,7 @@ public class DefaultDriveCommand extends CommandBase {
         {
             m_drive.joystickDrive(m_forward.getAsDouble()*NON_TURBO_FACTOR,
                                     myStrafe.getAsDouble()*NON_TURBO_FACTOR,
-                                 m_rotation.getAsDouble()*NON_TURBO_FACTOR);
+                                 m_rotation.getAsDouble()*0.2);
         }
     }
 

@@ -48,8 +48,8 @@ public class ArriveLocationCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        awayPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
-
+      //  awayPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
+          awayPoint = toPoint;
     }
 
     @Override
@@ -59,6 +59,9 @@ public class ArriveLocationCommand extends CommandBase {
         arrived = PurePursuitUtil.positionEqualsWithBuffer(robotPos.getTranslation(), toPoint, myBuffer);
         double[] motorPowers = new double[]{0, 0, 0};
         motorPowers = PurePursuitUtil.moveToPosition( robotPos.getX(), robotPos.getY(), robotPos.getHeading(), awayPoint.getX(), awayPoint.getY(), myHeading, false );
+        myChassisSubsystem.getTelemetry().addData("motor Powers 0", motorPowers[0]);
+        myChassisSubsystem.getTelemetry().addData("motor Powers 1", motorPowers[1]);
+        myChassisSubsystem.getTelemetry().addData("motor Powers 2", motorPowers[2]);
         adjustSpeedsWithProfile(motorPowers, robotPos.getTranslation());
         normalizeMotorSpeeds(motorPowers);
         if (arrived)

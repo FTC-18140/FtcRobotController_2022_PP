@@ -13,6 +13,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
 
     protected DifferentialOdometry m_odometry;
     Telemetry telemetry;
+    DoubleSupplier left, right;
 
     private final double TRACK_WIDTH = 28.2;
 
@@ -23,6 +24,8 @@ public class DiffOdometrySubsystem extends SubsystemBase
                                  Telemetry telem) {
         m_odometry = new DifferentialOdometry( leftEncoderDistance, rightEncoderDistance, TRACK_WIDTH);
         telemetry = telem;
+        left = leftEncoderDistance;
+        right = rightEncoderDistance;
     }
 
     public Pose2d getPose() {
@@ -42,6 +45,8 @@ public class DiffOdometrySubsystem extends SubsystemBase
     @Override
     public void periodic() {
         m_odometry.updatePose();
+        telemetry.addData("left", left.getAsDouble());
+        telemetry.addData("right", right.getAsDouble());
         telemetry.addData("Robot Pose: ", getPose() );
     }
 

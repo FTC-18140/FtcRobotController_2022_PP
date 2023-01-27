@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
@@ -26,7 +27,7 @@ public class FTCLib_OpMode extends TBDOpModeBase
                       telemetry );
             register( odometry );
 
-            DriveDistanceCommand step1 = new DriveDistanceCommand( 25, 0.4, chassis);
+            DriveDistanceCommand step1 = new DriveDistanceCommand( 25, 0.2, chassis);
             schedule( step1 );
         }
         catch (Exception e)

@@ -46,17 +46,32 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
+        lfEncoder.reset();
+        rfEncoder.reset();
+        lrEncoder.reset();
+        rrEncoder.reset();
+
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
         rfEncoder.setDistancePerPulse( CM_PER_COUNT );
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
+
+        lF.setRunMode(Motor.RunMode.VelocityControl);
+        rF.setRunMode(Motor.RunMode.VelocityControl);
+        lR.setRunMode(Motor.RunMode.VelocityControl);
+        rR.setRunMode(Motor.RunMode.VelocityControl);
+
+        lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
 
         telemetry = telem;
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
         myDrive = new DifferentialDrive(leftMotors, rightMotors);
-
     }
 
     /**
@@ -127,7 +142,7 @@ public class ChassisSubsystem extends SubsystemBase
     }
 
     public double getRightEncoderDistance() {
-        return (rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
+        return -(rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
     }
 
     public void resetEncoders() {
@@ -150,4 +165,7 @@ public class ChassisSubsystem extends SubsystemBase
         }
     }
 
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
 }
