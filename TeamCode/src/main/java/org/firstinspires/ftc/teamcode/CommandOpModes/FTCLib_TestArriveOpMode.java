@@ -27,7 +27,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
                        telemetry );
             register( odometry );
 
-            ArriveLocationCommand step1 = new ArriveLocationCommand(10, 20, 45, 0.5, 0.1, 1, chassis, odometry);
+            ArriveLocationCommand step1 = new ArriveLocationCommand(40, 0, 0, 0.5, 0.1, 1, chassis, odometry);
             schedule( step1 );
         }
         catch (Exception e)
