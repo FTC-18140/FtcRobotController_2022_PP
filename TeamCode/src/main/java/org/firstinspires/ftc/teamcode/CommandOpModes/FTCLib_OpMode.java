@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
-@TeleOp(name = "Test Normal FTCLib OpMode")
+@Autonomous(name = "Test Normal FTCLib OpMode")
 
 public class FTCLib_OpMode extends TBDOpModeBase
 {
@@ -23,11 +23,11 @@ public class FTCLib_OpMode extends TBDOpModeBase
             register( chassis );
 
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
-                      chassis::getRightEncoderDistance,
-                      telemetry );
+                                                  chassis::getRightEncoderDistance,
+                                                  telemetry );
             register( odometry );
 
-            DriveDistanceCommand step1 = new DriveDistanceCommand( 25, 0.2, chassis);
+            DriveDistanceCommand step1 = new DriveDistanceCommand( 60, 0.4, chassis);
             schedule( step1 );
         }
         catch (Exception e)

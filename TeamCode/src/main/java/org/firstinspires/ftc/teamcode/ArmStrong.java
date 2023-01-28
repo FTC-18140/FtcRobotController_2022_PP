@@ -339,6 +339,10 @@ public class ArmStrong {
             } else if (elbowPosition > 0.31) {
                 armRotate(0);
             }
+
+            if (elbowPosition > 0.49) {
+                wristMove(0.5);
+            }
         }
         return true;
     }

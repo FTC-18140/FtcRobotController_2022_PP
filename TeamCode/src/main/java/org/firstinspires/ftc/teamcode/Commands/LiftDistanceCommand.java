@@ -4,14 +4,14 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
-public class LiftCommand extends CommandBase
+public class LiftDistanceCommand extends CommandBase
 {
     private final double myDistance;
     private final double mySpeed;
     private final LiftSubsystem theSubsystem;
 
 
-    LiftCommand(double distance, double speed, LiftSubsystem armstrong)
+    LiftDistanceCommand(double distance, double speed, LiftSubsystem armstrong)
     {
         myDistance = distance;
         mySpeed = speed;

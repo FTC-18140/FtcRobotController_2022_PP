@@ -15,7 +15,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
     Telemetry telemetry;
     DoubleSupplier left, right;
 
-    private final double TRACK_WIDTH = 28.2;
+    public final double TRACK_WIDTH = 28.2;
 
     /**
      * Make sure you are using the supplier version of the constructor

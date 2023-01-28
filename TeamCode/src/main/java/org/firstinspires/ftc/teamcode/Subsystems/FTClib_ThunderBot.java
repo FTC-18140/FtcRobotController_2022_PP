@@ -38,7 +38,8 @@ public class FTClib_ThunderBot
      */
     public void joystickDrive(double forward, double right, double clockwise)
     {
-        myChassis.joystickDrive(forward, right, clockwise);
+//        myChassis.arcadeDrive(forward, right, clockwise);
+        myChassis.arcadeDrive(forward, clockwise);
     }
 
     public void stop()

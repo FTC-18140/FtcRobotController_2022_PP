@@ -616,19 +616,20 @@ public class Thunderbot_2022
         armstrong.update();
         lights.checkDeadlines();
 
-        telemetry.addData("leftFrontPosition", leftFrontPosition);
-        telemetry.addData("rightFrontPosition", rightFrontPosition);
-        telemetry.addData("leftRearPosition", leftRearPosition);
-        telemetry.addData("rightRearPosition", rightRearPosition);
+//        telemetry.addData("leftFrontPosition", leftFrontPosition);
+//        telemetry.addData("rightFrontPosition", rightFrontPosition);
+//        telemetry.addData("leftRearPosition", leftRearPosition);
+//        telemetry.addData("rightRearPosition", rightRearPosition);
 
         telemetry.addData("leftLinearSlide", armstrong.leftSlidePosition);
-        telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
+//        telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
         telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
-        telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
+//        telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
         telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
         telemetry.addData("Claw Position", armstrong.claw.getPosition());
-        telemetry.addData("Twist Position", armstrong.twist.getPosition());
+//        telemetry.addData("Twist Position", armstrong.twist.getPosition());
     }
+
     public void start() {
         lights.startTimers();
     }

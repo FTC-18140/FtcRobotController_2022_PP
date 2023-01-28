@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveLocationCommand;
@@ -7,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
-@TeleOp(name = "Test Arrive OpMode")
+@Autonomous(name = "Test Arrive OpMode")
 
 public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 {
@@ -20,15 +21,12 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         try
         {
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
-            register( chassis );
+            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
+            register( odometry, chassis );
 
-            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
-                       chassis::getRightEncoderDistance,
-                       telemetry );
-            register( odometry );
-
-            ArriveLocationCommand step1 = new ArriveLocationCommand(40, 0, 0, 0.5, 0.1, 1, chassis, odometry);
-            schedule( step1 );
+            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(40, 0, 0, 0.5, 0.1, 1, false, chassis, odometry);
+            ArriveLocationCommand driveTowardsJunction = new ArriveLocationCommand( 40, 10, 90, 0.2, 0.1, 3, true, chassis, odometry);
+            schedule( driveAwayFromWall, driveTowardsJunction );
         }
         catch (Exception e)
         {

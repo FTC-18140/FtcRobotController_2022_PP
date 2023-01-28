@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.unused;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.Commands.DefaultDriveCommand;
+import org.firstinspires.ftc.teamcode.Subsystems.unused.MecanumChassisSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -12,9 +13,9 @@ import java.util.function.DoubleSupplier;
  * explicitly for pedagogical purposes.
  */
 @Config
-public class TurboDriveCommand extends CommandBase {
+public class TurboMecDriveCommand extends CommandBase {
 
-    private final ChassisSubsystem m_drive;
+    private final MecanumChassisSubsystem m_drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier myStrafe;
     private final DoubleSupplier m_rotation;
@@ -27,7 +28,7 @@ public class TurboDriveCommand extends CommandBase {
      * @param forward   The control input for driving forwards/backwards
      * @param rotation  The control input for turning
      */
-    public TurboDriveCommand(ChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation ) {
+    public TurboMecDriveCommand(MecanumChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation) {
         m_drive = subsystem;
         m_forward = forward;
         m_rotation = rotation;
@@ -40,12 +41,13 @@ public class TurboDriveCommand extends CommandBase {
     public void execute() {
         if (myTurbo)
         {
-            m_drive.arcadeDrive(m_forward.getAsDouble(), m_rotation.getAsDouble());
+            m_drive.joystickDrive(m_forward.getAsDouble(), myStrafe.getAsDouble(), m_rotation.getAsDouble());
         }
         else
         {
-            m_drive.arcadeDrive(m_forward.getAsDouble() * DefaultDriveCommand.NON_TURBO_FACTOR,
-                                m_rotation.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR);
+            m_drive.joystickDrive(m_forward.getAsDouble() * DefaultDriveCommand.NON_TURBO_FACTOR,
+                                    myStrafe.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR,
+                                 m_rotation.getAsDouble()*DefaultDriveCommand.NON_TURBO_FACTOR);
         }
     }
 

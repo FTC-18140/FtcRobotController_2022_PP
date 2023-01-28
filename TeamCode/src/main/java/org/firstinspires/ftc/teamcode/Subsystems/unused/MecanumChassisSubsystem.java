@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.unused;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -13,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.List;
 
 
-public class ChassisSubsystem extends SubsystemBase
+public class MecanumChassisSubsystem extends SubsystemBase
 {
-    private final DifferentialDrive myDrive;
+    private final MecanumDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
     Telemetry telemetry;
     List<LynxModule> allHubs;
@@ -32,11 +33,11 @@ public class ChassisSubsystem extends SubsystemBase
     /**
      * Creates a new DriveSubsystem.
      */
-    private ChassisSubsystem(MotorEx lF,
-                             MotorEx rF,
-                             MotorEx lR,
-                             MotorEx rR,
-                             Telemetry telem )
+    private MecanumChassisSubsystem(MotorEx lF,
+                                    MotorEx rF,
+                                    MotorEx lR,
+                                    MotorEx rR,
+                                    Telemetry telem)
     {
         lfEncoder = lF.encoder;
         rfEncoder = rF.encoder;
@@ -64,19 +65,19 @@ public class ChassisSubsystem extends SubsystemBase
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
-        myDrive = new DifferentialDrive(leftMotors, rightMotors);
+        myDrive = new MecanumDrive(lF, rF, lR, rR);
 
     }
 
     /**
      * Creates a new DriveSubsystem with the hardware map and configuration names.
      */
-    private ChassisSubsystem(HardwareMap hMap,
-                            String leftFrontName,
-                            String rightFrontName,
-                            String leftRearName,
-                            String rightRearName,
-                            Telemetry telem)
+    private MecanumChassisSubsystem(HardwareMap hMap,
+                                    String leftFrontName,
+                                    String rightFrontName,
+                                    String leftRearName,
+                                    String rightRearName,
+                                    Telemetry telem)
     {
         this(new MotorEx(hMap, leftFrontName, CPR, RPM),
              new MotorEx(hMap, rightFrontName, CPR, RPM),
@@ -98,7 +99,7 @@ public class ChassisSubsystem extends SubsystemBase
         }
     }
 
-    public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
+    public MecanumChassisSubsystem(HardwareMap hMap, Telemetry telem)
     {
         this( hMap, "leftFront", "rightFront", "leftRear", "rightRear", telem);
     }
@@ -108,16 +109,12 @@ public class ChassisSubsystem extends SubsystemBase
      * it will calculate the motor commands needed for the mecanum drive.
      *
      * @param forward    - Any forward motion including backwards
+     * @param right     - Any movement from left to right
      * @param clockwise - Any turning movements
      */
-    public void arcadeDrive(double forward, double clockwise)
+    public void joystickDrive(double forward, double right, double clockwise)
     {
-        myDrive.arcadeDrive(forward, clockwise);
-    }
-
-    public void tankDrive( double leftPwr, double rightPwr)
-    {
-        myDrive.tankDrive(leftPwr, rightPwr);
+        myDrive.driveRobotCentric(right, forward,clockwise);
     }
 
     public void stop()
@@ -125,22 +122,22 @@ public class ChassisSubsystem extends SubsystemBase
         myDrive.stop();
     }
 
-    public double getLeftEncoderVal() {
-        return (lfEncoder.getPosition() + lrEncoder.getPosition()) / 2.0;
-    }
-
-    public double getLeftEncoderDistance() {
-        return (lfEncoder.getDistance() + lrEncoder.getDistance()) / 2.0;
-
-    }
-
-    public double getRightEncoderVal() {
-        return (rfEncoder.getPosition() + rrEncoder.getPosition()) / 2.0;
-    }
-
-    public double getRightEncoderDistance() {
-        return -(rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
-    }
+//    public double getLeftEncoderVal() {
+//        return (lfEncoder.getPosition() + lrEncoder.getPosition()) / 2.0;
+//    }
+//
+//    public double getLeftEncoderDistance() {
+//        return (lfEncoder.getDistance() + lrEncoder.getDistance()) / 2.0;
+//
+//    }
+//
+//    public double getRightEncoderVal() {
+//        return (rfEncoder.getPosition() + rrEncoder.getPosition()) / 2.0;
+//    }
+//
+//    public double getRightEncoderDistance() {
+//        return -(rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
+//    }
 
     public void resetEncoders() {
         lfEncoder.reset();
@@ -149,9 +146,9 @@ public class ChassisSubsystem extends SubsystemBase
         rrEncoder.reset();
     }
 
-    public double getAverageEncoderDistance() {
-        return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
-    }
+//    public double getAverageEncoderDistance() {
+//        return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
+//    }
 
     @Override
     public void periodic()

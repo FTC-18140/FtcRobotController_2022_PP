@@ -41,12 +41,11 @@ public class DefaultDriveCommand extends CommandBase {
     public void execute() {
         if (myTurbo)
         {
-            m_drive.joystickDrive(m_forward.getAsDouble(), myStrafe.getAsDouble(), m_rotation.getAsDouble());
+            m_drive.arcadeDrive(m_forward.getAsDouble(), m_rotation.getAsDouble());
         }
         else
         {
-            m_drive.joystickDrive(m_forward.getAsDouble()*NON_TURBO_FACTOR,
-                                    myStrafe.getAsDouble()*NON_TURBO_FACTOR,
+            m_drive.arcadeDrive(m_forward.getAsDouble() * NON_TURBO_FACTOR,
                                  m_rotation.getAsDouble()*0.2);
         }
     }

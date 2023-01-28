@@ -88,14 +88,6 @@ public class Teleop extends OpMode
         } else if (gamepad2.right_stick_button) {
             robot.armstrong.armRotate(0);
         }
-//        if (elbowPosition < 0.31) {
-//            robot.armstrong.armRotate(1);
-//        }
-//        else if (elbowPosition > 0.31) {
-//            robot.armstrong.armRotate(0);
-//        }
-//         less than 0.31 twist reverse
-//         more 0.31 untwist
 
         /////////////////
         // CLAW
@@ -144,9 +136,7 @@ public class Teleop extends OpMode
             robot.armstrong.wristMove(wristPosition);
         }
 
-        if (elbowPosition > 0.495) {
-            robot.armstrong.wristMove(0.5);
-        }
+
         /////////////////
         // Sensors
         /////////////////
