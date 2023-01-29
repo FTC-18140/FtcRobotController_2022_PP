@@ -8,38 +8,38 @@ public class LiftDistanceCommand extends CommandBase
 {
     private final double myDistance;
     private final double mySpeed;
-    private final LiftSubsystem theSubsystem;
+    private final LiftSubsystem myLift;
 
-
-    LiftDistanceCommand(double distance, double speed, LiftSubsystem armstrong)
+    LiftDistanceCommand(double distance, double speed, LiftSubsystem lift)
     {
         myDistance = distance;
         mySpeed = speed;
-        theSubsystem = armstrong;
+        myLift = lift;
+        addRequirements(myLift);
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         if (myDistance > 0)
         {
-            theSubsystem.liftUp(mySpeed);
+            myLift.liftUp(mySpeed);
         }
         else
         {
-            theSubsystem.liftDown(mySpeed);
+            myLift.liftDown(mySpeed);
         }
      }
 
     @Override
     public void end(boolean interrupted) {
-        theSubsystem.liftStop();
+        myLift.liftStop();
     }
 
 
     @Override
-    public boolean isFinished() {
-        return Math.abs(theSubsystem.getAverageEncoderDistance()) >= myDistance;
+    public boolean isFinished()
+    {
+        return Math.abs(myLift.getAverageEncoderDistance()) >= myDistance;
     }
-
-
 }

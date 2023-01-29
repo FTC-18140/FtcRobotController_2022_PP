@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
 import static java.lang.Math.abs;
 
-public class ArriveLocationCommand extends CommandBase {
-
+public class ArriveLocationCommand extends CommandBase
+{
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffOdometrySubsystem myOdometrySubsystem;
     private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 10);
@@ -44,10 +44,13 @@ public class ArriveLocationCommand extends CommandBase {
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
 
+        addRequirements(myChassisSubsystem, myOdometrySubsystem);
+
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
 
     }
@@ -88,7 +91,6 @@ public class ArriveLocationCommand extends CommandBase {
         }
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
-
     }
 
     @Override
@@ -96,12 +98,10 @@ public class ArriveLocationCommand extends CommandBase {
         myChassisSubsystem.stop();
     }
 
-
     @Override
     public boolean isFinished() {
         return myArrived && myAligned;
     }
-
 
     /**
      * Adjusts the motor speeds based on this path's motion profile.
@@ -130,7 +130,6 @@ public class ArriveLocationCommand extends CommandBase {
         myMotionProfile.processHeading(speeds, myRobotPose.getHeading() - myHeading, myTurnSpeed);
     }
 
-
     /**
      * Normalizes the provided motor speeds to be in the range [-1, 1].
      *
@@ -140,13 +139,19 @@ public class ArriveLocationCommand extends CommandBase {
     {
         double max = Math.max(abs(speeds[0]), abs(speeds[1]));
 
-        if (max > maxTranslate) {
+        if (max > maxTranslate)
+        {
             speeds[0] /= max;
             speeds[1] /= max;
         }
+
         if (speeds[2] > maxTurn)
+        {
             speeds[2] = maxTurn;
+        }
         else if (speeds[2] < -1*maxTurn)
-            speeds[2] = -1*maxTurn;
+        {
+            speeds[2] = -1 * maxTurn;
+        }
     }
 }

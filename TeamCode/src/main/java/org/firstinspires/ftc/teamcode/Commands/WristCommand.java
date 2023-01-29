@@ -7,17 +7,18 @@ import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 public class WristCommand extends CommandBase
 {
     private final double myAngle;
-    private final ArmSubsystem theSubsystem;
+    private final ArmSubsystem myArm;
 
     WristCommand(double angle, ArmSubsystem arm )
     {
         myAngle = angle;
-        theSubsystem = arm;
+        myArm = arm;
+        addRequirements(myArm);
     }
 
     @Override
     public void initialize() {
-        theSubsystem.wristMove(myAngle);
+        myArm.wristMove(myAngle);
     }
 
 }

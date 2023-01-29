@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -13,42 +12,42 @@ import java.util.function.DoubleSupplier;
  * explicitly for pedagogical purposes.
  */
 @Config
-public class DefaultLiftCommand extends CommandBase {
-
-    private final LiftSubsystem theSubsystem;
-    private boolean up = true;
-    private double speed = 0.7;
+public class DefaultLiftCommand extends CommandBase
+{
+    private final LiftSubsystem myLift;
+    private boolean upDirection = true;
+    private double mySpeed = 0.7;
 
     /**
      * Creates a new DefaultDriveCommand.
      *
-     * @param subsystem The drive subsystem this command wil run on.
+     * @param lift The hardware this command wil run on.
 
      */
-    public DefaultLiftCommand(boolean liftUp, double liftSpeed, LiftSubsystem subsystem)
+    public DefaultLiftCommand(boolean liftUp, double liftSpeed, LiftSubsystem lift)
     {
-        up = liftUp;
-        speed = liftSpeed;
-        theSubsystem = subsystem;
-        addRequirements(theSubsystem);
+        upDirection = liftUp;
+        mySpeed = liftSpeed;
+        myLift = lift;
+        addRequirements(myLift);
     }
 
     @Override
     public void execute()
     {
-        if (up)
+        if (upDirection)
         {
-            theSubsystem.liftUp(speed);
+            myLift.liftUp(mySpeed);
         }
         else
         {
-            theSubsystem.liftDown(speed);
+            myLift.liftDown(mySpeed);
         }
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        theSubsystem.liftStop();
+        myLift.liftStop();
     }
 }

@@ -44,5 +44,4 @@ public class MotionProfile extends PathMotionProfile
         // Do the profiling of the turning.
         motorspeeds[2] = motorspeeds[2] * abs(angleFromTarget)/hdgBuffer + 0.05;
     }
-
 }

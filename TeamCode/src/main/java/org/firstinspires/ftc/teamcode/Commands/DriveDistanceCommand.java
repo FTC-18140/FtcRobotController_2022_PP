@@ -4,8 +4,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 
-public class DriveDistanceCommand extends CommandBase {
-
+public class DriveDistanceCommand extends CommandBase
+{
     private final ChassisSubsystem myChassisSubsystem;
     private final double myDistance;
     private final double mySpeed;
@@ -18,10 +18,12 @@ public class DriveDistanceCommand extends CommandBase {
      * @param speed  The speed at which the robot will drive
      * @param chassis  The drive subsystem on which this command will run
      */
-    public DriveDistanceCommand(double cm, double speed, ChassisSubsystem chassis) {
+    public DriveDistanceCommand(double cm, double speed, ChassisSubsystem chassis)
+    {
         myDistance = cm;
         mySpeed = speed;
         myChassisSubsystem = chassis;
+        addRequirements(myChassisSubsystem);
     }
 
     @Override
@@ -44,7 +46,8 @@ public class DriveDistanceCommand extends CommandBase {
 
 
     @Override
-    public boolean isFinished() {
+    public boolean isFinished()
+    {
         return Math.abs(myChassisSubsystem.getAverageEncoderDistance()) >= myDistance;
     }
 
@@ -57,16 +60,12 @@ public class DriveDistanceCommand extends CommandBase {
     {
         // If we are less than half way there, do acceleration.  Otherwise do deceleration.
         if (robotDistance < myDistance / 2.0)
-        {
-            // If the robot is closer to the "from" point.
+        {   // If the robot is closer to the "from" point.
             myMotionProfile.processAccelerate(speeds, robotDistance, mySpeed, 0);
         }
         else
-        {
-            // If the robot is closer to the "to" point.
+        {   // If the robot is closer to the "to" point.
             myMotionProfile.processDecelerate(speeds, myDistance - robotDistance, mySpeed, 0);
         }
     }
-
-
 }

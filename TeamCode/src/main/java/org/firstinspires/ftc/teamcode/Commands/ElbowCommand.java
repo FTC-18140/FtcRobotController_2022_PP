@@ -7,17 +7,19 @@ import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 public class ElbowCommand extends CommandBase
 {
     private final double myAngle;
-    private final ArmSubsystem theSubsystem;
+    private final ArmSubsystem myArm;
 
-    public ElbowCommand(double angle, ArmSubsystem arm )
+    public ElbowCommand(double angle, ArmSubsystem arm)
     {
         myAngle = angle;
-        theSubsystem = arm;
+        myArm = arm;
+        addRequirements(myArm);
     }
 
     @Override
-    public void initialize() {
-        theSubsystem.elbowMove(myAngle);
+    public void initialize()
+    {
+        myArm.elbowMove(myAngle);
     }
 
 }

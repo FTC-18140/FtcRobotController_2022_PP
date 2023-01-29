@@ -8,17 +8,14 @@ import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import java.util.function.DoubleSupplier;
 
 /**
- * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s). Written
- * explicitly for pedagogical purposes.
+ * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s).
  */
 @Config
-public class DefaultDriveCommand extends CommandBase {
-
-    private final ChassisSubsystem m_drive;
-    private final DoubleSupplier m_forward;
-    private final DoubleSupplier myStrafe;
-    private final DoubleSupplier m_rotation;
-    private final boolean myTurbo;
+public class DefaultDriveCommand extends CommandBase
+{
+    private final ChassisSubsystem myChassis;
+    private final DoubleSupplier myForwardSupplier;
+    private final DoubleSupplier myRotationSupplier;
     public static double NON_TURBO_FACTOR = 0.45;
 
     /**
@@ -26,28 +23,21 @@ public class DefaultDriveCommand extends CommandBase {
      *
      * @param subsystem The drive subsystem this command wil run on.
      * @param forward   The control input for driving forwards/backwards
+     * @param strafe    Not used
      * @param rotation  The control input for turning
      */
-    public DefaultDriveCommand(ChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation) {
-        m_drive = subsystem;
-        m_forward = forward;
-        m_rotation = rotation;
-        myStrafe = strafe;
-        myTurbo = false;
-        addRequirements(m_drive);
+    public DefaultDriveCommand(ChassisSubsystem subsystem, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation)
+    {
+        myChassis = subsystem;
+        myForwardSupplier = forward;
+        myRotationSupplier = rotation;
+        addRequirements(myChassis);
     }
 
     @Override
-    public void execute() {
-        if (myTurbo)
-        {
-            m_drive.arcadeDrive(m_forward.getAsDouble(), m_rotation.getAsDouble());
-        }
-        else
-        {
-            m_drive.arcadeDrive(m_forward.getAsDouble() * NON_TURBO_FACTOR,
-                                 m_rotation.getAsDouble()*0.2);
-        }
+    public void execute()
+    {
+        myChassis.arcadeDrive(myForwardSupplier.getAsDouble() * NON_TURBO_FACTOR,
+                              myRotationSupplier.getAsDouble() * 0.2);
     }
-
 }

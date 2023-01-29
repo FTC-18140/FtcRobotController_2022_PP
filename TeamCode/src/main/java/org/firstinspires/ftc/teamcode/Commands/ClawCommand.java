@@ -7,17 +7,18 @@ import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 public class ClawCommand extends CommandBase
 {
     private final double myAngle;
-    private final ClawSubsystem theSubsystem;
+    private final ClawSubsystem myClaw;
 
     ClawCommand(double angle, ClawSubsystem claw )
     {
         myAngle = angle;
-        theSubsystem = claw;
+        myClaw = claw;
+        addRequirements(myClaw);
     }
 
     @Override
     public void initialize() {
-        theSubsystem.clawMove(myAngle);
+        myClaw.clawMove(myAngle);
     }
 
 }
