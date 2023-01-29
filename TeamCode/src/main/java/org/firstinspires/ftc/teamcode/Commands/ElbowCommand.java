@@ -9,7 +9,7 @@ public class ElbowCommand extends CommandBase
     private final double myAngle;
     private final ArmSubsystem theSubsystem;
 
-    ElbowCommand(double angle, ArmSubsystem arm )
+    public ElbowCommand(double angle, ArmSubsystem arm )
     {
         myAngle = angle;
         theSubsystem = arm;

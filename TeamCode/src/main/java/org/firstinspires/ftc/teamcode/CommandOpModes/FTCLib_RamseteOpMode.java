@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.RamseteCommand;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.RamseteController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -16,61 +17,87 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Ramsete Auto")
+@Autonomous(name = "FTCLib_RamseteOpMode", group = "FTCLib")
+@Config
 public class FTCLib_RamseteOpMode extends TBDOpModeBase
 {
-    ChassisSubsystem chassis = null;
-    DiffOdometrySubsystem odometry = null;
+    ChassisSubsystem myChassis = null;
+    DiffOdometrySubsystem myOdometry = null;
+    public static double b = 5;
+    public static double zeta = 0.5;
+    public static double maxVelocity = 48;
+    public static double maxAccel = 48;
 
     @Override
     public void init()
     {
         try
         {
-            chassis = new ChassisSubsystem(hardwareMap, telemetry);
-            register( chassis );
+            myChassis = new ChassisSubsystem(hardwareMap, telemetry);
+            register(myChassis);
 
-            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance,
-                                                  chassis::getRightEncoderDistance,
-                                                  telemetry );
-            register( odometry );
+            myOdometry = new DiffOdometrySubsystem(myChassis::getLeftEncoderDistance,
+                                                   myChassis::getRightEncoderDistance,
+                                                   telemetry);
+            register(myOdometry);
 
             // Create Trajectory
-            Pose2d trajStart = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-            Pose2d trajEnd = new Pose2d(40, 0, Rotation2d.fromDegrees(0));
 
-            ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
-            interiorWaypoints.add(new Translation2d(10, 0));
-            interiorWaypoints.add(new Translation2d(20, 0));
+            // Start and End points.
+            Pose2d trajStart = new Pose2d(inchesToMeters(0), inchesToMeters(0), Rotation2d.fromDegrees(0));
+            Pose2d trajEnd   = new Pose2d(inchesToMeters(48), inchesToMeters(0), Rotation2d.fromDegrees(45));
 
-            TrajectoryConfig config = new TrajectoryConfig(30, 30);
-            Trajectory theTraj = TrajectoryGenerator.generateTrajectory(
-                    trajStart,
-                    interiorWaypoints,
-                    trajEnd,
-                    config);
+            // Make intermediate or "interior" points between the start and end.
+            ArrayList<Translation2d> interiorWaypoints = new ArrayList<>();
+            interiorWaypoints.add(new Translation2d(inchesToMeters(12), inchesToMeters(-4)));
+            interiorWaypoints.add(new Translation2d(inchesToMeters(24), inchesToMeters(-4)));
+            interiorWaypoints.add(new Translation2d(inchesToMeters(36), inchesToMeters(0)));
 
-            RamseteController theController = new RamseteController(2, 0.7);
-            DifferentialDriveKinematics theDDKinem = new DifferentialDriveKinematics(odometry.TRACK_WIDTH);
+            // Specify the maximum velocity and acceleration allowed when following the trajectory
+            TrajectoryConfig config = new TrajectoryConfig(inchesToMeters(maxVelocity), inchesToMeters(maxAccel));
 
-            RamseteCommand step1 = new RamseteCommand(theTraj, odometry::getPose, theController, theDDKinem, chassis::tankDrive);
+            // Generate the trajectory!
+            Trajectory theTrajectory = TrajectoryGenerator.generateTrajectory(trajStart, interiorWaypoints, trajEnd, config);
 
+            // Make a new Ramsete controller
+            RamseteController theController = new RamseteController(b, zeta);
+
+            // Make a Differential Drive Kinematics object to help with the robot-centric and
+            // field-centric needs of trajectory following
+            DifferentialDriveKinematics theDiffDDriveKinematics = new DifferentialDriveKinematics(myOdometry.TRACK_WIDTH_METERS);
+
+            // Build the RamseteCommand using the Trajectory, the starting pose, the Controller object,
+            // the Kinematics object, and the method which will receive the computed motor velocities
+            // and actually drive the robot
+            RamseteCommand followTrajectory = new RamseteCommand(theTrajectory,
+                                                                 myOdometry::getPose,
+                                                                 theController,
+                                                                 theDiffDDriveKinematics,
+                                                                 myChassis::tankDrive);
+
+            // Schedule this command to run with the scheduler
+            schedule(followTrajectory);
         }
         catch (Exception e)
         {
             telemetry.addData("Something did not initialize properly.", 0);
-            telemetry.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3]);
+            telemetry.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2],
+                              e.getStackTrace()[3]);
         }
     }
+
 
     @Override
     public void init_loop()
     {
-        if (odometry != null) { odometry.update(); }
+        if (myOdometry != null)
+        {
+            myOdometry.update();
+        }
         telemetry.addData("Init Loop is running... ", 1);
-        telemetry.addData("X:  ", odometry.getPose().getX());
-        telemetry.addData("Y:  ", odometry.getPose().getY());
-        telemetry.addData("HDG:  ", odometry.getPose().getHeading());
+        telemetry.addData("X:  ", myOdometry.getPose().getX());
+        telemetry.addData("Y:  ", myOdometry.getPose().getY());
+        telemetry.addData("HDG:  ", myOdometry.getPose().getHeading());
     }
 
     @Override
@@ -82,6 +109,11 @@ public class FTCLib_RamseteOpMode extends TBDOpModeBase
     public void stop()
     {
         super.stop();
-        chassis.stop();
+        myChassis.stop();
+    }
+
+    private double inchesToMeters(double inches)
+    {
+        return inches * 2.54 / 100.0;
     }
 }

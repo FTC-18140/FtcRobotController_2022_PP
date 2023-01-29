@@ -7,8 +7,7 @@ import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
-@Autonomous(name = "Test Normal FTCLib OpMode")
-
+@Autonomous(name = "FTCLib_OpMode", group = "FTCLib")
 public class FTCLib_OpMode extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
