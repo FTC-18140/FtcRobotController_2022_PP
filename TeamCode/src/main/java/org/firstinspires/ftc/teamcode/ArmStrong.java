@@ -49,13 +49,13 @@ public class ArmStrong {
     private double CLAW_MIN = 0.3;
 
     // Wrist parameters
-    final private double INIT_WRIST = 0.625;
+    final private double INIT_WRIST = 0.55;
     final private double WRIST_MAX = 0.625;
     final private double WRIST_MIN = 0.0;
 
     final private double INIT_ELB = 0.535;
-    final private double ELB_MIN = 0.275;
-    final private double ELB_MAX = 0.535;
+    final private double ELB_MIN = 0.23; // 0.275
+    final private double ELB_MAX = 0.535; //0.535
 
     // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -198,8 +198,10 @@ public class ArmStrong {
         // Up power is positive.  Make sure it's positive.
         power = Math.abs(power);
 
-        if (leftLift != null)
+        if (leftLift != null && rightLift != null)
         {
+            telemetry.addData("leftHeight: ", leftSlidePosition/COUNTS_PER_CM);
+
             if (leftSlidePosition / COUNTS_PER_CM >= 51)
             {
                 liftStop();
@@ -207,22 +209,25 @@ public class ArmStrong {
             else if (leftSlidePosition / COUNTS_PER_CM > 45)
             {
                 leftLift.setPower(0.15);
+                rightLift.setPower(0.15);
             }
             else
             {
                 leftLift.setPower(power);
-            }
-        }
-        if (rightLift != null) {
-            if (rightSlidePosition / COUNTS_PER_CM >= 51) {
-                liftStop();
-            } else if (rightSlidePosition / COUNTS_PER_CM > 45) {
-                rightLift.setPower(0.15);
-            } else {
                 rightLift.setPower(power);
             }
         }
-    }
+//        if (rightLift != null) {                telemetry.addData("rightHegith: ", rightSlidePosition/COUNTS_PER_CM);
+//
+//            if (leftSlidePosition / COUNTS_PER_CM >= 51) {
+//                liftStop();
+//            } else if (leftSlidePosition / COUNTS_PER_CM > 45) {
+//                rightLift.setPower(0.15);
+//            } else {
+//                rightLift.setPower(power);
+//            }
+        }
+
 
     /**
      * Makes the lift go down at the power level specified.  This method handles the sign needed
@@ -341,7 +346,7 @@ public class ArmStrong {
             }
 
             if (elbowPosition > 0.49) {
-                wristMove(0.5);
+                wristMove(0.55);
             }
         }
         return true;
@@ -422,6 +427,8 @@ public class ArmStrong {
     public void update() {
         leftSlidePosition = leftLift.getCurrentPosition();
         rightSlidePosition = rightLift.getCurrentPosition();
+        telemetry.addData("leftHeight: ", leftSlidePosition/COUNTS_PER_CM);
+
     }
 
 

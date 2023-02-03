@@ -50,11 +50,11 @@ public class LED {
     public final static int FINAL_TIME = ENDGAME_TIME+15; // 15 seconds remaining --  105 seconds elapsed
     public final static int GAMEOVER_TIME = 120; // 0 seconds remaining -- 120 seconds elapsed
 
-    public final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GRAY; // GRAY
-    public final static RevBlinkinLedDriver.BlinkinPattern READY_4_ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+    public final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.BLACK; // GRAY
+    public final static RevBlinkinLedDriver.BlinkinPattern READY_4_ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
     public final static RevBlinkinLedDriver.BlinkinPattern ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
     public final static RevBlinkinLedDriver.BlinkinPattern LAST_15_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED;
-    public final static RevBlinkinLedDriver.BlinkinPattern GAMEOVER_PATTERN = RevBlinkinLedDriver.BlinkinPattern.DARK_GRAY;
+    public final static RevBlinkinLedDriver.BlinkinPattern GAMEOVER_PATTERN = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 
     boolean displayDeadlines = false;
 
@@ -82,7 +82,7 @@ public class LED {
      */
     public void init(HardwareMap hMap, Telemetry telem)
     {
-        hardwareMap = hMap;
+//        hardwareMap = hMap;
         telemetry = telem;
         try
         {
@@ -102,6 +102,7 @@ public class LED {
     }
 
     /**
+     * 
      * Batch reset of all timers so that they can begin timing in unison.
      */
     public void startTimers(){
