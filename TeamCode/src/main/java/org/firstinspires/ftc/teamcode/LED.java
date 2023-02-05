@@ -29,6 +29,7 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -41,15 +42,19 @@ import java.util.concurrent.TimeUnit;
  * Connects to the Blinkin LED Driver and is used to establish time-based LED displays for the robot to
  * help the drivers know when end game is about to occur and when the match is about to be complete.
  */
+@Config
 public class LED {
 
-    private final static int TELEOP_TIME = 90;
-    private final static int ENDGAME_TIME = TELEOP_TIME+25;
-    private final static int FINAL_TIME = ENDGAME_TIME+5;
-    private final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-    private final static RevBlinkinLedDriver.BlinkinPattern ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-    private final static RevBlinkinLedDriver.BlinkinPattern LAST_PATTERN = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
-    private final static RevBlinkinLedDriver.BlinkinPattern GAME_OVER_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED;
+    public final static int TELEOP_TIME = 75; // 45 seconds remaining -- 75 seconds elapsed
+    public final static int ENDGAME_TIME = TELEOP_TIME+15;  // 30 seconds remaining -- 90 seconds elapsed
+    public final static int FINAL_TIME = ENDGAME_TIME+15; // 15 seconds remaining --  105 seconds elapsed
+    public final static int GAMEOVER_TIME = 120; // 0 seconds remaining -- 120 seconds elapsed
+
+    public final static RevBlinkinLedDriver.BlinkinPattern TELEOP_PATTERN = RevBlinkinLedDriver.BlinkinPattern.BLACK; // GRAY
+    public final static RevBlinkinLedDriver.BlinkinPattern READY_4_ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+    public final static RevBlinkinLedDriver.BlinkinPattern ENDGAME_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
+    public final static RevBlinkinLedDriver.BlinkinPattern LAST_15_PATTERN = RevBlinkinLedDriver.BlinkinPattern.RED;
+    public final static RevBlinkinLedDriver.BlinkinPattern GAMEOVER_PATTERN = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 
     boolean displayDeadlines = false;
 
@@ -60,7 +65,8 @@ public class LED {
 
     Deadline teleopLimit;
     Deadline endgameLimit;
-    Deadline lastFive;
+    Deadline lastFifteen;
+    Deadline gameOver;
 
     /**
      * Method which allows deadline timer values to be displayed in telemetry
@@ -76,31 +82,34 @@ public class LED {
      */
     public void init(HardwareMap hMap, Telemetry telem)
     {
-        hardwareMap = hMap;
+//        hardwareMap = hMap;
         telemetry = telem;
         try
         {
-            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "led");
             pattern = TELEOP_PATTERN;
             blinkinLedDriver.setPattern(pattern);
         }
         catch (Exception e)
         {
-            telemetry.addData("blinkin not found in config file", 0);
+            telemetry.addData("led not found in config file", 0);
         }
 
         teleopLimit = new Deadline(TELEOP_TIME, TimeUnit.SECONDS);
         endgameLimit = new Deadline(ENDGAME_TIME, TimeUnit.SECONDS);
-        lastFive = new Deadline(FINAL_TIME, TimeUnit.SECONDS);
+        lastFifteen = new Deadline(FINAL_TIME, TimeUnit.SECONDS);
+        gameOver = new Deadline(GAMEOVER_TIME, TimeUnit.SECONDS);
     }
 
     /**
+     *
      * Batch reset of all timers so that they can begin timing in unison.
      */
     public void startTimers(){
         teleopLimit.reset();
         endgameLimit.reset();
-        lastFive.reset();
+        lastFifteen.reset();
+        gameOver.reset();
     }
 
     /**
@@ -111,16 +120,24 @@ public class LED {
         if(displayDeadlines) {
             telemetry.addData("TeleopLimit:", teleopLimit.timeRemaining(TimeUnit.SECONDS));
             telemetry.addData("EndgameLimit:", endgameLimit.timeRemaining(TimeUnit.SECONDS));
-            telemetry.addData("LastFive:", lastFive.timeRemaining(TimeUnit.SECONDS));
+            telemetry.addData("LastFive:", lastFifteen.timeRemaining(TimeUnit.SECONDS));
         }
-        if(lastFive.hasExpired()){
-            pattern = GAME_OVER_PATTERN;
+        if (gameOver.hasExpired()) // 120 seconds
+        {
+            pattern = GAMEOVER_PATTERN;
             setPattern();
-        }else if(endgameLimit.hasExpired()){
-            pattern = LAST_PATTERN;
+        }
+        else if(lastFifteen.hasExpired()) // 105 seconds
+        {
+            pattern = LAST_15_PATTERN;
             setPattern();
-        }else if(teleopLimit.hasExpired()){
+        } else if(endgameLimit.hasExpired())  // 90 seconds
+        {
             pattern = ENDGAME_PATTERN;
+            setPattern();
+        } else if(teleopLimit.hasExpired())  // 75 seconds
+        {
+            pattern = READY_4_ENDGAME_PATTERN;
             setPattern();
         }
     }

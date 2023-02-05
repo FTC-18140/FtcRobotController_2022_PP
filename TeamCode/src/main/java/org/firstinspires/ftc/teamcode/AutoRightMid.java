@@ -99,7 +99,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 25.5, 0.2);
+                    done = robot.drive(179, 25.75, 0.2);
                 } else {
                     robot.stop();
                     done = false;
@@ -221,7 +221,8 @@ public class AutoRightMid extends OpMode {
                 break;
             case 13:
                 if (!done) {
-                    done = robot.gyroDrive(-95, 1, 0.3);
+                  //  done = robot.gyroDrive(-95, 1, 0.3);
+                    done = true;
                 } else {
                     robot.stop();
                     done = false;
@@ -230,7 +231,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(-90, 28.5, 0.3);
+                    done = robot.drive(-90, 28, 0.3);
                 } else {
                     robot.stop();
                     done = false;

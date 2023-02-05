@@ -36,8 +36,8 @@ public class Teleop extends OpMode
 
         // Makes sure the Claw and Wrist can move as free as they need to
         try {
-            wristPosition = 0.625;
-            clawPosition = 0.5;
+            wristPosition = 0.55;
+            clawPosition = 0.3;
             robot.armstrong.elbowMove(elbowPosition);
             robot.armstrong.wristMove(wristPosition);
             robot.armstrong.clawMove(clawPosition);
@@ -73,7 +73,8 @@ public class Teleop extends OpMode
             robot.joystickDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
             // Normal Drive
-            robot.joystickDrive(-gamepad1.left_stick_y * 0.4, gamepad1.left_stick_x * 0.4, gamepad1.right_stick_x * 0.4);
+            double sign = Math.signum(gamepad1.right_stick_x);
+            robot.joystickDrive(-gamepad1.left_stick_y * 0.5, gamepad1.left_stick_x * 0.5, gamepad1.right_stick_x * 0.5 * gamepad1.right_stick_x * sign);
         }
 
         /////////////////
@@ -88,14 +89,6 @@ public class Teleop extends OpMode
         } else if (gamepad2.right_stick_button) {
             robot.armstrong.armRotate(0);
         }
-//        if (elbowPosition < 0.31) {
-//            robot.armstrong.armRotate(1);
-//        }
-//        else if (elbowPosition > 0.31) {
-//            robot.armstrong.armRotate(0);
-//        }
-//         less than 0.31 twist reverse
-//         more 0.31 untwist
 
         /////////////////
         // CLAW
@@ -143,10 +136,9 @@ public class Teleop extends OpMode
             wristPosition = Range.clip(wristPosition, robot.armstrong.getWRIST_MIN(), robot.armstrong.getWRIST_MAX());
             robot.armstrong.wristMove(wristPosition);
         }
+        telemetry.addData("Wrist Position", robot.armstrong.wrist.getPosition());
 
-        if (elbowPosition > 0.495) {
-            robot.armstrong.wristMove(0.5);
-        }
+
         /////////////////
         // Sensors
         /////////////////

@@ -223,8 +223,7 @@ public class Thunderbot_2022
      */
     public boolean drive(double targetHeading, double distance, double power)
     {
-        double xValue = Math.sin(toRadians(targetHeading)) * power;
-        double yValue = Math.cos(toRadians(targetHeading)) * power;
+
 
         double currentAngle = updateHeading();
 
@@ -303,7 +302,8 @@ public class Thunderbot_2022
         } else {
             currentPower=power;
         }
-        
+        double xValue = Math.sin(toRadians(targetHeading)) * currentPower;
+        double yValue = Math.cos(toRadians(targetHeading)) * currentPower;
         // calculates required speed to adjust to gyStartAngle
         double angleError = (startAngle - currentAngle) / 25;
         // Setting range of adjustments
@@ -632,19 +632,20 @@ if (distance > 30) {
         armstrong.update();
         lights.checkDeadlines();
 
-        telemetry.addData("leftFrontPosition", leftFrontPosition);
-        telemetry.addData("rightFrontPosition", rightFrontPosition);
-        telemetry.addData("leftRearPosition", leftRearPosition);
-        telemetry.addData("rightRearPosition", rightRearPosition);
+//        telemetry.addData("leftFrontPosition", leftFrontPosition);
+//        telemetry.addData("rightFrontPosition", rightFrontPosition);
+//        telemetry.addData("leftRearPosition", leftRearPosition);
+//        telemetry.addData("rightRearPosition", rightRearPosition);
 
-        telemetry.addData("leftLinearSlide", armstrong.leftSlidePosition);
-        telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
-        telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
-        telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
-        telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
-        telemetry.addData("Claw Position", armstrong.claw.getPosition());
-        telemetry.addData("Twist Position", armstrong.twist.getPosition());
+//        telemetry.addData("leftLinearSlide", armstrong.leftSlidePosition);
+//        telemetry.addData("rightLinearSlide", armstrong.rightSlidePosition);
+//        telemetry.addData("lelbow Position", armstrong.leftElbow.getPosition());
+//        telemetry.addData("relbow Position", armstrong.rightElbow.getPosition());
+//        telemetry.addData("Wrist Position", armstrong.wrist.getPosition());
+//        telemetry.addData("Claw Position", armstrong.claw.getPosition());
+//        telemetry.addData("Twist Position", armstrong.twist.getPosition());
     }
+
     public void start() {
         lights.startTimers();
     }
