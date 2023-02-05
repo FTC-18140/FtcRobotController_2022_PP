@@ -86,13 +86,13 @@ public class LED {
         telemetry = telem;
         try
         {
-            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "led");
             pattern = TELEOP_PATTERN;
             blinkinLedDriver.setPattern(pattern);
         }
         catch (Exception e)
         {
-            telemetry.addData("blinkin not found in config file", 0);
+            telemetry.addData("led not found in config file", 0);
         }
 
         teleopLimit = new Deadline(TELEOP_TIME, TimeUnit.SECONDS);
@@ -102,7 +102,7 @@ public class LED {
     }
 
     /**
-     * 
+     *
      * Batch reset of all timers so that they can begin timing in unison.
      */
     public void startTimers(){

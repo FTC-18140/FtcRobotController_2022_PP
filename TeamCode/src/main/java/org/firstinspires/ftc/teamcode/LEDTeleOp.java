@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name="LEDTeleOp")
-@Disabled
+
 public class LEDTeleOp extends OpMode {
     LED led;
     @Override

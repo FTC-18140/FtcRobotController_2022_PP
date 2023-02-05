@@ -54,7 +54,7 @@ public class ArmStrong {
     final private double WRIST_MIN = 0.0;
 
     final private double INIT_ELB = 0.535;
-    final private double ELB_MIN = 0.23; // 0.275
+    final private double ELB_MIN = 0.26; // 0.275
     final private double ELB_MAX = 0.535; //0.535
 
     // Lift parameters

@@ -102,7 +102,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 25.5, 0.3);
+                    done = robot.drive(179, 25.75, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -233,7 +233,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(90, 28.5, 0.3);
+                    done = robot.drive(90, 28, 0.3);
                 } else {
                     robot.stop();
                     done = false;
