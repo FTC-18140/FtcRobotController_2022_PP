@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import android.sax.StartElementListener;
+
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
@@ -9,7 +11,7 @@ public class DriveDistanceCommand extends CommandBase
     private final ChassisSubsystem myChassisSubsystem;
     private final double myDistance;
     private final double mySpeed;
-    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 10);
+    private final MotionProfile myMotionProfile = new MotionProfile(30, 30, 10);
 
     /**
      * Creates a new DriveDistanceCommand.
@@ -67,5 +69,6 @@ public class DriveDistanceCommand extends CommandBase
         {   // If the robot is closer to the "to" point.
             myMotionProfile.processDecelerate(speeds, myDistance - robotDistance, mySpeed, 0);
         }
+        myChassisSubsystem.getTelemetry().addData("speeds: ", "%f.6, %f.6", speeds[0], speeds[1]);
     }
 }

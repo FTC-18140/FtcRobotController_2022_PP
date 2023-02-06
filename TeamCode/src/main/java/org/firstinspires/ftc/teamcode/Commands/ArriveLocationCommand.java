@@ -44,7 +44,7 @@ public class ArriveLocationCommand extends CommandBase
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
 
-        addRequirements(myChassisSubsystem, myOdometrySubsystem);
+        addRequirements(myChassisSubsystem);
 
     }
 
@@ -52,45 +52,46 @@ public class ArriveLocationCommand extends CommandBase
     public void initialize()
     {
         fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
-
+        telemetry.addData("Arrive Command Initialized,", 2);
     }
 
     @Override
     public void execute()
     {
-        myRobotPose = myOdometrySubsystem.getPose();
-        myArrived = PurePursuitUtil.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
-        myAligned = PurePursuitUtil.rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2);
-
-        telemetry.addData("Arrived at toPoint?  ", myArrived);
-
-        double[] motorPowers = new double[]{0, 0, 0};
-        motorPowers = PurePursuitUtil.moveToPosition(myRobotPose.getX(), myRobotPose.getY(), myRobotPose.getHeading(), toPoint.getX(), toPoint.getY(), myHeading, false);
-        telemetry.addData("motor Powers 0: ", motorPowers[0]);
-        telemetry.addData("motor Powers 1: ", motorPowers[1]);
-        telemetry.addData("motor Powers 2: ", motorPowers[2]);
-
-        adjustSpeedsWithProfile(motorPowers, myRobotPose.getTranslation(), myRobotPose.getHeading());
-        telemetry.addData("motor Powers 0, profiled: ", motorPowers[0]);
-        telemetry.addData("motor Powers 1, profiled: ", motorPowers[1]);
-        telemetry.addData("motor Powers 2, profiled: ", motorPowers[2]);
-
-        normalizeMotorSpeeds(motorPowers, mySpeed, myTurnSpeed);
-        telemetry.addData("motor Powers 0, normalized: ", motorPowers[0]);
-        telemetry.addData("motor Powers 1, normalized: ", motorPowers[1]);
-        telemetry.addData("motor Powers 2, normalized: ", motorPowers[2]);
-
-        if (myArrived)
-        {
-            motorPowers[0] = 0;
-            motorPowers[1] = 0;
-        }
-        if (myAligned)
-        {
-            motorPowers[2] = 0;
-        }
-
-        myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
+        telemetry.addData("executing Arrive Command", 3);
+//        myRobotPose = myOdometrySubsystem.getPose();
+//        myArrived = PurePursuitUtil.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
+//        myAligned = PurePursuitUtil.rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2);
+//
+//        telemetry.addData("Arrived at toPoint?  ", myArrived);
+//
+//        double[] motorPowers = new double[]{0, 0, 0};
+//        motorPowers = PurePursuitUtil.moveToPosition(myRobotPose.getX(), myRobotPose.getY(), myRobotPose.getHeading(), toPoint.getX(), toPoint.getY(), myHeading, false);
+//        telemetry.addData("motor Powers 0: ", motorPowers[0]);
+//        telemetry.addData("motor Powers 1: ", motorPowers[1]);
+//        telemetry.addData("motor Powers 2: ", motorPowers[2]);
+//
+//        adjustSpeedsWithProfile(motorPowers, myRobotPose.getTranslation(), myRobotPose.getHeading());
+//        telemetry.addData("motor Powers 0, profiled: ", motorPowers[0]);
+//        telemetry.addData("motor Powers 1, profiled: ", motorPowers[1]);
+//        telemetry.addData("motor Powers 2, profiled: ", motorPowers[2]);
+//
+//        normalizeMotorSpeeds(motorPowers, mySpeed, myTurnSpeed);
+//        telemetry.addData("motor Powers 0, normalized: ", motorPowers[0]);
+//        telemetry.addData("motor Powers 1, normalized: ", motorPowers[1]);
+//        telemetry.addData("motor Powers 2, normalized: ", motorPowers[2]);
+//
+//        if (myArrived)
+//        {
+//            motorPowers[0] = 0;
+//            motorPowers[1] = 0;
+//        }
+//        if (myAligned)
+//        {
+//            motorPowers[2] = 0;
+//        }
+//
+//        myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }
 
     @Override
