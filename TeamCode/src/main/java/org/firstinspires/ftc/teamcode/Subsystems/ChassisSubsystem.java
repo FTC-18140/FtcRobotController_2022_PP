@@ -50,10 +50,10 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
-        lF.setRunMode(Motor.RunMode.VelocityControl);
-        rF.setRunMode(Motor.RunMode.VelocityControl);
-        lR.setRunMode(Motor.RunMode.VelocityControl);
-        rR.setRunMode(Motor.RunMode.VelocityControl);
+//        lF.setRunMode(Motor.RunMode.VelocityControl);
+//        rF.setRunMode(Motor.RunMode.VelocityControl);
+//        lR.setRunMode(Motor.RunMode.VelocityControl);
+//        rR.setRunMode(Motor.RunMode.VelocityControl);
 
         lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);

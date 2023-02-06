@@ -48,7 +48,8 @@ public class DiffOdometrySubsystem extends SubsystemBase
         m_odometry.updatePose();
         telemetry.addData("left", left.getAsDouble());
         telemetry.addData("right", right.getAsDouble());
-        telemetry.addData("Robot Pose: ", getPose() );
+       // telemetry.addData("Robot Pose: ", getPose() );
+        telemetry.addData("X, Y: ", "%f.4, %f.4", getPose().getX(), getPose().getY());
     }
 
 }

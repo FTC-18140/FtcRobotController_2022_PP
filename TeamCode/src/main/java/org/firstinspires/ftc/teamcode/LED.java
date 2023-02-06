@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
  * Connects to the Blinkin LED Driver and is used to establish time-based LED displays for the robot to
  * help the drivers know when end game is about to occur and when the match is about to be complete.
  */
-@Config
 public class LED {
 
     public final static int TELEOP_TIME = 75; // 45 seconds remaining -- 75 seconds elapsed
