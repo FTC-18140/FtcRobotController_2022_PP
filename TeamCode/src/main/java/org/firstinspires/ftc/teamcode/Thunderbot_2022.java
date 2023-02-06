@@ -405,17 +405,18 @@ public class Thunderbot_2022
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
 
         double distanceRemaining = Math.abs(distanceMovedInCM - distance);
-if (distance > 30) {
-    if (distanceRemaining < 30) {
-        power = (distanceRemaining / 30) * power;
-        if (power < 0) {
-            power = Range.clip(power, -1.0, -0.1);
-        } else {
-            power = Range.clip(power, 0.1, 1.0);
-        }
 
-    }
-}
+        if (distance > 30) {
+            if (distanceRemaining < 30) {
+                power = (distanceRemaining / 30) * power;
+                if (power < 0) {
+                    power = Range.clip(power, -1.0, -0.1);
+                } else {
+                    power = Range.clip(power, 0.1, 1.0);
+                }
+
+            }
+        }
 
         telemetry.addData("distanceMoved", distanceMoved);
 

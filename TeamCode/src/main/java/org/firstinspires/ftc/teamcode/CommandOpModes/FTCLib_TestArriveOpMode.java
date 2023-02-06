@@ -32,9 +32,10 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
             //armstrong = new ArmSubsystem(hardwareMap, telemetry);
-            register( odometry, chassis, armstrong );
+            //register( odometry, chassis, armstrong );
+            register( odometry, chassis );
 
-            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.5, 0.1, 1, false, chassis, odometry);
+            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.4, 0.1, 1, true, chassis, odometry);
             ArriveLocationCommand driveTowardsJunction = new ArriveLocationCommand( 121, 10, 45, 0.2, 0.1, 3, true, chassis, odometry);
 
             // Sequence the commands to drive to the junction
@@ -47,7 +48,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
 
             //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
-            //schedule( driveAwayFromWall); // for now... just drive.
+            schedule( driveAwayFromWall); // for now... just drive.
         }
         catch (Exception e)
         {

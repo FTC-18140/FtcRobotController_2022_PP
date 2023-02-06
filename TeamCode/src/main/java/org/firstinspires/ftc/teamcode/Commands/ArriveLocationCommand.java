@@ -15,7 +15,7 @@ public class ArriveLocationCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffOdometrySubsystem myOdometrySubsystem;
-    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 10);
+    private final MotionProfile myMotionProfile = new MotionProfile(30, 30, 10);
     private Translation2d fromPoint;
     private final Translation2d toPoint;
     private Pose2d myRobotPose;
@@ -59,39 +59,40 @@ public class ArriveLocationCommand extends CommandBase
     public void execute()
     {
         telemetry.addData("executing Arrive Command", 3);
-//        myRobotPose = myOdometrySubsystem.getPose();
-//        myArrived = PurePursuitUtil.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
-//        myAligned = PurePursuitUtil.rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2);
-//
-//        telemetry.addData("Arrived at toPoint?  ", myArrived);
-//
-//        double[] motorPowers = new double[]{0, 0, 0};
-//        motorPowers = PurePursuitUtil.moveToPosition(myRobotPose.getX(), myRobotPose.getY(), myRobotPose.getHeading(), toPoint.getX(), toPoint.getY(), myHeading, false);
-//        telemetry.addData("motor Powers 0: ", motorPowers[0]);
-//        telemetry.addData("motor Powers 1: ", motorPowers[1]);
-//        telemetry.addData("motor Powers 2: ", motorPowers[2]);
-//
-//        adjustSpeedsWithProfile(motorPowers, myRobotPose.getTranslation(), myRobotPose.getHeading());
-//        telemetry.addData("motor Powers 0, profiled: ", motorPowers[0]);
-//        telemetry.addData("motor Powers 1, profiled: ", motorPowers[1]);
-//        telemetry.addData("motor Powers 2, profiled: ", motorPowers[2]);
-//
-//        normalizeMotorSpeeds(motorPowers, mySpeed, myTurnSpeed);
-//        telemetry.addData("motor Powers 0, normalized: ", motorPowers[0]);
-//        telemetry.addData("motor Powers 1, normalized: ", motorPowers[1]);
-//        telemetry.addData("motor Powers 2, normalized: ", motorPowers[2]);
-//
-//        if (myArrived)
-//        {
-//            motorPowers[0] = 0;
-//            motorPowers[1] = 0;
-//        }
-//        if (myAligned)
-//        {
-//            motorPowers[2] = 0;
-//        }
-//
-//        myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
+        myRobotPose = myOdometrySubsystem.getPose();
+        myArrived = PurePursuitUtil.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
+        myAligned = PurePursuitUtil.rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2);
+
+        telemetry.addData("Arrived at toPoint?  ", myArrived);
+
+        double[] motorPowers = new double[]{0, 0, 0};
+        motorPowers = PurePursuitUtil.moveToPosition(myRobotPose.getX(), myRobotPose.getY(), myRobotPose.getHeading(), toPoint.getX(), toPoint.getY(), myHeading, false);
+        telemetry.addData("motor Powers 0: ", motorPowers[0]);
+        telemetry.addData("motor Powers 1: ", motorPowers[1]);
+        telemetry.addData("motor Powers 2: ", motorPowers[2]);
+
+        adjustSpeedsWithProfile(motorPowers, myRobotPose.getTranslation(), myRobotPose.getHeading());
+        telemetry.addData("motor Powers 0, profiled: ", motorPowers[0]);
+        telemetry.addData("motor Powers 1, profiled: ", motorPowers[1]);
+        telemetry.addData("motor Powers 2, profiled: ", motorPowers[2]);
+
+        normalizeMotorSpeeds(motorPowers, mySpeed, myTurnSpeed);
+        telemetry.addData("motor Powers 0, normalized: ", motorPowers[0]);
+        telemetry.addData("motor Powers 1, normalized: ", motorPowers[1]);
+        telemetry.addData("motor Powers 2, normalized: ", motorPowers[2]);
+        telemetry.addData("mySpeed: ", mySpeed);
+
+        if (myArrived)
+        {
+            motorPowers[0] = 0;
+            motorPowers[1] = 0;
+        }
+        if (myAligned)
+        {
+            motorPowers[2] = 0;
+        }
+
+        myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ArriveLocationCommand extends CommandBase
     }
 
     /**
-     * Normalizes the provided motor speeds to be in the range [-1, 1].
+     * Normalizes the provided motor speeds to be in the range [-maxTranslate, maxTranslate].
      *
      * @param speeds Motor speeds to normalize.
      */
@@ -142,17 +143,18 @@ public class ArriveLocationCommand extends CommandBase
 
         if (max > maxTranslate)
         {
-            speeds[0] /= max;
-            speeds[1] /= max;
+            speeds[0] *= maxTranslate/max;
+            speeds[1] *= maxTranslate/max;
         }
 
-        if (speeds[2] > maxTurn)
+        max = Math.abs(speeds[2]);
+        if (max > maxTurn)
         {
-            speeds[2] = maxTurn;
+            speeds[2] *= maxTurn/max;
         }
-        else if (speeds[2] < -1*maxTurn)
-        {
-            speeds[2] = -1 * maxTurn;
-        }
+//        else if (speeds[2] < -1*maxTurn)
+//        {
+//            speeds[2] = -1 * maxTurn;
+//        }
     }
 }
