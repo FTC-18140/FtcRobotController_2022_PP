@@ -134,7 +134,7 @@ class AprilEyesDetectionPipeline extends OpenCvPipeline
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
 
-        signalZone = 0;
+        signalZone = 2;
         String answer = "Null";
         Scalar yellow = new Scalar(255, 255, 0);
 

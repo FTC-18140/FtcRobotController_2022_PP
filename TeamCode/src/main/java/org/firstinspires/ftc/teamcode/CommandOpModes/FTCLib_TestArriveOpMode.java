@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -25,25 +27,28 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         try
         {
+            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
-            armstrong = new ArmSubsystem(hardwareMap, telemetry);
-            register( odometry, chassis, armstrong );
+            //armstrong = new ArmSubsystem(hardwareMap, telemetry);
+            //register( odometry, chassis, armstrong );
+            register( odometry, chassis );
 
-            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.5, 0.1, 1, false, chassis, odometry);
+            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.4, 0.1, 1, true, chassis, odometry);
             ArriveLocationCommand driveTowardsJunction = new ArriveLocationCommand( 121, 10, 45, 0.2, 0.1, 3, true, chassis, odometry);
 
             // Sequence the commands to drive to the junction
-            SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction);
+            //SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction);
 
             // Make the command to lift up the cone away from the floor (guessing to set it at 65 degrees)
-            ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
+           // ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
 
             // Run the elbow and chassis in parallel.
-            ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
+            //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
 
             //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
-            schedule( driveToJunction); // for now... just drive.
+            schedule( driveAwayFromWall); // for now... just drive.
         }
         catch (Exception e)
         {
@@ -55,7 +60,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     @Override
     public void init_loop()
     {
-        if (odometry != null) { odometry.update(); }
+        //if (odometry != null) { odometry.update(); }
         telemetry.addData("Init Loop is running... ", 1);
     }
 
@@ -69,5 +74,6 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         super.stop();
         chassis.stop();
+        telemetry.addData("Processed stop.", 4);
     }
 }

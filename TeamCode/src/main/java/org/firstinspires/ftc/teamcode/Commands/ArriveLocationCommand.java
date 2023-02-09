@@ -15,7 +15,7 @@ public class ArriveLocationCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffOdometrySubsystem myOdometrySubsystem;
-    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 10);
+    private final MotionProfile myMotionProfile = new MotionProfile(30, 30, 10);
     private Translation2d fromPoint;
     private final Translation2d toPoint;
     private Pose2d myRobotPose;
@@ -44,7 +44,7 @@ public class ArriveLocationCommand extends CommandBase
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
 
-        addRequirements(myChassisSubsystem, myOdometrySubsystem);
+        addRequirements(myChassisSubsystem);
 
     }
 
@@ -52,12 +52,13 @@ public class ArriveLocationCommand extends CommandBase
     public void initialize()
     {
         fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
-
+        telemetry.addData("Arrive Command Initialized,", 2);
     }
 
     @Override
     public void execute()
     {
+        telemetry.addData("executing Arrive Command", 3);
         myRobotPose = myOdometrySubsystem.getPose();
         myArrived = PurePursuitUtil.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
         myAligned = PurePursuitUtil.rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2);
@@ -79,6 +80,7 @@ public class ArriveLocationCommand extends CommandBase
         telemetry.addData("motor Powers 0, normalized: ", motorPowers[0]);
         telemetry.addData("motor Powers 1, normalized: ", motorPowers[1]);
         telemetry.addData("motor Powers 2, normalized: ", motorPowers[2]);
+        telemetry.addData("mySpeed: ", mySpeed);
 
         if (myArrived)
         {
@@ -131,7 +133,7 @@ public class ArriveLocationCommand extends CommandBase
     }
 
     /**
-     * Normalizes the provided motor speeds to be in the range [-1, 1].
+     * Normalizes the provided motor speeds to be in the range [-maxTranslate, maxTranslate].
      *
      * @param speeds Motor speeds to normalize.
      */
@@ -141,17 +143,18 @@ public class ArriveLocationCommand extends CommandBase
 
         if (max > maxTranslate)
         {
-            speeds[0] /= max;
-            speeds[1] /= max;
+            speeds[0] *= maxTranslate/max;
+            speeds[1] *= maxTranslate/max;
         }
 
-        if (speeds[2] > maxTurn)
+        max = Math.abs(speeds[2]);
+        if (max > maxTurn)
         {
-            speeds[2] = maxTurn;
+            speeds[2] *= maxTurn/max;
         }
-        else if (speeds[2] < -1*maxTurn)
-        {
-            speeds[2] = -1 * maxTurn;
-        }
+//        else if (speeds[2] < -1*maxTurn)
+//        {
+//            speeds[2] = -1 * maxTurn;
+//        }
     }
 }
