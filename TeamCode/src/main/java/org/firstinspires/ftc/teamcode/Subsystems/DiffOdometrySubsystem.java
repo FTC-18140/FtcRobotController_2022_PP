@@ -49,7 +49,8 @@ public class DiffOdometrySubsystem extends SubsystemBase
         telemetry.addData("left", left.getAsDouble());
         telemetry.addData("right", right.getAsDouble());
        // telemetry.addData("Robot Pose: ", getPose() );
-        telemetry.addData("X, Y: ", "%f.4, %f.4", getPose().getX(), getPose().getY());
+        telemetry.addData("X, Y: ", "%.4f, %.4f", getPose().getX(), getPose().getY());
+        telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
     }
 
 }

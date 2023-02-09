@@ -43,7 +43,6 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-        resetEncoders();
 
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
         rfEncoder.setDistancePerPulse( CM_PER_COUNT );
@@ -60,11 +59,16 @@ public class ChassisSubsystem extends SubsystemBase
         lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+        // temp
+        lF.setInverted(true);
+        rF.setInverted(true);
+
         telemetry = telem;
+        resetEncoders();
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
-        myDrive = new DifferentialDrive(leftMotors, rightMotors);
+        myDrive = new DifferentialDrive(lF, rF);
 
     }
 
@@ -89,7 +93,7 @@ public class ChassisSubsystem extends SubsystemBase
             allHubs = hMap.getAll(LynxModule.class);
             for (LynxModule module : allHubs)
             {
-                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
             }
         }
         catch (Exception e)
@@ -156,10 +160,10 @@ public class ChassisSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
-        for (LynxModule module : allHubs)
-        {
-            module.clearBulkCache();
-        }
+//        for (LynxModule module : allHubs)
+//        {
+//            module.clearBulkCache();
+//        }
     }
 
     public Telemetry getTelemetry() {

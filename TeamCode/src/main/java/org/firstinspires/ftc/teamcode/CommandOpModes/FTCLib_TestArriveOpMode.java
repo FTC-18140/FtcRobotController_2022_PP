@@ -33,13 +33,19 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
             //armstrong = new ArmSubsystem(hardwareMap, telemetry);
             //register( odometry, chassis, armstrong );
-            register( odometry, chassis );
+            register( chassis );
+            register( odometry );
 
-            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.4, 0.1, 1, true, chassis, odometry);
-            ArriveLocationCommand driveTowardsJunction = new ArriveLocationCommand( 121, 10, 45, 0.2, 0.1, 3, true, chassis, odometry);
+            ArriveLocationCommand driveAwayFromWall =
+                    new ArriveLocationCommand(100, 0, 0, 0.5, 0.3, 5, false, chassis, odometry);
+            ArriveLocationCommand driveTowardsJunction =
+                    new ArriveLocationCommand( 121, 10, 45, 0.5, 0.3, 2, true, chassis, odometry);
+            ArriveLocationCommand turnTowardsJunction =
+                    new ArriveLocationCommand( 121, 10, 90, 0.0, 0.3, 2, true, chassis, odometry);
+
 
             // Sequence the commands to drive to the junction
-            //SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction);
+            SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction, turnTowardsJunction);
 
             // Make the command to lift up the cone away from the floor (guessing to set it at 65 degrees)
            // ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
@@ -48,7 +54,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
 
             //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
-            schedule( driveAwayFromWall); // for now... just drive.
+            schedule( driveToJunction ); // for now... just drive.
         }
         catch (Exception e)
         {
@@ -61,7 +67,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     public void init_loop()
     {
         //if (odometry != null) { odometry.update(); }
-        telemetry.addData("Init Loop is running... ", 1);
+        //telemetry.addData("Init Loop is running... ", 1);
     }
 
     @Override
