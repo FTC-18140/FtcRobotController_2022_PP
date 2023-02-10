@@ -16,7 +16,7 @@ public class ArriveLocationCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffOdometrySubsystem myOdometrySubsystem;
-    private final MotionProfile myMotionProfile = new MotionProfile(20, 30, 10);
+    private final MotionProfile myMotionProfile = new MotionProfile(20, 20, 1);
     private Translation2d fromPoint;
     private final Translation2d toPoint;
     private Pose2d myRobotPose;
@@ -48,7 +48,7 @@ public class ArriveLocationCommand extends CommandBase
     public ArriveLocationCommand(double x, double y, double heading, double speed, double turnSpeed, double endBuffer, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
-        myHeading = heading;
+        myHeading = Math.toRadians(heading);
         mySpeed = speed;
         myTurnSpeed = turnSpeed;
         myBuffer = endBuffer;
@@ -109,12 +109,13 @@ public class ArriveLocationCommand extends CommandBase
         // The x and y powers need to be swapped and have their signs flipped.
         telemetry.addData("Distance to Point: ", toDistance);
         telemetry.addData("AbsAngle, deg: ", Math.toDegrees(absoluteAngleToPosition));
-        telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
 
         // Determine if robot needs to drive and turn to get to the position.
         double[] motorPowers = new double[3];
         if ( myTurnOnly)
         { // no translation speed
+            telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
+            telemetry.addData("myHeading: ", Math.toDegrees(myHeading));
             relativeAngleToPosition = -angleWrap(myHeading - myRobotPose.getHeading());
             motorPowers[0] = 0.0;
             motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
@@ -125,6 +126,7 @@ public class ArriveLocationCommand extends CommandBase
             motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
         }
         motorPowers[1] = 0;
+        telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
 
 
 //        telemetry.addData("Power 0, raw: ", motorPowers[0]);

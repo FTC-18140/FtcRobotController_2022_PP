@@ -24,7 +24,7 @@ public class MotionProfile extends PathMotionProfile
 
     public MotionProfile()
     {
-        this( 50, 40, 10 );
+        this( 50, 40, 1 );
     }
 
     @Override
@@ -39,8 +39,8 @@ public class MotionProfile extends PathMotionProfile
     @Override
     public void accelerate(double[] motorSpeeds, double distanceFromTarget, double speed, double configuredMovementSpeed, double configuredTurnSpeed) {
         if (distanceFromTarget < accelBuffer) {
-            motorSpeeds[0] = shapeWithLimit(motorSpeeds[0], configuredMovementSpeed, distanceFromTarget, accelBuffer, 0.1, 2);
-            motorSpeeds[1] = shapeWithLimit(motorSpeeds[1], configuredMovementSpeed, distanceFromTarget, accelBuffer, 0.1, 2);
+            motorSpeeds[0] = shapeWithLimit(motorSpeeds[0], configuredMovementSpeed, distanceFromTarget, accelBuffer, 0.2, 1);
+            motorSpeeds[1] = shapeWithLimit(motorSpeeds[1], configuredMovementSpeed, distanceFromTarget, accelBuffer, 0.2, 1);
         }
 
     }
@@ -58,8 +58,8 @@ public class MotionProfile extends PathMotionProfile
     {
         // Do the profiling of the turning.
         //telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
-        double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, hdgBuffer/180.0*Math.PI, 0.0, 1);
-       // telem.addData("shaped Value: ", shapedValue);
+        double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, hdgBuffer/180.0*Math.PI, 0.05, 1);
+        //telem.addData("shaped Value: ", shapedValue);
         motorspeeds[2] = shapedValue;
     }
 }

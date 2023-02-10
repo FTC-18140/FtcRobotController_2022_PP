@@ -42,10 +42,18 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
                     new ArriveLocationCommand( 121, 10, 45, 0.5, 0.3, 2, true, chassis, odometry);
             ArriveLocationCommand turnTowardsJunction =
                     new ArriveLocationCommand( 121, 10, 90, 0.0, 0.3, 2, true, chassis, odometry);
+            ArriveLocationCommand driveToCenter =
+                    new ArriveLocationCommand( 121, 100, 90, 0.5, 0.3, 2, true, chassis, odometry);
+            ArriveLocationCommand driveHome =
+                    new ArriveLocationCommand( 0, 0, 90, 0.5, 0.3, 2, true, chassis, odometry);
 
 
             // Sequence the commands to drive to the junction
-            SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction, turnTowardsJunction);
+            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall,
+                    driveTowardsJunction,
+                    turnTowardsJunction,
+                    driveToCenter,
+                    driveHome);
 
             // Make the command to lift up the cone away from the floor (guessing to set it at 65 degrees)
            // ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
@@ -54,7 +62,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
 
             //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
-            schedule( driveToJunction ); // for now... just drive.
+            schedule( driveAroundField ); // for now... just drive.
         }
         catch (Exception e)
         {
