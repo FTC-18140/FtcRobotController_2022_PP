@@ -25,9 +25,10 @@ public class ArriveLocationCommand extends CommandBase
     private final double mySpeed;
     private final double myTurnSpeed;
     private boolean myArrived = false;
-//    private boolean myAligned = false;
-    private boolean myEndPoint = false;
-    private boolean myTurnOnly = false;
+    private final boolean myEndPoint;
+    private final boolean myTurnOnly;
+    private final boolean myBackwards;
+
     // Get delta values.
     double fromDeltaX;
     double fromDeltaY;
@@ -45,19 +46,19 @@ public class ArriveLocationCommand extends CommandBase
      * Creates a new ArriveLocationCommand.
      *
      */
-    public ArriveLocationCommand(double x, double y, double heading, double speed, double turnSpeed, double endBuffer, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
+    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double endBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
         myHeading = Math.toRadians(heading);
         mySpeed = speed;
+        myBackwards = (Math.signum(speed) < 0);
         myTurnSpeed = turnSpeed;
         myBuffer = endBuffer;
         myEndPoint = lastPoint;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
-        myTurnOnly = (mySpeed == 0.0);
-
+        myTurnOnly = turnOnly;
 
         // temp
         myMotionProfile.telem = telemetry;
@@ -112,6 +113,8 @@ public class ArriveLocationCommand extends CommandBase
 
         // Determine if robot needs to drive and turn to get to the position.
         double[] motorPowers = new double[3];
+        motorPowers[1] = 0; // no strafing
+
         if ( myTurnOnly)
         { // no translation speed
             telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
@@ -125,12 +128,15 @@ public class ArriveLocationCommand extends CommandBase
             motorPowers[0] = Range.clip(toDistance, 0.1, mySpeed);
             motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
         }
-        motorPowers[1] = 0;
+        if (myBackwards)
+        {
+            //motorPowers[0] *= -1.0;
+            relativeAngleToPosition = angleWrap(relativeAngleToPosition-Math.PI);
+            motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
+
+        }
+
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
-
-
-//        telemetry.addData("Power 0, raw: ", motorPowers[0]);
-//        telemetry.addData("Power 2, raw: ", motorPowers[2]);
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);

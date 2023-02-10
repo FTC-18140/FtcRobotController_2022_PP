@@ -2,18 +2,14 @@ package org.firstinspires.ftc.teamcode.CommandOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveLocationCommand;
-import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
-import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
+
 @Autonomous(name = "FTCLib_TestArriveOpMode", group = "FTCLib")
 
 public class FTCLib_TestArriveOpMode extends TBDOpModeBase
@@ -27,7 +23,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         try
         {
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+            //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
@@ -37,15 +33,15 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             register( odometry );
 
             ArriveLocationCommand driveAwayFromWall =
-                    new ArriveLocationCommand(100, 0, 0, 0.5, 0.3, 5, false, chassis, odometry);
+                    new ArriveLocationCommand(100, 0, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
             ArriveLocationCommand driveTowardsJunction =
-                    new ArriveLocationCommand( 121, 10, 45, 0.5, 0.3, 2, true, chassis, odometry);
+                    new ArriveLocationCommand( 121, 10, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
             ArriveLocationCommand turnTowardsJunction =
-                    new ArriveLocationCommand( 121, 10, 90, 0.0, 0.3, 2, true, chassis, odometry);
+                    new ArriveLocationCommand( 121, 10, 0.0, 0.3, 2, 90, true, true, chassis, odometry );
             ArriveLocationCommand driveToCenter =
-                    new ArriveLocationCommand( 121, 100, 90, 0.5, 0.3, 2, true, chassis, odometry);
+                    new ArriveLocationCommand( 121, 100, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
             ArriveLocationCommand driveHome =
-                    new ArriveLocationCommand( 0, 0, 90, 0.5, 0.3, 2, true, chassis, odometry);
+                    new ArriveLocationCommand( 0, 0, -0.5, 0.3, 2, 0, false, true, chassis, odometry );
 
 
             // Sequence the commands to drive to the junction
