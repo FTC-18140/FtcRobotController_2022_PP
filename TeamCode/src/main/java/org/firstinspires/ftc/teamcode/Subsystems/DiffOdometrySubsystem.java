@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,6 +25,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
     public DiffOdometrySubsystem(DoubleSupplier leftEncoderDistance, DoubleSupplier rightEncoderDistance,
                                  Telemetry telem) {
         m_odometry = new DifferentialOdometry( leftEncoderDistance, rightEncoderDistance, TRACK_WIDTH);
+        m_odometry.updatePose( new Pose2d(20, 90, new Rotation2d(0)));
         telemetry = telem;
         left = leftEncoderDistance;
         right = rightEncoderDistance;

@@ -23,41 +23,43 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         try
         {
-            //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
             //armstrong = new ArmSubsystem(hardwareMap, telemetry);
-            //register( odometry, chassis, armstrong );
             register( chassis );
             register( odometry );
+            //reigster(armstrong);
 
             ArriveLocationCommand driveAwayFromWall =
-                    new ArriveLocationCommand(100, 0, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
+                    new ArriveLocationCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
             ArriveLocationCommand driveTowardsJunction =
-                    new ArriveLocationCommand( 121, 10, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
-            ArriveLocationCommand turnTowardsJunction =
-                    new ArriveLocationCommand( 121, 10, 0.0, 0.3, 2, 90, true, true, chassis, odometry );
-            ArriveLocationCommand driveToCenter =
-                    new ArriveLocationCommand( 121, 100, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
-            ArriveLocationCommand driveHome =
-                    new ArriveLocationCommand( 0, 0, -0.5, 0.3, 2, 0, false, true, chassis, odometry );
+                    new ArriveLocationCommand( 167, 102, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
+            ArriveLocationCommand driveToCenterB =
+                    new ArriveLocationCommand( 158, 90, -0.5, 0.3, 2, 0, false, false, chassis, odometry );
+            ArriveLocationCommand driveToConestack =
+                    new ArriveLocationCommand( 154, 31, -0.3, 0.3, 2, 0, false, true, chassis, odometry );
+            ArriveLocationCommand driveToCenterF =
+                    new ArriveLocationCommand( 158, 90, 0.5, 0.3, 2, 0, false, false, chassis, odometry );
 
-
-            // Sequence the commands to drive to the junction
-            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall,
+            // Sequence the commands to drive to the junction and cone stack
+            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(
+                    driveAwayFromWall,
                     driveTowardsJunction,
-                    turnTowardsJunction,
-                    driveToCenter,
-                    driveHome);
+                    driveToCenterB,
+                    driveToConestack,
+                    driveToCenterF,
+                    driveTowardsJunction,
+                    driveToCenterB,
+                    driveToConestack,
+                    driveToCenterF);
 
             // Make the command to lift up the cone away from the floor (guessing to set it at 65 degrees)
            // ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
 
             // Run the elbow and chassis in parallel.
-            //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
+            //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveTowardsJunction);
 
-            //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
+            //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with this
             schedule( driveAroundField ); // for now... just drive.
         }
         catch (Exception e)
