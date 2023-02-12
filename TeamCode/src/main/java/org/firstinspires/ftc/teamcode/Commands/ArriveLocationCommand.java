@@ -77,7 +77,8 @@ public class ArriveLocationCommand extends CommandBase
     @Override
     public void execute()
     {
-        telemetry.addData("executing Arrive Command", toPoint);
+        telemetry.addData("executing Arrive Command: ", toPoint);
+        telemetry.addData("Command: ", getName());
         myRobotPose = myOdometrySubsystem.getPose();
 
         // Check if we have arrived

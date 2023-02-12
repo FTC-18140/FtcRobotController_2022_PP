@@ -35,8 +35,8 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             register( chassis );
             register( odometry );
-            register(armstrong);
-            register(lift);
+            register( armstrong );
+            register( lift );
 
             ArriveLocationCommand driveAwayFromWall =
                     new ArriveLocationCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
@@ -59,30 +59,32 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             LiftDistanceCommand raiseOffConeStack = new LiftDistanceCommand(15, 0.5, lift);
 
             // Run the elbow and chassis in parallel.
-            ParallelCommandGroup elbowAndDriveFromWall = new ParallelCommandGroup(rotateConeUp, driveAwayFromWall);
+            //ParallelCommandGroup elbowAndDriveFromWall = new ParallelCommandGroup(rotateConeUp, driveAwayFromWall);
 
             // Drive towards the high junction and raise the lift at the same time.
-            ParallelCommandGroup turnToAndRaiseLift = new ParallelCommandGroup( raiseHighJunction, driveTowardsJunction);
+            //ParallelCommandGroup turnToAndRaiseLift = new ParallelCommandGroup( raiseHighJunction, driveTowardsJunction);
 
             // Sequence the commands to drive to the junction and cone stack
             SequentialCommandGroup driveAroundField = new SequentialCommandGroup(
-                    elbowAndDriveFromWall,
-                    turnToAndRaiseLift,
-                    driveToCenterB,
-                    driveToConestack.withTimeout(5000),
-                    driveToCenterF,
-                    driveTowardsJunction.withTimeout(5000),
-                    driveToCenterB,
-                    driveToConestack.withTimeout(5000),
-                    driveToCenterF);
+                    driveAwayFromWall,
+                    driveTowardsJunction );
+//                    elbowAndDriveFromWall,
+//                    turnToAndRaiseLift,
+//                    driveToCenterB ); //,
+//                    driveToConestack.withTimeout(5000),
+//                    driveToCenterF,
+//                    turnToAndRaiseLift,
+//                    driveToCenterB,
+//                   // driveToConestack.withTimeout(5000),
+//                    driveToCenterF);
 
-            //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with this
             schedule( driveAroundField ); // for now... just drive.
         }
         catch (Exception e)
         {
             telemetry.addData("Something did not initialize properly.", 0);
-            telemetry.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3]);
+            telemetry.addData("Ugh: ",  e.getMessage());
+            telemetry.addData("Ugh2: ", "%s\n%s\n%s\n%s\n%s", e.getStackTrace()[0], e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3], e.getStackTrace()[4]);
         }
     }
 

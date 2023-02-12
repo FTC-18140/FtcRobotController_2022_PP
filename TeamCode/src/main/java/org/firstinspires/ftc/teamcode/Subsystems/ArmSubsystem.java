@@ -29,6 +29,7 @@ public class ArmSubsystem extends SubsystemBase
 
     public ArmSubsystem( HardwareMap hwMap, Telemetry telem )
     {
+        telemetry = telem;
         try
         {
             leftElbow =  new SimpleServo( hwMap, "lelbow", 0, 900, AngleUnit.DEGREES);
@@ -40,7 +41,7 @@ public class ArmSubsystem extends SubsystemBase
         {
             telemetry.addData("Something in armstrong not found.  ", e.getMessage());
         }
-        telemetry = telem;
+
 
     }
 

@@ -110,8 +110,15 @@ public class LiftSubsystem extends SubsystemBase
     }
 
     public void update() {
-        leftSlidePosition = leftEncoder.getDistance() / COUNTS_PER_CM;
-        rightSlidePosition = rightEncoder.getDistance() / COUNTS_PER_CM;
+        if ( leftEncoder != null )
+        {
+            leftSlidePosition = leftEncoder.getDistance() / COUNTS_PER_CM;
+
+        }
+        if ( rightEncoder != null )
+        {
+            rightSlidePosition = rightEncoder.getDistance() / COUNTS_PER_CM;
+        }
     }
 
     @Override
