@@ -67,10 +67,10 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             // Sequence the commands to drive to the junction and cone stack
             SequentialCommandGroup driveAroundField = new SequentialCommandGroup(
                     driveAwayFromWall,
-                    driveTowardsJunction );
+                    driveTowardsJunction,
 //                    elbowAndDriveFromWall,
 //                    turnToAndRaiseLift,
-//                    driveToCenterB ); //,
+                    driveToCenterB ); //,
 //                    driveToConestack.withTimeout(5000),
 //                    driveToCenterF,
 //                    turnToAndRaiseLift,

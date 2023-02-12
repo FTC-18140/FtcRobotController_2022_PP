@@ -17,24 +17,30 @@ public class ArriveLocationCommand extends CommandBase
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffOdometrySubsystem myOdometrySubsystem;
     private final MotionProfile myMotionProfile = new MotionProfile(20, 20, 1);
+
     private Translation2d fromPoint;
     private final Translation2d toPoint;
+    private final double toHeading;
+
     private Pose2d myRobotPose;
+
     private final double myBuffer;
-    private final double myHeading;
     private final double mySpeed;
     private final double myTurnSpeed;
+
     private boolean myArrived = false;
+
     private final boolean myEndPoint;
     private final boolean myTurnOnly;
     private final boolean myBackwards;
 
-    // Get delta values.
+    // Delta values.
     double fromDeltaX;
     double fromDeltaY;
     double toDeltaX;
     double toDeltaY;
-    // Get Distances
+
+    // Distances
     double fromDistance;
     double toDistance;
     double absoluteAngleToPosition;
@@ -46,14 +52,14 @@ public class ArriveLocationCommand extends CommandBase
      * Creates a new ArriveLocationCommand.
      *
      */
-    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double endBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
+    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double moveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
-        myHeading = Math.toRadians(heading);
+        toHeading = Math.toRadians(heading);
         mySpeed = speed;
         myBackwards = (Math.signum(speed) < 0);
         myTurnSpeed = turnSpeed;
-        myBuffer = endBuffer;
+        myBuffer = moveBuffer;
         myEndPoint = lastPoint;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
@@ -63,8 +69,7 @@ public class ArriveLocationCommand extends CommandBase
         // temp
         myMotionProfile.telem = telemetry;
 
-        addRequirements(myChassisSubsystem);
-
+        addRequirements(myChassisSubsystem, myOdometrySubsystem);
     }
 
     @Override
@@ -79,65 +84,32 @@ public class ArriveLocationCommand extends CommandBase
     {
         telemetry.addData("executing Arrive Command: ", toPoint);
         telemetry.addData("Command: ", getName());
-        myRobotPose = myOdometrySubsystem.getPose();
 
-        // Check if we have arrived
-        if ( myTurnOnly )
-        {
-            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), myHeading, 2/180.0*Math.PI);
-        }
-        else
-        {
-            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
-        }
+        // Get new position data from the odometry subsystem and update the robot's location and
+        // distance/angles relative to the From Point and the To Point.
+        double driveDistance = updatePositions();
+        telemetry.addData("Distance to Point: ", driveDistance);
 
-        telemetry.addData("Arrived at toPoint?  ", myArrived);
-
-        // Get delta Translation values.
-        fromDeltaX = myRobotPose.getTranslation().getX() - fromPoint.getX();
-        fromDeltaY = myRobotPose.getTranslation().getY() - fromPoint.getY();
-        toDeltaX = toPoint.getX() - myRobotPose.getTranslation().getX();
-        toDeltaY = toPoint.getY() - myRobotPose.getTranslation().getY();
-        telemetry.addData("dX2Point, dY2Point: ", "%.3f, %.3f", toDeltaX,toDeltaY);
-
-        // Get Distances between From and To points
-        fromDistance = Math.hypot(fromDeltaX, fromDeltaY);
-        toDistance = Math.hypot(toDeltaX, toDeltaY);
-
-        // Get angle to To point, both absolute and relative to robot's current heading
-        absoluteAngleToPosition = Math.atan2(toDeltaY, toDeltaX);
-        relativeAngleToPosition = -angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
-
-        // The x and y powers need to be swapped and have their signs flipped.
-        telemetry.addData("Distance to Point: ", toDistance);
-        telemetry.addData("AbsAngle, deg: ", Math.toDegrees(absoluteAngleToPosition));
+        // Now that the robot's position is updated. Figure out the angle the robot needs to
+        // drive in order to get to the To Point.
+        double turnAngle = updateAngles();
 
         // Determine if robot needs to drive and turn to get to the position.
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-        if ( myTurnOnly)
+        if (myTurnOnly)
         { // no translation speed
             telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-            telemetry.addData("myHeading: ", Math.toDegrees(myHeading));
-            relativeAngleToPosition = -angleWrap(myHeading - myRobotPose.getHeading());
+            telemetry.addData("myHeading: ", Math.toDegrees(toHeading));
             motorPowers[0] = 0.0;
-            motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
+            motorPowers[2] = Range.clip(-turnAngle / Math.PI, -1.0 * myTurnSpeed, myTurnSpeed);
         }
         else
         {  // find translation speed
-            motorPowers[0] = Range.clip(toDistance, 0.1, mySpeed);
-            motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
+            motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
+            motorPowers[2] = Range.clip(-turnAngle / Math.PI, -1.0 * myTurnSpeed, myTurnSpeed);
         }
-        if (myBackwards)
-        {
-            //motorPowers[0] *= -1.0;
-            relativeAngleToPosition = angleWrap(relativeAngleToPosition-Math.PI);
-            motorPowers[2] = Range.clip( -relativeAngleToPosition/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
-
-        }
-
-        telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);
@@ -145,6 +117,17 @@ public class ArriveLocationCommand extends CommandBase
         telemetry.addData("Power 0, profiled: ", motorPowers[0]);
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
+        // Check if we have arrived
+        if ( myTurnOnly )
+        { // arriving on a Turn Only move is based on closeness to myHeading
+            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, myBuffer);
+        }
+        else
+        { // arriving on a normal move is based on closeness to the toPoint
+            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
+        }
+
+        telemetry.addData("Arrived at toPoint?  ", myArrived);
         if (myArrived)
         {
             motorPowers[0] = 0;
@@ -153,6 +136,52 @@ public class ArriveLocationCommand extends CommandBase
         }
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
+    }
+
+    private double updatePositions()
+    {
+        // Update the current position of the Robot by getting it from the odometry subsystem.
+        myRobotPose = myOdometrySubsystem.getPose();
+
+        // Update delta Translation values so that we can update how far the robot is from the
+        // From Point and the To Point
+        fromDeltaX = myRobotPose.getTranslation().getX() - fromPoint.getX();
+        fromDeltaY = myRobotPose.getTranslation().getY() - fromPoint.getY();
+
+        toDeltaX = toPoint.getX() - myRobotPose.getTranslation().getX();
+        toDeltaY = toPoint.getY() - myRobotPose.getTranslation().getY();
+        telemetry.addData("dX2Point, dY2Point: ", "%.3f, %.3f", toDeltaX,toDeltaY);
+
+        // Update distances between Robot and From Point and Robot and To Point
+        fromDistance = Math.hypot(fromDeltaX, fromDeltaY);
+        toDistance = Math.hypot(toDeltaX, toDeltaY);
+        return toDistance;
+    }
+
+    private double updateAngles()
+    {
+        // Update the angle to To point in absolute, field-based perspective.  This represents the
+        // the angle the robot needs to move to get to the To Point.
+        absoluteAngleToPosition = Math.atan2(toDeltaY, toDeltaX);
+        telemetry.addData("AbsAngle, deg: ", Math.toDegrees(absoluteAngleToPosition));
+
+        // Based on the current heading of the robot, update the value that determines how much
+        // the robot needs to turn
+        if (myTurnOnly)
+        {
+            relativeAngleToPosition = -angleWrap(toHeading - myRobotPose.getHeading());
+        }
+        else
+        {
+            relativeAngleToPosition = -angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
+
+            if (myBackwards)
+            {
+                relativeAngleToPosition = angleWrap(relativeAngleToPosition - Math.PI);
+            }
+        }
+        telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
+        return relativeAngleToPosition;
     }
 
     /**
@@ -172,75 +201,6 @@ public class ArriveLocationCommand extends CommandBase
         }
         myMotionProfile.processHeading(speeds, relativeAngleToPosition, myTurnSpeed);
     }
-
-//    /**
-//     * Takes the robot's current position and rotation and calculates the motor powers for the robot to move to the target position.
-//     *
-//     * @param cx       Robot's current X position.
-//     * @param cy       Robot's current Y position.
-//     * @param ca       Robot's current rotation (angle).
-//     * @param tx       Target X position.
-//     * @param ty       Target Y position.
-//     * @param toAngle       Target rotation (angle).
-//     * @param turnOnly True if the robot should only turn.
-//     * @return A double array containing raw motor powers. a[0] is strafe power, a[1] is vertical power and a[2] is turn power.
-//     */
-//    public double[] One_moveToPosition(double cx, double cy, double ca, double tx, double ty, double toAngle, boolean turnOnly)
-//    {
-//        double[] rawMotorPowers;
-//
-//        if (turnOnly)
-//        {
-//            // If turnOnly is true, only return a turn power.
-//            return new double[]{0, 0, angleWrap(ca + toAngle) / Math.PI};
-//        }
-////
-////        double absoluteXToPosition = tx - cx;
-////        double absoluteYToPosition = ty - cy;
-//
-//        double absoluteAngleToPosition = Math.atan2(toDetlaY, toDeltaX);
-////        double distanceToPosition = Math.hypot(toDeltaX, toDetlaY);
-//
-//        double relativeAngleToPosition = angleWrap(absoluteAngleToPosition + ca);
-//
-//        rawMotorPowers = new double[3];
-//
-//        // The x and y powers need to be swapped and have their signs flipped.
-//        telemetry.addData("Distance to Point: ", toDistance);
-//        telemetry.addData("Relative Angle: ", relativeAngleToPosition/Math.PI*180.0);
-//        rawMotorPowers[0] = Range.clip(toDistance, -1.0*mySpeed, mySpeed);
-//        rawMotorPowers[1] = 0;
-//        rawMotorPowers[2] = Range.clip( angleWrap(relativeAngleToPosition)/Math.PI, -1.0*myTurnSpeed, myTurnSpeed);
-//
-//        return rawMotorPowers;
-//    }
-
-
-//    /**
-//     * Normalizes the provided motor speeds to be in the range [-maxTranslate, maxTranslate].
-//     *
-//     * @param speeds Motor speeds to normalize.
-//     */
-//    private void Three_normalizeMotorSpeeds(double[] speeds, double maxTranslate, double maxTurn )
-//    {
-//        double max = Math.max(abs(speeds[0]), abs(speeds[1]));
-//
-//        if (max > maxTranslate)
-//        {
-//            speeds[0] *= maxTranslate/max;
-//            speeds[1] *= maxTranslate/max;
-//        }
-//
-//        max = Math.abs(speeds[2]);
-//        if (max > maxTurn)
-//        {
-//            speeds[2] *= maxTurn/max;
-//        }
-////        else if (speeds[2] < -1*maxTurn)
-////        {
-////            speeds[2] = -1 * maxTurn;
-////        }
-//    }
 
 
     /**
