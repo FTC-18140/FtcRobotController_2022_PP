@@ -120,7 +120,7 @@ public class ArriveLocationCommand extends CommandBase
         // Check if we have arrived
         if ( myTurnOnly )
         { // arriving on a Turn Only move is based on closeness to myHeading
-            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, myBuffer);
+            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, Math.toRadians(myBuffer));
         }
         else
         { // arriving on a normal move is based on closeness to the toPoint

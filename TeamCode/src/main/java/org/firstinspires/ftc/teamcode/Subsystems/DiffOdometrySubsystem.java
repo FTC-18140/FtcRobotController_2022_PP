@@ -16,7 +16,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
     Telemetry telemetry;
     DoubleSupplier left, right;
 
-    public final double TRACK_WIDTH = 28.2;
+    public final double TRACK_WIDTH = 28.2*2.0;
     public final double TRACK_WIDTH_METERS = TRACK_WIDTH/100.0;
 
     /**

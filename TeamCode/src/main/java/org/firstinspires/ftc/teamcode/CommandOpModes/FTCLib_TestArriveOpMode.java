@@ -40,14 +40,20 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             ArriveLocationCommand driveAwayFromWall =
                     new ArriveLocationCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
+            ArriveLocationCommand turnToJunction =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, 40, true, false, chassis, odometry );
             ArriveLocationCommand driveTowardsJunction =
                     new ArriveLocationCommand( 167, 102, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
             ArriveLocationCommand driveToCenterB =
                     new ArriveLocationCommand( 158, 90, -0.5, 0.3, 2, 0, false, false, chassis, odometry );
+            ArriveLocationCommand turnToConestack =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, -90, true, false, chassis, odometry );
             ArriveLocationCommand driveToConestack =
-                    new ArriveLocationCommand( 154, 31, -0.3, 0.3, 2, 0, false, true, chassis, odometry );
+                    new ArriveLocationCommand( 154, 31, 0.3, 0.3, 2, 0, false, true, chassis, odometry );
             ArriveLocationCommand driveToCenterF =
                     new ArriveLocationCommand( 158, 90, 0.5, 0.3, 2, 0, false, false, chassis, odometry );
+            ArriveLocationCommand plainTurn =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.3, 2, -90, true, false, chassis, odometry );
 
 
             // Make the command to rotate the cone away from the floor (guessing to set it at 65 degrees)
@@ -67,11 +73,13 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             // Sequence the commands to drive to the junction and cone stack
             SequentialCommandGroup driveAroundField = new SequentialCommandGroup(
                     driveAwayFromWall,
+                    turnToJunction,
                     driveTowardsJunction,
 //                    elbowAndDriveFromWall,
 //                    turnToAndRaiseLift,
-                    driveToCenterB ); //,
-//                    driveToConestack.withTimeout(5000),
+                    driveToCenterB ,
+                    turnToConestack,
+                    driveToConestack.withTimeout(5000));
 //                    driveToCenterF,
 //                    turnToAndRaiseLift,
 //                    driveToCenterB,
@@ -79,6 +87,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 //                    driveToCenterF);
 
             schedule( driveAroundField ); // for now... just drive.
+            //schedule(plainTurn);
         }
         catch (Exception e)
         {
