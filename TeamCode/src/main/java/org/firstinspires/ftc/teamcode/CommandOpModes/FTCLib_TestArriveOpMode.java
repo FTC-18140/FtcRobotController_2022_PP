@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
-    DiffOdometrySubsystem odometry = null;
+    DiffDriveOdometrySubsystem odometry = null;
     ArmSubsystem armstrong = null;
     LiftSubsystem lift = null;
 
@@ -29,7 +30,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         try
         {
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
-            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
+            odometry = new DiffDriveOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeading, telemetry );
             armstrong = new ArmSubsystem(hardwareMap, telemetry);
             lift = new LiftSubsystem(hardwareMap, telemetry);
 

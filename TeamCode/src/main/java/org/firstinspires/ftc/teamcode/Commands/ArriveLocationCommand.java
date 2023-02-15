@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
 import static java.lang.Math.abs;
@@ -15,7 +16,7 @@ import static java.lang.Math.ulp;
 public class ArriveLocationCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
-    private final DiffOdometrySubsystem myOdometrySubsystem;
+    private final DiffDriveOdometrySubsystem myOdometrySubsystem;
     private final MotionProfile myMotionProfile = new MotionProfile(20, 20, 1);
 
     private Translation2d fromPoint;
@@ -52,7 +53,7 @@ public class ArriveLocationCommand extends CommandBase
      * Creates a new ArriveLocationCommand.
      *
      */
-    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double moveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffOdometrySubsystem odometry)
+    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double moveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
         toHeading = Math.toRadians(heading);

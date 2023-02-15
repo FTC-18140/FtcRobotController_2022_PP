@@ -5,10 +5,18 @@ import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.List;
 
@@ -17,6 +25,7 @@ public class ChassisSubsystem extends SubsystemBase
 {
     private final DifferentialDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
+    BNO055IMU imu;
     Telemetry telemetry;
     List<LynxModule> allHubs;
 
@@ -100,6 +109,31 @@ public class ChassisSubsystem extends SubsystemBase
         {
             telemetry.addData("Lynx Module not found", 0);
         }
+
+        try
+        {
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+            // Retrieve and initialize the IMU.
+            imu = hMap.get(BNO055IMU.class, "imu");
+            imu.initialize(parameters);
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        }
+        catch (Exception p_exeception)
+        {
+            telemetry.addData("imu not found in config file", 0);
+            imu = null;
+        }
+
     }
 
     public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
@@ -155,6 +189,18 @@ public class ChassisSubsystem extends SubsystemBase
 
     public double getAverageEncoderDistance() {
         return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
+    }
+
+    /**
+     * Get the heading angle from the imu and convert it to degrees.
+     * @return the heading angle
+     */
+    public double getHeading()
+    {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                AngleUnit.DEGREES);
+        return -AngleUnit.DEGREES.normalize(
+                AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
 
     @Override
