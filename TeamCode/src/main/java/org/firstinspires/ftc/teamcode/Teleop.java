@@ -17,7 +17,7 @@ public class Teleop extends OpMode
     // Variables for the positions for claw, wrist, and elbow
     double wristPosition = 0;
     double clawPosition = 0;
-    double elbowPosition = 0.535;
+    double elbowPosition = 0.515;
 
     double ELBOW_INCREMENT = 0.005;
     double WRIST_INCREMENT = 0.015; // its 0.0025
@@ -64,7 +64,8 @@ public class Teleop extends OpMode
     @Override
     public void loop() {
         robot.update();
-
+        telemetry.addData("Larm position", robot.armstrong.leftElbow.getPosition());
+        telemetry.addData("Rarm position", robot.armstrong.rightElbow.getPosition());
         /////////////////
         // CHASSIS
         /////////////////
@@ -74,7 +75,7 @@ public class Teleop extends OpMode
         } else {
             // Normal Drive
             double sign = Math.signum(gamepad1.right_stick_x);
-            robot.joystickDrive(-gamepad1.left_stick_y * 0.8, gamepad1.left_stick_x * 0.8, gamepad1.right_stick_x * 0.8 * gamepad1.right_stick_x * sign);
+            robot.joystickDrive(-gamepad1.left_stick_y * 0.55, gamepad1.left_stick_x * 0.55, gamepad1.right_stick_x * 0.55 * gamepad1.right_stick_x * sign);
         }
 
         /////////////////
@@ -137,20 +138,5 @@ public class Teleop extends OpMode
             robot.armstrong.wristMove(wristPosition);
         }
         telemetry.addData("Wrist Position", robot.armstrong.wrist.getPosition());
-
-
-        /////////////////
-        // Sensors
-        /////////////////
-
-//        robot.armstrong.detectColor();
-//        if (robot.armstrong.color.red() > 200 && robot.armstrong.color.green() > 200
-//                && robot.armstrong.color.red() < 400 && robot.armstrong.color.green() < 400) {
-//            telemetry.addData("yellow", "is detected");
-//        } else {
-//            telemetry.addData("yellow", "is not detected");
-//        }
-
-       // robot.armstrong.detectDistance();
     }
 }

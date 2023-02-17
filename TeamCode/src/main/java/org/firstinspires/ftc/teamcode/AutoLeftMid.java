@@ -15,11 +15,11 @@ public class AutoLeftMid extends OpMode {
 
     // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
-    double stepA = 107.5; // was 120
+    double stepA = 176.15; // was 120
     // stepB is a turn
     double stepB = 90;
     // stepC is a drive
-    double stepC = 1.75;
+    double stepC = 3.1;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -48,8 +48,8 @@ public class AutoLeftMid extends OpMode {
 
         if (theZone == 1)
         { // set the number to the value of black
-            stepF = 42.5;
-            stepFPower = -0.5;
+            stepF = 85;
+            stepFPower = -0.3;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -58,8 +58,8 @@ public class AutoLeftMid extends OpMode {
         }
         else
         { // set the number to the value of white
-            stepF = 42.5;
-            stepFPower = 0.5;
+            stepF = 85;
+            stepFPower = 0.3;
         }
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
@@ -71,8 +71,7 @@ public class AutoLeftMid extends OpMode {
         robot.update();
         telemetry.addData("Zone", theZone);
 
-        switch (state)
-        {
+        switch (state) {
             case 0:
                 if (!done) {
                     done = robot.armstrong.elbowMove(0.375);
@@ -87,7 +86,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.5);
+                    done = robot.gyroDrive(0, stepA, 0.3);
                 }
                 else
                 {
@@ -98,7 +97,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 25.75, 0.5);
+                    done = robot.drive(179, 29, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -109,7 +108,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(stepB, 0.5);
+                    done = robot.turnTo(stepB, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -123,7 +122,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(92.5, 0.5);
+                    done = robot.turnTo(92.5, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -137,6 +136,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepC is 10y
+                    done = true;
                     done = robot.gyroDrive(92.5, stepC, -0.3); // was 43.5
                     telemetry.addData("case 2", "is started");
                 }
@@ -220,7 +220,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 13:
                 if (!done) {
-                    done = robot.gyroDrive(95, 1, 0.5);
+                    done = robot.gyroDrive(95, 1, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -229,7 +229,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(90, 28, 0.5);
+                    done = robot.drive(90, 30, 0.3);
                 } else {
                     robot.stop();
                     done = false;
