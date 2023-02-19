@@ -19,7 +19,10 @@ public class ElbowCommand extends CommandBase
     @Override
     public void initialize()
     {
-        myArm.elbowMove(myAngle);
+        if (myArm != null )
+        {
+            myArm.elbowMove(myAngle);
+        }
     }
 
 }

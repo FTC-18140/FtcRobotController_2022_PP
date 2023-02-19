@@ -27,27 +27,22 @@ public class ArmSubsystem extends SubsystemBase
     public static double minTwistAngle = 0;
     public static double maxTwistAngle = 180;
 
-    public ArmSubsystem( ServoEx leftServo, ServoEx rightServo, ServoEx twistS, ServoEx wristS, Telemetry telem)
-    {
-        leftElbow = leftServo;
-        rightElbow = rightServo;
-        twist = twistS;
-        wrist = wristS;
-        telemetry = telem;
-    }
-
-    public ArmSubsystem(HardwareMap hwMap, String leftServo, String rightServo, String twist, String wrist, Telemetry telem)
-    {
-        this( new SimpleServo( hwMap, leftServo, 0, 900, AngleUnit.DEGREES),
-              new SimpleServo( hwMap, rightServo, 0, 900, AngleUnit.DEGREES),
-              new SimpleServo( hwMap, twist, 0, 180, AngleUnit.DEGREES),
-              new SimpleServo( hwMap, wrist, 0, 270, AngleUnit.DEGREES),
-              telem );
-    }
-
     public ArmSubsystem( HardwareMap hwMap, Telemetry telem )
     {
-        this( hwMap, "lelbow", "relbow", "twist", "wrist", telem);
+        telemetry = telem;
+        try
+        {
+            leftElbow =  new SimpleServo( hwMap, "lelbow", 0, 900, AngleUnit.DEGREES);
+            rightElbow = new SimpleServo( hwMap, "relbow", 0, 900, AngleUnit.DEGREES);
+            twist = new SimpleServo( hwMap, "twist", 0, 180, AngleUnit.DEGREES);
+            wrist = new SimpleServo( hwMap, "wrist", 0, 270, AngleUnit.DEGREES);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Something in armstrong not found.  ", e.getMessage());
+        }
+
+
     }
 
     public boolean elbowMove(double elbAng) {

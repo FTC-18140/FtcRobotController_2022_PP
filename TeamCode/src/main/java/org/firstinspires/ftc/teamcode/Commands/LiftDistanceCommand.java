@@ -10,7 +10,7 @@ public class LiftDistanceCommand extends CommandBase
     private final double mySpeed;
     private final LiftSubsystem myLift;
 
-    LiftDistanceCommand(double distance, double speed, LiftSubsystem lift)
+    public LiftDistanceCommand(double distance, double speed, LiftSubsystem lift)
     {
         myDistance = distance;
         mySpeed = speed;

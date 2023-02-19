@@ -5,55 +5,96 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveLocationCommand;
-import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
+import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
+import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
+
 @Autonomous(name = "FTCLib_TestArriveOpMode", group = "FTCLib")
 
 public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
-    DiffOdometrySubsystem odometry = null;
+    DiffDriveOdometrySubsystem odometry = null;
     ArmSubsystem armstrong = null;
+    LiftSubsystem lift = null;
 
     @Override
     public void init()
     {
         try
         {
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
-            odometry = new DiffOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, telemetry );
-            //armstrong = new ArmSubsystem(hardwareMap, telemetry);
-            //register( odometry, chassis, armstrong );
-            register( odometry, chassis );
+            odometry = new DiffDriveOdometrySubsystem( chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeading, telemetry );
+            armstrong = new ArmSubsystem(hardwareMap, telemetry);
+            lift = new LiftSubsystem(hardwareMap, telemetry);
 
-            ArriveLocationCommand driveAwayFromWall = new ArriveLocationCommand(100, 0, 0, 0.4, 0.1, 1, true, chassis, odometry);
-            ArriveLocationCommand driveTowardsJunction = new ArriveLocationCommand( 121, 10, 45, 0.2, 0.1, 3, true, chassis, odometry);
+            register( chassis );
+            register( odometry );
+            register( armstrong );
+            register( lift );
 
-            // Sequence the commands to drive to the junction
-            //SequentialCommandGroup driveToJunction = new SequentialCommandGroup(driveAwayFromWall, driveTowardsJunction);
+            ArriveLocationCommand driveAwayFromWall =
+                    new ArriveLocationCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
+            ArriveLocationCommand turnToJunction =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, 40, true, false, chassis, odometry );
+            ArriveLocationCommand driveTowardsJunction =
+                    new ArriveLocationCommand( 167, 102, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
+            ArriveLocationCommand driveToCenterB =
+                    new ArriveLocationCommand( 158, 90, -0.5, 0.3, 2, 0, false, false, chassis, odometry );
+            ArriveLocationCommand turnToConestack =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, -90, true, false, chassis, odometry );
+            ArriveLocationCommand driveToConestack =
+                    new ArriveLocationCommand( 154, 31, 0.3, 0.3, 2, 0, false, true, chassis, odometry );
+            ArriveLocationCommand driveToCenterF =
+                    new ArriveLocationCommand( 158, 90, 0.5, 0.3, 2, 0, false, false, chassis, odometry );
+            ArriveLocationCommand plainTurn =
+                    new ArriveLocationCommand( 100, 100, 0.3, 0.3, 2, -90, true, false, chassis, odometry );
 
-            // Make the command to lift up the cone away from the floor (guessing to set it at 65 degrees)
-           // ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
+
+            // Make the command to rotate the cone away from the floor (guessing to set it at 65 degrees)
+            ElbowCommand rotateConeUp = new ElbowCommand(65, armstrong);
+
+            // Make a command to lift the linear slide assembly up vertical.
+            LiftDistanceCommand raiseHighJunction = new LiftDistanceCommand(30, 0.5, lift);
+            LiftDistanceCommand lowerToConeStack = new LiftDistanceCommand(-20, 0.5, lift);
+            LiftDistanceCommand raiseOffConeStack = new LiftDistanceCommand(15, 0.5, lift);
 
             // Run the elbow and chassis in parallel.
-            //ParallelCommandGroup elbowAndDrive = new ParallelCommandGroup(rotateConeUp, driveToJunction);
+            //ParallelCommandGroup elbowAndDriveFromWall = new ParallelCommandGroup(rotateConeUp, driveAwayFromWall);
 
-            //schedule( elbowAndDrive ); // TODO: make sure the ArmSubsystem works with the angles and such
-            schedule( driveAwayFromWall); // for now... just drive.
+            // Drive towards the high junction and raise the lift at the same time.
+            //ParallelCommandGroup turnToAndRaiseLift = new ParallelCommandGroup( raiseHighJunction, driveTowardsJunction);
+
+            // Sequence the commands to drive to the junction and cone stack
+            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(
+                    driveAwayFromWall,
+                    turnToJunction,
+                    driveTowardsJunction,
+//                    elbowAndDriveFromWall,
+//                    turnToAndRaiseLift,
+                    driveToCenterB ,
+                    turnToConestack,
+                    driveToConestack.withTimeout(5000));
+//                    driveToCenterF,
+//                    turnToAndRaiseLift,
+//                    driveToCenterB,
+//                   // driveToConestack.withTimeout(5000),
+//                    driveToCenterF);
+
+            schedule( driveAroundField ); // for now... just drive.
+            //schedule(plainTurn);
         }
         catch (Exception e)
         {
             telemetry.addData("Something did not initialize properly.", 0);
-            telemetry.addData("Ugh: ", "%s, %s, %s", e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3]);
+            telemetry.addData("Ugh: ",  e.getMessage());
+            telemetry.addData("Ugh2: ", "%s\n%s\n%s\n%s\n%s", e.getStackTrace()[0], e.getStackTrace()[1], e.getStackTrace()[2], e.getStackTrace()[3], e.getStackTrace()[4]);
         }
     }
 
@@ -61,7 +102,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     public void init_loop()
     {
         //if (odometry != null) { odometry.update(); }
-        telemetry.addData("Init Loop is running... ", 1);
+        //telemetry.addData("Init Loop is running... ", 1);
     }
 
     @Override

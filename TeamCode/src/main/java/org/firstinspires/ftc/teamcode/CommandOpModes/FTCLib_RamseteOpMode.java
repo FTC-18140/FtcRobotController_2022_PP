@@ -45,12 +45,12 @@ public class FTCLib_RamseteOpMode extends TBDOpModeBase
 
             // Start and End points.
             Pose2d trajStart = new Pose2d(inchesToMeters(0), inchesToMeters(0), Rotation2d.fromDegrees(0));
-            Pose2d trajEnd   = new Pose2d(inchesToMeters(48), inchesToMeters(0), Rotation2d.fromDegrees(45));
+            Pose2d trajEnd   = new Pose2d(inchesToMeters(48), inchesToMeters(0), Rotation2d.fromDegrees(0));
 
             // Make intermediate or "interior" points between the start and end.
             ArrayList<Translation2d> interiorWaypoints = new ArrayList<>();
-            interiorWaypoints.add(new Translation2d(inchesToMeters(12), inchesToMeters(-4)));
-            interiorWaypoints.add(new Translation2d(inchesToMeters(24), inchesToMeters(-4)));
+            interiorWaypoints.add(new Translation2d(inchesToMeters(12), inchesToMeters(0)));
+            interiorWaypoints.add(new Translation2d(inchesToMeters(24), inchesToMeters(0)));
             interiorWaypoints.add(new Translation2d(inchesToMeters(36), inchesToMeters(0)));
 
             // Specify the maximum velocity and acceleration allowed when following the trajectory

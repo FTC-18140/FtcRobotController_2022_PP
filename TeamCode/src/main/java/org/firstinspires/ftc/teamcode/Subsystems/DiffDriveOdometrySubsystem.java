@@ -1,20 +1,22 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.function.DoubleSupplier;
 
-public class DiffOdometrySubsystem extends SubsystemBase
+public class DiffDriveOdometrySubsystem extends SubsystemBase
 {
 
-    protected DifferentialOdometry m_odometry;
+    protected DifferentialDriveOdometry m_odometry;
     Telemetry telemetry;
-    DoubleSupplier left, right;
+    DoubleSupplier left, right, gyro;
 
     public final double TRACK_WIDTH = 28.2*2.0;
     public final double TRACK_WIDTH_METERS = TRACK_WIDTH/100.0;
@@ -22,24 +24,24 @@ public class DiffOdometrySubsystem extends SubsystemBase
     /**
      * Make sure you are using the supplier version of the constructor
      */
-    public DiffOdometrySubsystem(DoubleSupplier leftEncoderDistance, DoubleSupplier rightEncoderDistance,
-                                 Telemetry telem) {
-        m_odometry = new DifferentialOdometry( leftEncoderDistance, rightEncoderDistance, TRACK_WIDTH);
-        m_odometry.updatePose( new Pose2d(20, 90, new Rotation2d(0)));
+    public DiffDriveOdometrySubsystem(DoubleSupplier leftEncoderDistance, DoubleSupplier rightEncoderDistance, DoubleSupplier gyroAngle,
+                                      Telemetry telem) {
+        m_odometry = new DifferentialDriveOdometry( new Rotation2d(0), new Pose2d(20, 90, new Rotation2d(0)));
         telemetry = telem;
         left = leftEncoderDistance;
         right = rightEncoderDistance;
+        gyro = gyroAngle;
     }
 
     public Pose2d getPose() {
-        return m_odometry.getPose();
+        return m_odometry.getPoseMeters();
     }
 
     /**
      * Call this at the end of every loop
      */
     public void update() {
-        m_odometry.updatePose();
+        m_odometry.update(new Rotation2d(gyro.getAsDouble()), left.getAsDouble(), right.getAsDouble());
     }
 
     /**
@@ -47,7 +49,7 @@ public class DiffOdometrySubsystem extends SubsystemBase
      */
     @Override
     public void periodic() {
-        m_odometry.updatePose();
+        m_odometry.update(new Rotation2d(gyro.getAsDouble()), left.getAsDouble(), right.getAsDouble());
         telemetry.addData("left", left.getAsDouble());
         telemetry.addData("right", right.getAsDouble());
        // telemetry.addData("Robot Pose: ", getPose() );
