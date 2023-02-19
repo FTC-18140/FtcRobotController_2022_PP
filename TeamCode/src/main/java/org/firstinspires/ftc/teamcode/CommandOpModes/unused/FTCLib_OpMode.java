@@ -1,14 +1,17 @@
-package org.firstinspires.ftc.teamcode.CommandOpModes;
+package org.firstinspires.ftc.teamcode.CommandOpModes.unused;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.CommandOpModes.TBDOpModeBase;
 import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
+@Disabled
 @Autonomous(name = "FTCLib_OpMode", group = "FTCLib")
 public class FTCLib_OpMode extends TBDOpModeBase
 {

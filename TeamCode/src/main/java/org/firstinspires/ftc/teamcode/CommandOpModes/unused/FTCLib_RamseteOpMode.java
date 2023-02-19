@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandOpModes;
+package org.firstinspires.ftc.teamcode.CommandOpModes.unused;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.RamseteCommand;
@@ -11,12 +11,14 @@ import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.CommandOpModes.TBDOpModeBase;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous(name = "FTCLib_RamseteOpMode", group = "FTCLib")
 @Config
 public class FTCLib_RamseteOpMode extends TBDOpModeBase

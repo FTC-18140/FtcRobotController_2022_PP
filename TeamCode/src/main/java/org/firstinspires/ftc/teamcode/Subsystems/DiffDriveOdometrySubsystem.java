@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdometry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,8 +23,8 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
      * Make sure you are using the supplier version of the constructor
      */
     public DiffDriveOdometrySubsystem(DoubleSupplier leftEncoderDistance, DoubleSupplier rightEncoderDistance, DoubleSupplier gyroAngle,
-                                      Telemetry telem) {
-        m_odometry = new DifferentialDriveOdometry( new Rotation2d(0), new Pose2d(20, 90, new Rotation2d(0)));
+                                      double initX, double initY, double initHdg, Telemetry telem) {
+        m_odometry = new DifferentialDriveOdometry( new Rotation2d(initHdg), new Pose2d(initX, initY, new Rotation2d(initHdg)));
         telemetry = telem;
         left = leftEncoderDistance;
         right = rightEncoderDistance;
