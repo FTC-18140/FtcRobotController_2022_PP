@@ -49,11 +49,11 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
      */
     @Override
     public void periodic() {
-        m_odometry.update(new Rotation2d(gyro.getAsDouble()), left.getAsDouble(), right.getAsDouble());
+        update();
         telemetry.addData("left", left.getAsDouble());
         telemetry.addData("right", right.getAsDouble());
        // telemetry.addData("Robot Pose: ", getPose() );
-        telemetry.addData("X, Y: ", "%.4f, %.4f", getPose().getX(), getPose().getY());
+        telemetry.addData("X, Y: ", "%.3f, %.3f", getPose().getX(), getPose().getY());
         telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
     }
 
