@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
-import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.ulp;
@@ -53,14 +52,14 @@ public class ArriveLocationCommand extends CommandBase
      * Creates a new ArriveLocationCommand.
      *
      */
-    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double moveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double arriveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
         toHeading = Math.toRadians(heading);
         mySpeed = speed;
         myBackwards = (Math.signum(speed) < 0);
         myTurnSpeed = turnSpeed;
-        myBuffer = moveBuffer;
+        myBuffer = arriveBuffer;
         myEndPoint = lastPoint;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
@@ -104,12 +103,17 @@ public class ArriveLocationCommand extends CommandBase
             telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
             telemetry.addData("myHeading: ", Math.toDegrees(toHeading));
             motorPowers[0] = 0.0;
-            motorPowers[2] = Range.clip(-turnAngle / Math.PI, -1.0 * myTurnSpeed, myTurnSpeed);
+            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
+            MotionProfile.headingMinSpeed = 0.08;
+
         }
         else
         {  // find translation speed
             motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
-            motorPowers[2] = Range.clip(-turnAngle / Math.PI, -1.0 * myTurnSpeed, myTurnSpeed);
+            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
+
+            MotionProfile.headingMinSpeed = 0.004 * Math.abs(turnAngle)/Math.toRadians(10);
+
         }
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
@@ -136,6 +140,10 @@ public class ArriveLocationCommand extends CommandBase
             motorPowers[2] = 0;
         }
 
+        if ((Math.abs(motorPowers[0])+Math.abs(motorPowers[2])) > myTurnSpeed )
+        {
+            motorPowers[0] = motorPowers[0] * Math.abs(motorPowers[0]/(Math.abs(motorPowers[0])+Math.abs(motorPowers[2])));
+        }
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }
 
@@ -218,7 +226,7 @@ public class ArriveLocationCommand extends CommandBase
         }
         else
         {
-            return ((angle - Math.PI) % (Math.PI * 2)) + Math.PI;
+            return ((angle - Math.PI) % (Math.PI * -2)) + Math.PI;
         }
     }
 

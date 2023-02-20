@@ -29,6 +29,17 @@ public class ChassisSubsystem extends SubsystemBase
     Telemetry telemetry;
     List<LynxModule> allHubs;
 
+    public double getHeading()
+    {
+        return heading;
+    }
+    public double getHeadingAsRad()
+    {
+        return Math.toRadians(heading);
+    }
+
+    private double heading;
+
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
     private static final double DRIVE_GEAR_REDUCTION = 5.23 * 2.89;  // actual gear ratios of the 4:1 and 3:1 UltraPlanetary gear box modules
@@ -37,6 +48,7 @@ public class ChassisSubsystem extends SubsystemBase
     private static final double CPR = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION;
     private static final double RPM = 6000.0/(DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION);  // max RPM of REV HD motor is 6000
     private static final double CM_PER_COUNT = (WHEEL_DIAMETER_CM * Math.PI) / CPR;
+
 
     /**
      * Creates a new DriveSubsystem.
@@ -102,7 +114,7 @@ public class ChassisSubsystem extends SubsystemBase
             allHubs = hMap.getAll(LynxModule.class);
             for (LynxModule module : allHubs)
             {
-                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             }
         }
         catch (Exception e)
@@ -195,10 +207,10 @@ public class ChassisSubsystem extends SubsystemBase
      * Get the heading angle from the imu and convert it to degrees.
      * @return the heading angle
      */
-    public double getHeading()
+    private double updateHeading()
     {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                AngleUnit.DEGREES);
+                                                       AngleUnit.DEGREES);
         return -AngleUnit.DEGREES.normalize(
                 AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
@@ -206,10 +218,11 @@ public class ChassisSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
-//        for (LynxModule module : allHubs)
-//        {
-//            module.clearBulkCache();
-//        }
+        heading = updateHeading();
+        for (LynxModule module : allHubs)
+        {
+            module.clearBulkCache();
+        }
     }
 
     public Telemetry getTelemetry() {

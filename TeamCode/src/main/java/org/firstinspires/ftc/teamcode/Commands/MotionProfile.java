@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.purepursuit.PathMotionProfile;
 import com.qualcomm.robotcore.util.Range;
 
@@ -7,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-
+@Config
 public class MotionProfile extends PathMotionProfile
 {
     private final double accelBuffer; // cm from target
@@ -54,12 +55,15 @@ public class MotionProfile extends PathMotionProfile
         return sign*Range.clip(shapedValue, minSpeed, Math.abs(maxSpeed));
     }
 
+    public static double headingOrder = 0.5;
+    public static double headingMinSpeed = 0.02;
+
     public void processHeading(double[] motorspeeds, double angleFromTarget, double maxTurnSpeed)
     {
         // Do the profiling of the turning.
-        //telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
-        double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, hdgBuffer/180.0*Math.PI, 0.1, 1);
-        //telem.addData("shaped Value: ", shapedValue);
+        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
+        double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBuffer), headingMinSpeed, headingOrder);
+        telem.addData("shaped Value: ", shapedValue);
         motorspeeds[2] = shapedValue;
     }
 }

@@ -635,6 +635,7 @@ public class Thunderbot_2022
         armstrong.update();
         lights.checkDeadlines();
 
+        telemetry.addData("Heading: ", heading);
 //        telemetry.addData("leftFrontPosition", leftFrontPosition);
 //        telemetry.addData("rightFrontPosition", rightFrontPosition);
 //        telemetry.addData("leftRearPosition", leftRearPosition);

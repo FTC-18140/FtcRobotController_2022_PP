@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveLocationCommand;
@@ -9,13 +12,16 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 @Autonomous(name = "FTCLib_TestArriveOpMode", group = "FTCLib")
-
+@Config
 public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
     DiffDriveOdometrySubsystem odometry = null;
     ArmSubsystem armstrong = null;
     LiftSubsystem lift = null;
+    public static double driveOutDistanceX = 90;
+    public static double driveBackDistanceY = 31;
+
 
     @Override
     public void init()
@@ -23,7 +29,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         try
         {
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
-            odometry = new DiffDriveOdometrySubsystem(chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeading,
+            odometry = new DiffDriveOdometrySubsystem(chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeadingAsRad,
                                                       20, 90, 0, telemetry
             );
             armstrong = new ArmSubsystem(hardwareMap, telemetry);
@@ -84,9 +90,33 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
 
             ArriveLocationCommand driveAwayFromWall =
-                    new ArriveLocationCommand(50, 90, 0.3, 0.3, 5, 0, false, false, chassis, odometry );
-            schedule( driveAwayFromWall );
-            //schedule(plainTurn);
+                    new ArriveLocationCommand(110, 90, 0.3, 0.1, 1, 0, false, true, chassis, odometry );
+            ArriveLocationCommand turnToJunction =
+                    new ArriveLocationCommand( 100, 100, 0.35, 0.25, .5, 45, true, false, chassis, odometry );
+            WaitCommand waitAtJunction = new WaitCommand( 1000);
+            ArriveLocationCommand driveBackwards =
+                    new ArriveLocationCommand( 95, 70, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
+            ArriveLocationCommand turnToCones =
+                    new ArriveLocationCommand( 100, 100, 0.25, 0.25, .5, -90, true, false, chassis, odometry );
+            ArriveLocationCommand driveToCones1 =
+                    new ArriveLocationCommand(90, 51, 0.3, 0.2, 1, 0, false, false, chassis, odometry );
+            ArriveLocationCommand driveToCones2 =
+                    new ArriveLocationCommand(90, 31, 0.3, 0.2, 1, 0, false, true, chassis, odometry );
+            ArriveLocationCommand straightenOnCones =
+                    new ArriveLocationCommand( 100, 100, 0.25, 0.2, .5, -90, true, false, chassis, odometry );
+            WaitCommand waitAtCones = new WaitCommand( 2000);
+            ArriveLocationCommand driveBackwards2 =
+                    new ArriveLocationCommand( 95, 70, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
+            ArriveLocationCommand driveToJunction =
+                    new ArriveLocationCommand(110, 90, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
+            WaitCommand waitAtJunction2 = new WaitCommand( 2000);
+
+            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall, turnToJunction.withTimeout(1500), waitAtJunction,
+                                                                                 driveBackwards, turnToCones.withTimeout(3000), driveToCones1, driveToCones2, waitAtCones,
+                                                                                 driveBackwards2, driveToJunction, waitAtJunction2);
+
+
+            schedule( driveAroundField );
         }
         catch (Exception e)
         {
