@@ -22,6 +22,7 @@ public class DepartCommand extends CommandBase
     private Pose2d myRobotPose;
 
     private final double myTargetZoneCM;
+    private final double myLaunchZoneCM;
     private final double mySpeed;
     private final double myTurnSpeed;
 
@@ -56,17 +57,17 @@ public class DepartCommand extends CommandBase
         toPoint = new Translation2d(x, y);
 //        toHeading = Math.toRadians(heading);
         mySpeed = speed;
-        myBackwards = (Math.signum(speed) < 0);
+        myBackwards = (speed < 0);
         myTurnSpeed = turnSpeed;
         myTargetZoneCM = targetZoneCM;
-//        myEndPoint = lastPoint;
+        myLaunchZoneCM = launchZoneCM;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
 //        myTurnOnly = turnOnly;
         myStopAtEnd = stopAtEnd;
 
-        myMotionProfile = new MotionProfile(30, targetZoneCM, 1, 0.005);
+        myMotionProfile = new MotionProfile(myLaunchZoneCM, myTargetZoneCM, 1, 0.005);
         // temp
         myMotionProfile.telem = telemetry;
 
@@ -123,7 +124,9 @@ public class DepartCommand extends CommandBase
         {  // find translation speed
             if (myBackwards)
             {
-                motorPowers[0] = Range.clip(driveDistance, mySpeed, -0.1);
+                motorPowers[0] = Range.clip(-driveDistance, mySpeed, -0.1);
+                telemetry.addData("Motor p 0: ", "%.2f --> %.2f", driveDistance, motorPowers[0]);
+
             }
             else
             {
@@ -220,7 +223,7 @@ public class DepartCommand extends CommandBase
      */
     private void profileMotorPowers(double[] speeds)
     {
-        if (fromDistance < toDistance)
+        if (fromDistance < myLaunchZoneCM )
         {    // If the robot is closer to the "from" point, do acceleration
             myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
         }

@@ -60,7 +60,7 @@ public class ArriveCommand extends CommandBase
         toPoint = new Translation2d(x, y);
 //        toHeading = Math.toRadians(heading);
         mySpeed = speed;
-        myBackwards = (Math.signum(speed) < 0);
+        myBackwards = (speed < 0);
         myTurnSpeed = turnSpeed;
         myArriveBufferCM = arriveBuffer;
         myEndZoneCM = endZoneCM;
@@ -92,7 +92,16 @@ public class ArriveCommand extends CommandBase
             firstExecute = false;
         }
 
-        telemetry.addData("executing Arrive Command: ", toPoint);
+        if ( myBackwards)
+        {
+            telemetry.addData("Executing Arrive Command Backwards: ", "%.2f, %.2f", toPoint.getX(),
+                              toPoint.getY());
+        }
+        else
+        {
+            telemetry.addData("Executing Arrive Command: ", "%.2f, %.2f", toPoint.getX(),
+                              toPoint.getY());
+        }
         telemetry.addData("Command: ", getName());
 
         // Get new position data from the odometry subsystem and update the robot's location and
@@ -121,7 +130,7 @@ public class ArriveCommand extends CommandBase
         {  // find translation speed
             if (myBackwards)
             {
-                motorPowers[0] = Range.clip(driveDistance, mySpeed, -0.1);
+                motorPowers[0] = Range.clip(-driveDistance, mySpeed, -0.1);
             }
             else
             {

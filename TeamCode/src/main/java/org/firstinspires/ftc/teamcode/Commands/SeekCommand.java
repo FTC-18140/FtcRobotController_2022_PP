@@ -84,8 +84,16 @@ public class SeekCommand extends CommandBase
             fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
             firstExecute = false;
         }
-        telemetry.addData("Executing Arrive Command: ", toPoint);
-
+        if ( myBackwards)
+        {
+            telemetry.addData("Executing Seek Command Backwards: ", "%.2f, %.2f", toPoint.getX(),
+                              toPoint.getY());
+        }
+        else
+        {
+            telemetry.addData("Executing Seek Command: ", "%.2f, %.2f", toPoint.getX(),
+                              toPoint.getY());
+        }
         // Get new position data from the odometry subsystem and update the robot's location and
         // distance/angles relative to the From Point and the To Point.
         double driveDistance = updatePositions();
@@ -112,7 +120,7 @@ public class SeekCommand extends CommandBase
         {  // find translation speed
             if (myBackwards)
             {
-                motorPowers[0] = Range.clip(driveDistance, mySpeed, -0.1);
+                motorPowers[0] = Range.clip(-driveDistance, mySpeed, -0.1);
             }
             else
             {

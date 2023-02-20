@@ -67,7 +67,7 @@ public class MotionProfile extends PathMotionProfile
         return sign*Range.clip(shapedValue, minSpeed, Math.abs(maxSpeed));
     }
 
-    public static double headingOrder = 0.5;
+    public static double headingOrder = 1;
 
     public void processHeading(double[] motorspeeds, double angleFromTarget, double maxTurnSpeed)
     {
