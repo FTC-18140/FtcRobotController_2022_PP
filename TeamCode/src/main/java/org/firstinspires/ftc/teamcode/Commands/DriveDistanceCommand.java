@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import android.sax.StartElementListener;
-
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
@@ -12,7 +10,7 @@ public class DriveDistanceCommand extends CommandBase
     private final double myDistance;
     private final double mySpeed;
     private double myInitialDistance;
-    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 1);
+    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 1, 0.02);
 
     /**
      * Creates a new DriveDistanceCommand.

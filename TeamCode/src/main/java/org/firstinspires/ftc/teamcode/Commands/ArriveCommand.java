@@ -12,26 +12,27 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import static java.lang.Math.abs;
 import static java.lang.Math.ulp;
 
-public class ArriveLocationCommand extends CommandBase
+public class ArriveCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffDriveOdometrySubsystem myOdometrySubsystem;
-    private final MotionProfile myMotionProfile = new MotionProfile(20, 20, 1);
+    private final MotionProfile myMotionProfile;
 
     private Translation2d fromPoint;
     private final Translation2d toPoint;
-    private final double toHeading;
+//    private final double toHeading;
 
     private Pose2d myRobotPose;
 
-    private final double myBuffer;
+    private final double myArriveBufferCM;
+    private final double myEndZoneCM;
     private final double mySpeed;
     private final double myTurnSpeed;
 
     private boolean myArrived = false;
 
-    private final boolean myEndPoint;
-    private final boolean myTurnOnly;
+//    private final boolean myEndPoint;
+//    private final boolean myTurnOnly;
     private final boolean myBackwards;
 
     // Delta values.
@@ -46,26 +47,30 @@ public class ArriveLocationCommand extends CommandBase
     double absoluteAngleToPosition;
     double relativeAngleToPosition;
 
+    private boolean firstExecute = true;
+
     Telemetry telemetry;
 
     /**
-     * Creates a new ArriveLocationCommand.
+     * Creates a new ArriveCommand.
      *
      */
-    public ArriveLocationCommand(double x, double y, double speed, double turnSpeed, double arriveBuffer, double heading, boolean turnOnly, boolean lastPoint, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public ArriveCommand(double x, double y, double speed, double turnSpeed, double endZoneCM, double arriveBuffer, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
-        toHeading = Math.toRadians(heading);
+//        toHeading = Math.toRadians(heading);
         mySpeed = speed;
         myBackwards = (Math.signum(speed) < 0);
         myTurnSpeed = turnSpeed;
-        myBuffer = arriveBuffer;
-        myEndPoint = lastPoint;
+        myArriveBufferCM = arriveBuffer;
+        myEndZoneCM = endZoneCM;
+//        myEndPoint = lastPoint;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
-        myTurnOnly = turnOnly;
+//        myTurnOnly = turnOnly;
 
+        myMotionProfile  = new MotionProfile(30, myEndZoneCM, 1, 0.005);
         // temp
         myMotionProfile.telem = telemetry;
 
@@ -75,13 +80,18 @@ public class ArriveLocationCommand extends CommandBase
     @Override
     public void initialize()
     {
-        fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
         telemetry.addData("Arrive Command Initialized,", toPoint);
     }
 
     @Override
     public void execute()
     {
+        if ( firstExecute )
+        {
+            fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
+            firstExecute = false;
+        }
+
         telemetry.addData("executing Arrive Command: ", toPoint);
         telemetry.addData("Command: ", getName());
 
@@ -98,21 +108,28 @@ public class ArriveLocationCommand extends CommandBase
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-        if (myTurnOnly)
-        { // no translation speed
-            telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-            telemetry.addData("myHeading: ", Math.toDegrees(toHeading));
-            motorPowers[0] = 0.0;
-            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
-            MotionProfile.headingMinSpeed = 0.08;
-
-        }
-        else
+//        if (myTurnOnly)
+//        { // no translation speed
+//            telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
+//            telemetry.addData("myHeading: ", Math.toDegrees(toHeading));
+//            motorPowers[0] = 0.0;
+//            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
+//            MotionProfile.headingMinSpeed = 0.08;
+//
+//        }
+//        else
         {  // find translation speed
-            motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
+            if (myBackwards)
+            {
+                motorPowers[0] = Range.clip(driveDistance, mySpeed, -0.1);
+            }
+            else
+            {
+                motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
+            }
             motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
 
-            MotionProfile.headingMinSpeed = 0.004 * Math.abs(turnAngle)/Math.toRadians(10);
+            myMotionProfile.setMinTurnSpeed(0.03 * Math.abs(turnAngle)/Math.toRadians(10));
 
         }
 
@@ -123,13 +140,15 @@ public class ArriveLocationCommand extends CommandBase
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
         // Check if we have arrived
-        if ( myTurnOnly )
-        { // arriving on a Turn Only move is based on closeness to myHeading
-            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, Math.toRadians(myBuffer));
-        }
-        else
+//        if ( myTurnOnly )
+//        { // arriving on a Turn Only move is based on closeness to myHeading
+//            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, Math.toRadians(
+//                    myTargetZoneCM));
+//        }
+//        else
         { // arriving on a normal move is based on closeness to the toPoint
-            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
+            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint,
+                                                 myArriveBufferCM);
         }
 
         telemetry.addData("Arrived at toPoint?  ", myArrived);
@@ -176,11 +195,11 @@ public class ArriveLocationCommand extends CommandBase
 
         // Based on the current heading of the robot, update the value that determines how much
         // the robot needs to turn
-        if (myTurnOnly)
-        {
-            relativeAngleToPosition = -angleWrap(toHeading - myRobotPose.getHeading());
-        }
-        else
+//        if (myTurnOnly)
+//        {
+//            relativeAngleToPosition = -angleWrap(toHeading - myRobotPose.getHeading());
+//        }
+//        else
         {
             relativeAngleToPosition = -angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
 
@@ -200,11 +219,11 @@ public class ArriveLocationCommand extends CommandBase
      */
     private void profileMotorPowers(double[] speeds)
     {
-        if (fromDistance < toDistance)
-        {    // If the robot is closer to the "from" point, do acceleration
-            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
-        }
-        else if (myEndPoint)
+//        if (fromDistance < toDistance)
+//        {    // If the robot is closer to the "from" point, do acceleration
+//            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
+//        }
+       if (toDistance < myEndZoneCM)
         {    // If the robot is closer to the "to" point, do deceleration
             myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
         }
@@ -250,22 +269,22 @@ public class ArriveLocationCommand extends CommandBase
         return false;
     }
 
-    /**
-     * Calculates whether or not two angles are equal within a margin of error.
-     *
-     * @param a1     Angle 1 (in radians).
-     * @param a2     Angle 2 (in radians).
-     * @param buffer Margin of error (in radians)
-     * @return True if the point are equal within a margin or error, false otherwise.
-     */
-    public boolean rotationEqualsWithBuffer(double a1, double a2, double buffer)
-    {
-        if (a1 - buffer < a2 && a1 + buffer > a2)
-        {
-            return true;
-        }
-        return false;
-    }
+//    /**
+//     * Calculates whether or not two angles are equal within a margin of error.
+//     *
+//     * @param a1     Angle 1 (in radians).
+//     * @param a2     Angle 2 (in radians).
+//     * @param buffer Margin of error (in radians)
+//     * @return True if the point are equal within a margin or error, false otherwise.
+//     */
+//    public boolean rotationEqualsWithBuffer(double a1, double a2, double buffer)
+//    {
+//        if (a1 - buffer < a2 && a1 + buffer > a2)
+//        {
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public void end(boolean interrupted) {

@@ -5,7 +5,11 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Commands.ArriveLocationCommand;
+import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
+import org.firstinspires.ftc.teamcode.Commands.DepartCommand;
+import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
+import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
+import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
@@ -19,8 +23,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     DiffDriveOdometrySubsystem odometry = null;
     ArmSubsystem armstrong = null;
     LiftSubsystem lift = null;
-    public static double driveOutDistanceX = 90;
-    public static double driveBackDistanceY = 31;
+
 
 
     @Override
@@ -40,22 +43,22 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             register( armstrong );
             register( lift );
 
-//            ArriveLocationCommand driveAwayFromWall =
-//                    new ArriveLocationCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
-//            ArriveLocationCommand turnToJunction =
-//                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, 40, true, false, chassis, odometry );
-//            ArriveLocationCommand driveTowardsJunction =
-//                    new ArriveLocationCommand( 167, 102, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
-//            ArriveLocationCommand driveToCenterB =
-//                    new ArriveLocationCommand( 158, 90, -0.5, 0.3, 2, 0, false, false, chassis, odometry );
-//            ArriveLocationCommand turnToConestack =
-//                    new ArriveLocationCommand( 100, 100, 0.3, 0.4, 2, -90, true, false, chassis, odometry );
-//            ArriveLocationCommand driveToConestack =
-//                    new ArriveLocationCommand( 154, 31, 0.3, 0.3, 2, 0, false, true, chassis, odometry );
-//            ArriveLocationCommand driveToCenterF =
-//                    new ArriveLocationCommand( 158, 90, 0.5, 0.3, 2, 0, false, false, chassis, odometry );
-//            ArriveLocationCommand plainTurn =
-//                    new ArriveLocationCommand( 100, 100, 0.3, 0.3, 2, -90, true, false, chassis, odometry );
+//            ArriveCommand driveAwayFromWall =
+//                    new ArriveCommand(154, 90, 0.5, 0.3, 5, 0, false, false, chassis, odometry );
+//            ArriveCommand turnToJunction =
+//                    new ArriveCommand( 100, 100, 0.3, 0.4, 2, 40, true, false, chassis, odometry );
+//            ArriveCommand driveTowardsJunction =
+//                    new ArriveCommand( 167, 102, 0.5, 0.3, 2, 0, false, true, chassis, odometry );
+//            ArriveCommand driveToCenterB =
+//                    new ArriveCommand( 158, 90, -0.5, 0.3, 2, 0, false, false, chassis, odometry );
+//            ArriveCommand turnToConestack =
+//                    new ArriveCommand( 100, 100, 0.3, 0.4, 2, -90, true, false, chassis, odometry );
+//            ArriveCommand driveToConestack =
+//                    new ArriveCommand( 154, 31, 0.3, 0.3, 2, 0, false, true, chassis, odometry );
+//            ArriveCommand driveToCenterF =
+//                    new ArriveCommand( 158, 90, 0.5, 0.3, 2, 0, false, false, chassis, odometry );
+//            ArriveCommand plainTurn =
+//                    new ArriveCommand( 100, 100, 0.3, 0.3, 2, -90, true, false, chassis, odometry );
 //
 //
 //            // Make the command to rotate the cone away from the floor (guessing to set it at 65 degrees)
@@ -89,31 +92,35 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 ////                    driveToCenterF);
 
 
-            ArriveLocationCommand driveAwayFromWall =
-                    new ArriveLocationCommand(110, 90, 0.3, 0.1, 1, 0, false, true, chassis, odometry );
-            ArriveLocationCommand turnToJunction =
-                    new ArriveLocationCommand( 100, 100, 0.35, 0.25, .5, 45, true, false, chassis, odometry );
-            WaitCommand waitAtJunction = new WaitCommand( 1000);
-            ArriveLocationCommand driveBackwards =
-                    new ArriveLocationCommand( 95, 70, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
-            ArriveLocationCommand turnToCones =
-                    new ArriveLocationCommand( 100, 100, 0.25, 0.25, .5, -90, true, false, chassis, odometry );
-            ArriveLocationCommand driveToCones1 =
-                    new ArriveLocationCommand(90, 51, 0.3, 0.2, 1, 0, false, false, chassis, odometry );
-            ArriveLocationCommand driveToCones2 =
-                    new ArriveLocationCommand(90, 31, 0.3, 0.2, 1, 0, false, true, chassis, odometry );
-            ArriveLocationCommand straightenOnCones =
-                    new ArriveLocationCommand( 100, 100, 0.25, 0.2, .5, -90, true, false, chassis, odometry );
-            WaitCommand waitAtCones = new WaitCommand( 2000);
-            ArriveLocationCommand driveBackwards2 =
-                    new ArriveLocationCommand( 95, 70, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
-            ArriveLocationCommand driveToJunction =
-                    new ArriveLocationCommand(110, 90, -0.3, 0.2, 1, 0, false, true, chassis, odometry );
+            DepartCommand driveAwayFromWall = new DepartCommand(70, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+            ArriveCommand arriveAtJunction  = new ArriveCommand(140, 90, 0.4, 0.1, 30, 1, chassis, odometry );
+            WaitCommandTBD       waitToTurn = new WaitCommandTBD(250, telemetry);
+            TurnCommand      turnToJunction = new TurnCommand(45, 0.25, 0.1, .5, chassis, odometry);
+            WaitCommandTBD   waitAtJunction = new WaitCommandTBD( 2000, telemetry);
+
+            DepartCommand   driveBackwards = new DepartCommand(122, 75, -0.35, 0.3, 3, 3, false, chassis, odometry);
+            WaitCommandTBD waitAfterBackup = new WaitCommandTBD(125, telemetry);
+
+            TurnCommand     turnTowardsCones = new TurnCommand(-90, 0.3, 0.05, 2, chassis, odometry);
+            WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
+
+            SeekCommand   driveToCones1 = new SeekCommand(121, 60, 0.35, 0.35, 5, false, chassis, odometry );
+            SeekCommand driveToCones1_5 = new SeekCommand(121, 40, 0.35, 0.35, 5, false, chassis, odometry );
+            ArriveCommand driveToCones2 = new ArriveCommand(123, 21, 0.3, 0.3, 20, 1, chassis, odometry );
+            TurnCommand    alignToCones = new TurnCommand(-90, 0.25, 0.1, 0.5, chassis, odometry);
+
+            WaitCommandTBD waitAtCones = new WaitCommandTBD( 250, telemetry);
+
+//            ArriveCommand driveBackwards2 =
+//                    new ArriveCommand(95, 70, -0.3, 0.2, 1, chassis, odometry );
+//            ArriveCommand driveToJunction =
+//                    new ArriveCommand(110, 90, -0.3, 0.2, 1, chassis, odometry );
             WaitCommand waitAtJunction2 = new WaitCommand( 2000);
 
-            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall, turnToJunction.withTimeout(1500), waitAtJunction,
-                                                                                 driveBackwards, turnToCones.withTimeout(3000), driveToCones1, driveToCones2, waitAtCones,
-                                                                                 driveBackwards2, driveToJunction, waitAtJunction2);
+            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall, arriveAtJunction, waitToTurn, turnToJunction.withTimeout(1500), waitAtJunction,
+                                                                                 driveBackwards, waitAfterBackup, turnTowardsCones, waitAfterConeTurn,
+                                                                                 driveToCones1, driveToCones1_5, driveToCones2, waitAtCones, alignToCones);
+//                                                                                 driveBackwards2, driveToJunction, waitAtJunction2);
 
 
             schedule( driveAroundField );

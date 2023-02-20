@@ -42,7 +42,7 @@ public class ChassisSubsystem extends SubsystemBase
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
-    private static final double DRIVE_GEAR_REDUCTION = 5.23 * 2.89;  // actual gear ratios of the 4:1 and 3:1 UltraPlanetary gear box modules
+    private static final double DRIVE_GEAR_REDUCTION = 3.61 * 2.89;  // actual gear ratios of the 4:1 and 3:1 UltraPlanetary gear box modules
     private static final double WHEEL_DIAMETER_CM = 9.6;  // goBilda mecanum wheels are 96mm in diameter
     private static final double SPROCKET_REDUCTION = 1.4;  // drive train has a 10 tooth sprocket driving a 14 tooth sprocket
     private static final double CPR = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION;
@@ -86,6 +86,11 @@ public class ChassisSubsystem extends SubsystemBase
 
         telemetry = telem;
         resetEncoders();
+
+        lF.motor.setPower(0);
+        rF.motor.setPower(0);
+        lR.motor.setPower(0);
+        rR.motor.setPower(0);
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
