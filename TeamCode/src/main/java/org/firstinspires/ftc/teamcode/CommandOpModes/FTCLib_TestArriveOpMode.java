@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.DepartCommand;
+import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
 import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
@@ -45,38 +46,42 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             // Auto Commands
 
+            ElbowCommand liftConeUp = new ElbowCommand( 0.375, armstrong);
+
             DepartCommand driveAwayFromWall = new DepartCommand(70, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
-            ArriveCommand arriveAtJunction  = new ArriveCommand(140, 90, 0.4, 0.1, 30, 1, chassis, odometry );
+            ArriveCommand arriveAtJunction  = new ArriveCommand(152, 90, 0.4, 0.1, 30, 1, chassis, odometry );
             WaitCommandTBD       waitToTurn = new WaitCommandTBD(250, telemetry);
             TurnCommand      turnToJunction = new TurnCommand(45, 0.25, 0.1, 0.75, chassis, odometry);
             WaitCommandTBD  waitForConeDrop = new WaitCommandTBD( 2000, telemetry);
 
-            DepartCommand   driveBackwards = new DepartCommand(125, 75, -0.35, 0.2, 10, 10, false, chassis, odometry);
+            DepartCommand   driveBackwards = new DepartCommand(149, 80, -0.35, 0.3, 10, 10, false, chassis, odometry);
             WaitCommandTBD waitAfterBackup = new WaitCommandTBD(125, telemetry);
             TurnCommand     turnTowardsCones = new TurnCommand(-90, 0.3, 0.1, 2, chassis, odometry);
             WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
-            SeekCommand   driveToCones1 = new SeekCommand(124, 60, 0.3, 0.2, 5, false, chassis, odometry );
-            SeekCommand driveToCones1_5 = new SeekCommand(122, 40, 0.3, 0.2, 5, false, chassis, odometry );
-            ArriveCommand driveToCones2 = new ArriveCommand(123, 23, 0.3, 0.2, 25, 1, chassis, odometry );
+            SeekCommand   driveToCones1 = new SeekCommand(149, 60, 0.3, 0.2, 5, false, chassis, odometry );
+            SeekCommand driveToCones1_5 = new SeekCommand(149, 40, 0.3, 0.2, 5, false, chassis, odometry );
+            ArriveCommand driveToCones2 = new ArriveCommand(150, 28, 0.3, 0.2, 25, 1, chassis, odometry );
             TurnCommand    alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
             WaitCommandTBD waitForClaw = new WaitCommandTBD( 2000, telemetry);
 
-            DepartCommand  driveAwayCones = new DepartCommand(122, 40, -0.3, 0.2, 20, 3, false, chassis, odometry);
-            ArriveCommand   driveToCenter = new ArriveCommand( 122, 75, -0.3, 0.2, 20, 1, chassis, odometry);
-            TurnCommand   alignToJunction = new TurnCommand(45, 0.25, 0.15, 0.75, chassis, odometry);
+            DepartCommand  driveAwayCones = new DepartCommand(149, 40, -0.3, 0.2, 20, 3, false, chassis, odometry);
+            ArriveCommand   driveToCenter = new ArriveCommand( 152, 90, -0.3, 0.2, 20, 1, chassis, odometry);
+            TurnCommand   alignToJunction = new TurnCommand(-135, 0.25, 0.15, 0.75, chassis, odometry);
 
 //            ArriveCommand driveToJunction =
 //                    new ArriveCommand(110, 90, -0.3, 0.2, 1, chassis, odometry );
             WaitCommand waitAtJunction2 = new WaitCommand( 2000);
 
             SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveAwayFromWall, arriveAtJunction, waitToTurn, turnToJunction.withTimeout(1500), waitForConeDrop,
-                                                                                 driveBackwards, waitAfterBackup, turnTowardsCones.withTimeout(3000), waitAfterConeTurn,
-                                                                                 driveToCones1, driveToCones1_5, driveToCones2, alignToCones.withTimeout(1000), waitForClaw,
-                                                                                 driveAwayCones, driveToCenter, alignToJunction.withTimeout(3000));
+                                                                                 turnTowardsCones.withTimeout(3000), waitAfterConeTurn,
+                                                                                 driveToCones1_5, driveToCones2, alignToCones.withTimeout(1000), waitForClaw,
+                                                                                 driveAwayCones, driveToCenter, alignToJunction.withTimeout(1000));
 
 
             schedule( driveAroundField );
+//            schedule( liftConeUp);
+
         }
         catch (Exception e)
         {
