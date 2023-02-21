@@ -22,6 +22,8 @@ public class ClawSubsystem extends SubsystemBase
     {
         theClaw = hwMap.servo.get("claw");
         telemetry = telem;
+        theClaw.setPosition(0.525);
+
     }
 
     public boolean clawMove(double angle) {

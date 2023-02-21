@@ -28,13 +28,15 @@ public class ArmTestOpMode extends TBDOpModeBase {
             WaitCommandTBD waitTime = new WaitCommandTBD(5000, telemetry);
             WristCommand moveUp = new WristCommand(0.135, arm);
             WristCommand moveDown = new WristCommand(0.155, arm);
-            ClawCommand openUp = new ClawCommand(0.3, claw);
+            ClawCommand openUp = new ClawCommand(0.525, claw);
+//            claw.clawMove(0.3);
             register(claw);
             register(arm);
 
 
-            SequentialCommandGroup ElbowMotion = new SequentialCommandGroup(goUp, moveUp, openUp, waitTime, goDown);
-            schedule(ElbowMotion);
+//            SequentialCommandGroup ElbowMotion = new SequentialCommandGroup(goUp, moveUp, openUp, waitTime, goDown);
+//            schedule(ElbowMotion);
+            schedule(openUp);
 
         } catch (Exception e) {
             telemetry.addData("Something did not initialize properly.", 0);
