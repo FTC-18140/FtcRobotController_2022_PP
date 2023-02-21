@@ -22,7 +22,7 @@ public class LiftSubsystem extends SubsystemBase
     double leftSlidePosition;
     double rightSlidePosition;
 
-    Telemetry telemetry;
+    public Telemetry telemetry;
 
     // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -38,6 +38,8 @@ public class LiftSubsystem extends SubsystemBase
         {
             leftMotor = new Motor( hwMap, "leftLinear");
             rightMotor = new Motor( hwMap, "rightLinear");
+            leftEncoder = leftMotor.encoder;
+            rightEncoder = rightMotor.encoder;
             motors = new MotorGroup(leftMotor, rightMotor);
         }
         catch (Exception e)
@@ -112,12 +114,12 @@ public class LiftSubsystem extends SubsystemBase
     public void update() {
         if ( leftEncoder != null )
         {
-            leftSlidePosition = leftEncoder.getDistance() / COUNTS_PER_CM;
+            leftSlidePosition = leftEncoder.getPosition() / COUNTS_PER_CM;
 
         }
         if ( rightEncoder != null )
         {
-            rightSlidePosition = rightEncoder.getDistance() / COUNTS_PER_CM;
+            rightSlidePosition = rightEncoder.getPosition() / COUNTS_PER_CM;
         }
     }
 
@@ -126,5 +128,6 @@ public class LiftSubsystem extends SubsystemBase
     {
         super.periodic();
         update();
+        telemetry.addData("EncdoderDistance", getAverageEncoderDistance());
     }
 }

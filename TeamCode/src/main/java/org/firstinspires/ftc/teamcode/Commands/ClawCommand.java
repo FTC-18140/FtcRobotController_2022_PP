@@ -4,13 +4,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 
-public class ClawCommand extends CommandBase
-{
+public class ClawCommand extends CommandBase {
     private final double myAngle;
     private final ClawSubsystem myClaw;
 
-    ClawCommand(double angle, ClawSubsystem claw )
-    {
+
+    public ClawCommand(double angle, ClawSubsystem claw) {
         myAngle = angle;
         myClaw = claw;
         addRequirements(myClaw);
@@ -18,7 +17,16 @@ public class ClawCommand extends CommandBase
 
     @Override
     public void initialize() {
+
+    }
+
+    @Override
+    public void execute() {
         myClaw.clawMove(myAngle);
     }
 
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }
