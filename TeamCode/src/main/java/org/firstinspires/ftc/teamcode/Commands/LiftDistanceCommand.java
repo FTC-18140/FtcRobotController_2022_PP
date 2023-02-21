@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands;;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -9,6 +9,7 @@ public class LiftDistanceCommand extends CommandBase
     private final double myDistance;
     private final double mySpeed;
     private final LiftSubsystem myLift;
+    private double myInitialDistance;
 
     public LiftDistanceCommand(double distance, double speed, LiftSubsystem lift)
     {
@@ -21,6 +22,12 @@ public class LiftDistanceCommand extends CommandBase
     @Override
     public void initialize()
     {
+        myInitialDistance = myLift.getAverageEncoderDistance();
+    }
+
+    @Override
+    public void execute() {
+          
         if (myDistance > 0)
         {
             myLift.liftUp(mySpeed);
@@ -29,7 +36,8 @@ public class LiftDistanceCommand extends CommandBase
         {
             myLift.liftDown(mySpeed);
         }
-     }
+        myLift.telemetry.addData("Init Encoder Distance", myInitialDistance);
+    }
 
     @Override
     public void end(boolean interrupted) {
@@ -40,6 +48,6 @@ public class LiftDistanceCommand extends CommandBase
     @Override
     public boolean isFinished()
     {
-        return Math.abs(myLift.getAverageEncoderDistance()) >= myDistance;
+        return Math.abs(myLift.getAverageEncoderDistance()- myInitialDistance) >= Math.abs(myDistance);
     }
 }
