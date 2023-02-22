@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.CommandOpModes;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Commands.ClawCommand;
 import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 
 @Autonomous(name = "FTCLib_ElbowOpMode", group = "FTCLib")
 @Config
+@Disabled
 public class ArmTestOpMode extends TBDOpModeBase {
     ArmSubsystem arm = null;
     ClawSubsystem claw = null;
