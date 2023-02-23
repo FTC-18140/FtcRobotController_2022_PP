@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
+import org.w3c.dom.Text;
 
 @Autonomous(name = "FTCLib_TestArriveOpMode", group = "FTCLib")
 @Config
@@ -59,11 +60,11 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
             // ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
-            ArriveCommand arriveAtJunction  = new ArriveCommand(158, 101, 0.4, 0.1, 40, 1, chassis, odometry );
+            ArriveCommand arriveAtJunction  = new ArriveCommand(157, 100, 0.5, 0.1, 40, 1, chassis, odometry );
             ParallelCommandGroup driveAndLift = new ParallelCommandGroup(arriveAtJunction, goUpToHigh);
 
             WaitCommand waitToTurn = new WaitCommand(250);
-            TurnCommand turnToJunction = new TurnCommand(50, 0.25, 0.1, 0.75, chassis, odometry);
+            TurnCommand turnToJunction = new TurnCommand(52.5, 0.25, 0.1, 0.75, chassis, odometry);
 
             SequentialCommandGroup driveToJunction = new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
             //////////////////////////////////////
@@ -82,15 +83,15 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-25, 0.5, lift);
 //            ScheduleCommand lowerLift = new ScheduleCommand( moveLiftDown);
 
-            SeekCommand driveBack = new SeekCommand(154, 97, -0.3, 0.3, 1, true, chassis, odometry);
+            SeekCommand driveBack = new SeekCommand(154, 90, -0.4, 0.2, 7, true, chassis, odometry);
             TurnCommand turnTowardsCones = new TurnCommand(-90, 0.3, 0.1, 2, chassis, odometry);
             ParallelCommandGroup lowerLiftAndTurn = new ParallelCommandGroup(moveLiftDown, turnTowardsCones);
 
             ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
             WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
-            DepartCommand driveToCones1_5 = new DepartCommand(150, 40, 0.3, 0.2, 15, 5,false, chassis, odometry );
-            ArriveCommand driveToCones2 = new ArriveCommand(152, 25, 0.3, 0.2, 25, 1, chassis, odometry );
+            DepartCommand driveToCones1_5 = new DepartCommand(152, 40, 0.45, 0.2, 15, 5,false, chassis, odometry );
+            ArriveCommand driveToCones2 = new ArriveCommand(152, 25, 0.35, 0.2, 25, 1, chassis, odometry );
             TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
             ClawCommand grabCone = new ClawCommand(0.525, claw);
 
@@ -102,8 +103,8 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             // driveBackToJunction //
             DepartCommand  a_driveAwayCones = new DepartCommand(150, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
-            ArriveCommand   c_driveToCenter = new ArriveCommand( 163, 110, -0.3, 0.2, 30, 1, chassis, odometry);
-            SeekCommand b_midPoint = new SeekCommand(150, 70, -0.3, 0.2, 3, false, chassis, odometry);
+            ArriveCommand   c_driveToCenter = new ArriveCommand( 162, 109, -0.3, 0.2, 30, 1, chassis, odometry);
+            SeekCommand b_midPoint = new SeekCommand(150, 70, -0.3, 0.2, 6, false, chassis, odometry);
 
             SequentialCommandGroup _1a_driveToJunction = new SequentialCommandGroup(a_driveAwayCones, b_midPoint, c_driveToCenter);
 
@@ -115,7 +116,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             ParallelCommandGroup _1_liftAndDriveToCenter = new ParallelCommandGroup(_1a_driveToJunction, _1b_backUpHigh, _1c_wait.andThen(elbowBehind));
 
-            TurnCommand   _2_alignToJunction = new TurnCommand(-132, 0.25, 0.15, 0.75, chassis, odometry);
+            TurnCommand   _2_alignToJunction = new TurnCommand(-128, 0.25, 0.15, 0.75, chassis, odometry);
 
             SequentialCommandGroup driveBacktoJunction = new SequentialCommandGroup(_1_liftAndDriveToCenter, _2_alignToJunction);
             //////////////////////////////////////////
