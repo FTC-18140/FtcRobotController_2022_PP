@@ -58,12 +58,12 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
             LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(42, 0.5, lift);
-            ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
-            ArriveCommand arriveAtJunction  = new ArriveCommand(155, 97, 0.4, 0.1, 30, 1, chassis, odometry );
-            ParallelCommandGroup driveAndLift = new ParallelCommandGroup(arriveAtJunction, raiseUpLift);
+            // ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
+            ArriveCommand arriveAtJunction  = new ArriveCommand(151, 94, 0.4, 0.1, 40, 1, chassis, odometry );
+            ParallelCommandGroup driveAndLift = new ParallelCommandGroup(arriveAtJunction, goUpToHigh);
 
             WaitCommand waitToTurn = new WaitCommand(250);
-            TurnCommand turnToJunction = new TurnCommand(48, 0.25, 0.1, 0.75, chassis, odometry);
+            TurnCommand turnToJunction = new TurnCommand(50, 0.25, 0.1, 0.75, chassis, odometry);
 
             SequentialCommandGroup driveToJunction = new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
             //////////////////////////////////////
@@ -79,35 +79,39 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             ///////////////////////////////
 
             // driveToConeStack //
-            LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-25, 0.5, lift);
-            ScheduleCommand lowerLift = new ScheduleCommand( moveLiftDown);
+            LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-17.5, 0.5, lift);
+//            ScheduleCommand lowerLift = new ScheduleCommand( moveLiftDown);
 
             TurnCommand turnTowardsCones = new TurnCommand(-90, 0.3, 0.1, 2, chassis, odometry);
+            ParallelCommandGroup lowerLiftAndTurn = new ParallelCommandGroup(moveLiftDown, turnTowardsCones);
+
             ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
             WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
             DepartCommand driveToCones1_5 = new DepartCommand(150, 40, 0.3, 0.2, 15, 5,false, chassis, odometry );
-            ArriveCommand driveToCones2 = new ArriveCommand(150, 28, 0.3, 0.2, 25, 1, chassis, odometry );
+            ArriveCommand driveToCones2 = new ArriveCommand(150, 25, 0.3, 0.2, 25, 1, chassis, odometry );
             TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
             ClawCommand grabCone = new ClawCommand(0.525, claw);
 
-            WaitCommandTBD waitForClaw = new WaitCommandTBD( 1000, telemetry);
-            LiftDistanceCommand fifthConeUp = new LiftDistanceCommand(-12, 0.5, lift);
+            WaitCommandTBD waitForClaw = new WaitCommandTBD( 200, telemetry);
+            LiftDistanceCommand fifthConeUp = new LiftDistanceCommand(12, 0.5, lift);
 
-            SequentialCommandGroup driveToConeStack = new SequentialCommandGroup( lowerLift, turnTowardsCones.withTimeout(3000), elbowDown, waitAfterConeTurn, driveToCones1_5, driveToCones2, alignToCones.withTimeout(1000), grabCone, waitForClaw, fifthConeUp);
+            SequentialCommandGroup driveToConeStack = new SequentialCommandGroup( lowerLiftAndTurn, elbowDown, waitAfterConeTurn, driveToCones1_5, driveToCones2, alignToCones.withTimeout(500), grabCone, waitForClaw, fifthConeUp);
             ///////////////////////////////////////
 
             // driveBackToJunction //
-            DepartCommand  driveAwayCones = new DepartCommand(150, 40, -0.3, 0.2, 20, 3, false, chassis, odometry);
-            ArriveCommand   driveToCenter = new ArriveCommand( 155, 97, -0.3, 0.2, 20, 1, chassis, odometry);
+            DepartCommand  driveAwayCones = new DepartCommand(150, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
+            ArriveCommand   driveToCenter = new ArriveCommand( 161, 103, -0.3, 0.2, 30, 1, chassis, odometry);
             ElbowCommand elbowBehind = new ElbowCommand( 0.27, arm);
 
             LiftDistanceCommand backUpHigh = new LiftDistanceCommand(42, 0.5, lift);
-            ScheduleCommand raiseUpAgain = new ScheduleCommand( backUpHigh );
+            //  ScheduleCommand raiseUpAgain = new ScheduleCommand( backUpHigh );
 
-            TurnCommand   alignToJunction = new TurnCommand(-132, 0.25, 0.15, 0.75, chassis, odometry);
+            ParallelCommandGroup liftAndDriveToCenter = new ParallelCommandGroup(driveToCenter, backUpHigh, elbowBehind);
 
-            SequentialCommandGroup driveBackToJunction = new SequentialCommandGroup( driveAwayCones, raiseUpAgain, elbowBehind, driveToCenter, alignToJunction.withTimeout(1000));
+            TurnCommand   alignToJunction = new TurnCommand(-128, 0.25, 0.15, 0.75, chassis, odometry);
+
+            SequentialCommandGroup driveBackToJunction = new SequentialCommandGroup( driveAwayCones, liftAndDriveToCenter, alignToJunction.withTimeout(1000));
             //////////////////////////////////////////
 
             // dropCone2 //
