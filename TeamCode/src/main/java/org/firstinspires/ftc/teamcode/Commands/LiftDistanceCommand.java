@@ -27,7 +27,7 @@ public class LiftDistanceCommand extends CommandBase
 
     @Override
     public void execute() {
-          
+
         if (myDistance > 0)
         {
             myLift.liftUp(mySpeed);
@@ -50,6 +50,6 @@ public class LiftDistanceCommand extends CommandBase
     {
         return (Math.abs(myLift.getAverageEncoderDistance()- myInitialDistance) >= Math.abs(myDistance)) ||
                 (myDistance < 0 && myLift.getAverageEncoderDistance() <= 0) ||
-                (myDistance > 0 && myLift.getAverageEncoderDistance() >= 49);
+                (myDistance > 0 && myLift.getAverageEncoderDistance() >= 51);
     }
 }

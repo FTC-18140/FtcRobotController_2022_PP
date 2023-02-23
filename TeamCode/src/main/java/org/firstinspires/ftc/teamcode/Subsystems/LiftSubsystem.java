@@ -67,7 +67,7 @@ public class LiftSubsystem extends SubsystemBase
             }
             else if ( getAverageEncoderDistance() > 45)
             {
-                motors.set(0.15);
+                motors.set(0.4);
             }
             else
             {
@@ -94,7 +94,7 @@ public class LiftSubsystem extends SubsystemBase
             }
             else if ( getAverageEncoderDistance() < 8)
             {
-                 motors.set(-0.15);
+                motors.set(-0.15);
             }
             else
             {
