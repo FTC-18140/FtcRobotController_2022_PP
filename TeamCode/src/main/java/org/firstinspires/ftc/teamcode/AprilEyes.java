@@ -69,4 +69,9 @@ Telemetry telemetry;
             return 0;
         }
     }
+
+    public void stopCamera()
+    {
+        camera.stopStreaming();
+    }
 }
