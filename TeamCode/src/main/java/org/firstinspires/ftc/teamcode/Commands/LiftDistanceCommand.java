@@ -50,6 +50,6 @@ public class LiftDistanceCommand extends CommandBase
     {
         return (Math.abs(myLift.getAverageEncoderDistance()- myInitialDistance) >= Math.abs(myDistance)) ||
                 (myDistance < 0 && myLift.getAverageEncoderDistance() <= 0) ||
-                (myDistance > 0 && myLift.getAverageEncoderDistance() >= 43);
+                (myDistance > 0 && myLift.getAverageEncoderDistance() >= 49);
     }
 }
