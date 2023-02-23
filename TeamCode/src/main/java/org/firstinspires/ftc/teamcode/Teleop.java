@@ -118,13 +118,20 @@ public class Teleop extends OpMode
         /////////////////
         // LINEAR SLIDE
         /////////////////
-        if (gamepad2.y) {
-            robot.armstrong.liftUp(1);
-        } else if (gamepad2.a) {
-            robot.armstrong.liftDown(1);
+        // Automized linear slide for medium junction
+        if (gamepad2.right_stick_button) {
+            robot.armstrong.liftUpDistance(26.1, 1);
         } else {
-            robot.armstrong.liftStop();
+            if (gamepad2.y) {
+                robot.armstrong.liftUp(1);
+            } else if (gamepad2.a) {
+                robot.armstrong.liftDown(1);
+            } else {
+                robot.armstrong.liftStop();
+            }
         }
+
+
         /////////////////
         // WRIST
         /////////////////
