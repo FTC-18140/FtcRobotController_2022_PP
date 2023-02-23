@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.ClawCommand;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 @Autonomous(name = "TwoConeAuto", group = "FTCLib")
+@Disabled
 public class TwoConeAuto extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
