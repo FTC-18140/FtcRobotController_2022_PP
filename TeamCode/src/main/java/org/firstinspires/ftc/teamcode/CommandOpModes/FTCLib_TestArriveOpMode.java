@@ -48,6 +48,8 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         try
         {
+            vision.init(hardwareMap, telemetry);
+
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffDriveOdometrySubsystem(chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeadingAsRad,
                                                       20, 90, 0, telemetry );
@@ -73,7 +75,6 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
             schedule( driveAroundField );
 
-            vision.init(hardwareMap, telemetry);
         }
         catch (Exception e)
         {
@@ -121,14 +122,14 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-23, 0.5, lift);
 
         SeekCommand driveBack = new SeekCommand(155, 95, -0.4, 0.2, 8, true, chassis, odometry);
-        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.6, 0.1, 2, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.5, 0.1, 5, chassis, odometry);
         ParallelCommandGroup lowerLiftAndTurn = new ParallelCommandGroup(moveLiftDown, turnTowardsCones);
 
         ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
         WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
-        DepartCommand driveToCones1_5 = new DepartCommand(151, 40, 0.45, 0.2, 15, 5,false, chassis, odometry );
-        ArriveCommand driveToCones2 = new ArriveCommand(152, 25, 0.35, 0.2, 25, 1, chassis, odometry );
+        DepartCommand driveToCones1_5 = new DepartCommand(151, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
+        ArriveCommand driveToCones2 = new ArriveCommand(152, 25, 0.3, 0.2, 25, 1, chassis, odometry );
         TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
         ClawCommand grabCone = new ClawCommand(0.525, claw);
 
@@ -235,20 +236,36 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     private SelectCommand goToZone()
     {
         // These are the 3 commands which will be executed depending on the Zone selected.
+        // Works
         DepartCommand goToZone1a = new DepartCommand( 145, 70, 0.4, 0.2, 8, 5,false, chassis, odometry );
-        ArriveCommand goToZone1b = new ArriveCommand( 145, 40, 0.4, 0.2, 5,10, chassis, odometry );
+        ArriveCommand goToZone1b = new ArriveCommand( 145, 35, 0.4, 0.2, 5,10, chassis, odometry );
+        LiftDistanceCommand liftDownOne = new LiftDistanceCommand(-40, 0.5, lift);
+        ElbowCommand elbowDownOne = new ElbowCommand(0.535, arm);
 
-        DepartCommand goToZone2a = new DepartCommand(145, 90, 0.4, 0.3, 8, 5, false, chassis, odometry);
-        ArriveCommand goToZone2b = new ArriveCommand( 135, 90, 0.4, 0.3, 5,10, chassis, odometry );
+        //
+        DepartCommand goToZone2a = new DepartCommand(145, 97, 0.4, 0.3, 8, 5, false, chassis, odometry);
+        ArriveCommand goToZone2b = new ArriveCommand( 135, 87, 0.4, 0.3, 5,10, chassis, odometry );
+        TurnCommand goToZone2c = new TurnCommand(-170, 0.3, 0.2, 3, chassis, odometry);
+        LiftDistanceCommand liftDownTwo = new LiftDistanceCommand(-40, 0.5, lift);
+        ElbowCommand elbowDownTwo = new ElbowCommand(0.535, arm);
 
-        DepartCommand goToZone3a = new DepartCommand(150, 90, 0.4, 0.3, 8, 5, false, chassis, odometry);
-        ArriveCommand goToZone3b = new ArriveCommand( 150, 150, -0.4, 0.4, 5,10, chassis, odometry );
+
+        DepartCommand goToZone3a = new DepartCommand(145, 90, 0.4, 0.3, 8, 5, false, chassis, odometry);
+        TurnCommand turnToCones3 = new TurnCommand(-90, 0.3, 0.2, 5, chassis, odometry);
+        ArriveCommand goToZone3b = new ArriveCommand( 143, 160, -0.4, 0.2, 5,10, chassis, odometry );
+        LiftDistanceCommand liftDownThree = new LiftDistanceCommand(-40, 0.5, lift);
+        ElbowCommand elbowDownThree = new ElbowCommand(0.535, arm);
+
+        ParallelCommandGroup zoneOne = new ParallelCommandGroup(goToZone1a.andThen(goToZone1b), liftDownOne, elbowDownOne);
+        ParallelCommandGroup zoneTwo = new ParallelCommandGroup(goToZone2a.andThen(goToZone2b.andThen(goToZone2c)), liftDownTwo, elbowDownTwo);
+        ParallelCommandGroup zoneThree = new ParallelCommandGroup(goToZone3a.andThen(turnToCones3.andThen(goToZone3b)), liftDownThree, elbowDownThree);
+
 
         // This HashMap lets us associate the signal zone with an command group.
         HashMap<Object, Command> theMap =  new HashMap<Object, Command>();
-        theMap.put( Zone.ONE, new SequentialCommandGroup( goToZone1a.andThen(goToZone1b) ));
-        theMap.put(Zone.TWO, new SequentialCommandGroup( goToZone2a.andThen(goToZone2b) ));
-        theMap.put(Zone.THREE, new SequentialCommandGroup( goToZone3a.andThen(goToZone3b)));
+        theMap.put( Zone.ONE, zoneOne);
+        theMap.put(Zone.TWO, zoneTwo);
+        theMap.put(Zone.THREE, zoneThree);
 
         return new SelectCommand(theMap,this::getZone);
     }
@@ -267,12 +284,15 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         {
             case 1:
                 theZone = Zone.ONE;
+                telemetry.addData("One", 0);
                 break;
             case 3:
                 theZone = Zone.THREE;
+                telemetry.addData("Three", 0);
                 break;
             default:
                 theZone = Zone.TWO;
+                telemetry.addData("Two", 0);
         }
     }
 
