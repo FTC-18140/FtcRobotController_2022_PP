@@ -72,8 +72,8 @@ public class Teleop extends OpMode
             // TURBO!!!
             robot.joystickDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else if (gamepad1.x){
-            // 30 percent
-            robot.joystickDrive(-gamepad1.left_stick_y * 0.3, gamepad1.left_stick_x * 0.3, gamepad1.right_stick_x * 0.3);
+            // 20 percent
+            robot.joystickDrive(-gamepad1.left_stick_y * 0.2, gamepad1.left_stick_x * 0.2, gamepad1.right_stick_x * 0.2);
         } else {
             // Normal Drive
             double sign = Math.signum(gamepad1.right_stick_x);
@@ -120,13 +120,34 @@ public class Teleop extends OpMode
         /////////////////
         // LINEAR SLIDE
         /////////////////
-        if (gamepad2.y) {
-            robot.armstrong.liftUp(1);
-        } else if (gamepad2.a) {
-            robot.armstrong.liftDown(1);
+        if (gamepad2.left_stick_button) {
+            if (gamepad2.y) {
+                robot.armstrong.liftFree(0.25);
+            } else if (gamepad2.a) {
+                robot.armstrong.liftFree(-0.25);
+            } else {
+                robot.armstrong.liftStop();
+            }
         } else {
-            robot.armstrong.liftStop();
+            if (gamepad2.y) {
+                robot.armstrong.liftUp(1);
+            } else if (gamepad2.a) {
+                robot.armstrong.liftDown(1);
+            } else {
+                robot.armstrong.liftStop();
+            }
         }
+        /////////////////
+        // RESET
+        /////////////////
+        if (gamepad2.left_trigger > 0.9 && gamepad2.right_trigger > 0.9) {
+            robot.armstrong.resetEncoders();
+            robot.armstrong.leftSlidePosition = 0;
+            robot.armstrong.rightSlidePosition = 0;
+            telemetry.addData("resetting left encoders.", 0);
+
+        }
+
         /////////////////
         // WRIST
         /////////////////

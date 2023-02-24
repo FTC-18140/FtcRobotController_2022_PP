@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.AprilEyes;
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.ClawCommand;
@@ -25,10 +26,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "FTCLib_TestArriveOpMode", group = "FTCLib")
+@Autonomous(name = "AutoLegendary", group = "FTCLib")
 @Config
-public class FTCLib_TestArriveOpMode extends TBDOpModeBase
+public class AutoLegendary extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
     DiffDriveOdometrySubsystem odometry = null;
@@ -36,6 +38,14 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     LiftSubsystem lift = null;
     ClawSubsystem claw = null;
     AprilEyes vision = new AprilEyes();
+
+    Deadline timerOne = new Deadline(7, TimeUnit.SECONDS);
+    Deadline timerTwo = new Deadline(17, TimeUnit.SECONDS);
+    Deadline timerThree = new Deadline(27, TimeUnit.SECONDS);
+
+    public static boolean coneOneDropped = false;
+    public static boolean coneTwoDropped = false;
+    public static boolean coneThreeDropped = false;
 
     public enum Zone {
         ONE, TWO, THREE
@@ -62,6 +72,8 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
             register( arm );
             register( lift );
             register( claw );
+            arm.armTwist(0);
+
 
 
             ////////////// MASTER COMMAND /////////
@@ -86,15 +98,16 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
     private SequentialCommandGroup driveToJunction()
     {
+
         // driveToJunction //
         ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
         DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
-
+        SeekCommand midPointOne = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry);
         LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
         // ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
         ArriveCommand arriveAtJunction  = new ArriveCommand(159, 102, 0.5, 0.1, 40, 1, chassis, odometry );
-        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(arriveAtJunction, goUpToHigh);
+        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
 
         WaitCommand waitToTurn = new WaitCommand(100);
         TurnCommand turnToJunction = new TurnCommand(53.5, 0.25, 0.1, 0.75, chassis, odometry);
@@ -107,7 +120,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         // dropCone //
         WristCommand moveWristDown = new WristCommand(0, arm);
-        ClawCommand openUp = new ClawCommand(0.3, claw);
+        ClawCommand openUp = new ClawCommand(0.3, claw, "coneOne");
         LiftDistanceCommand goDownOnHigh = new LiftDistanceCommand(-3, 0.5, lift);
         WristCommand moveWristUp = new WristCommand(0.5, arm);
         WaitCommand  waitForConeDrop = new WaitCommand( 250);
@@ -122,7 +135,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-23, 0.5, lift);
 
         SeekCommand driveBack = new SeekCommand(155, 95, -0.4, 0.2, 8, true, chassis, odometry);
-        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.5, 0.1, 5, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.65, 0.1, 10, chassis, odometry);
         ParallelCommandGroup lowerLiftAndTurn = new ParallelCommandGroup(moveLiftDown, turnTowardsCones);
 
         ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
@@ -131,7 +144,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         DepartCommand driveToCones1_5 = new DepartCommand(151, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
         ArriveCommand driveToCones2 = new ArriveCommand(152, 25, 0.3, 0.2, 25, 1, chassis, odometry );
         TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
-        ClawCommand grabCone = new ClawCommand(0.525, claw);
+        ClawCommand grabCone = new ClawCommand(0.525, claw, "none");
 
         WaitCommandTBD waitForClaw = new WaitCommandTBD( 250, telemetry);
         LiftDistanceCommand fifthConeUp = new LiftDistanceCommand(12, 0.5, lift);
@@ -168,7 +181,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     {
         // dropCone2 //
         WristCommand moveWristDown2 = new WristCommand(0, arm);
-        ClawCommand openUp2 = new ClawCommand(0.3, claw);
+        ClawCommand openUp2 = new ClawCommand(0.3, claw, "coneTwo");
         LiftDistanceCommand goDownOnHigh2 = new LiftDistanceCommand(-3, 0.5, lift);
         WristCommand moveWristUp2 = new WristCommand(0.5, arm);
         WaitCommand  waitForConeDrop2 = new WaitCommand( 250);
@@ -189,7 +202,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         DepartCommand driveToCones1_53 = new DepartCommand(145, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
         ArriveCommand driveToCones23 = new ArriveCommand(145, 25, 0.35, 0.2, 25, 1, chassis, odometry );
         TurnCommand alignToCones3 = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
-        ClawCommand grabCone3 = new ClawCommand(0.525, claw);
+        ClawCommand grabCone3 = new ClawCommand(0.525, claw, "none");
 
         WaitCommand waitForClaw3 = new WaitCommand( 250 );
         LiftDistanceCommand fifthConeUp3 = new LiftDistanceCommand(12, 0.5, lift);
@@ -222,7 +235,7 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
 
         // dropCone2 //
         WristCommand moveWristDown3 = new WristCommand(0, arm);
-        ClawCommand openUp3 = new ClawCommand(0.3, claw);
+        ClawCommand openUp3 = new ClawCommand(0.3, claw, "coneThree");
         LiftDistanceCommand goDownOnHigh3 = new LiftDistanceCommand(-3, 0.5, lift);
         WristCommand moveWristUp3 = new WristCommand(0.5, arm);
         WaitCommand  waitForConeDrop3 = new WaitCommand( 250);
@@ -276,6 +289,26 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
     }
 
     @Override
+    public void loop() {
+        super.loop();
+        if (timerOne.hasExpired()) {
+            if (coneOneDropped == false) {
+                stop();
+            }
+        }
+        if (timerTwo.hasExpired()) {
+            if (coneTwoDropped == false) {
+                stop();
+            }
+        }
+        if (timerThree.hasExpired()) {
+            if (coneThreeDropped == false) {
+                stop();
+            }
+        }
+    }
+
+    @Override
     public void init_loop()
     {
         int intZone = vision.getSignalZone();
@@ -296,9 +329,14 @@ public class FTCLib_TestArriveOpMode extends TBDOpModeBase
         }
     }
 
+
     @Override
     public void start()
     {
+        timerOne.reset();
+        timerTwo.reset();
+        timerThree.reset();
+
         vision.stopCamera();
     }
 

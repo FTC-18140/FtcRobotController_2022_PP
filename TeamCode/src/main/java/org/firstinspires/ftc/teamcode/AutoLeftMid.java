@@ -49,7 +49,7 @@ public class AutoLeftMid extends OpMode {
         if (theZone == 1)
         { // set the number to the value of black
             stepF = 42.5;
-            stepFPower = -0.5;
+            stepFPower = -0.3;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -59,7 +59,7 @@ public class AutoLeftMid extends OpMode {
         else
         { // set the number to the value of white
             stepF = 42.5;
-            stepFPower = 0.5;
+            stepFPower = 0.3;
         }
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
@@ -87,7 +87,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.5);
+                    done = robot.gyroDrive(0, stepA, 0.3);
                 }
                 else
                 {
@@ -98,7 +98,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 25.75, 0.5);
+                    done = robot.drive(179, 25.75, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -109,7 +109,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(stepB, 0.5);
+                    done = robot.turnTo(stepB, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -123,7 +123,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(92.5, 0.5);
+                    done = robot.turnTo(92.5, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -220,7 +220,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 13:
                 if (!done) {
-                    done = robot.gyroDrive(95, 1, 0.5);
+                    done = robot.gyroDrive(95, 1, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -229,7 +229,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(90, 28, 0.5);
+                    done = robot.drive(90, 28, 0.3);
                 } else {
                     robot.stop();
                     done = false;

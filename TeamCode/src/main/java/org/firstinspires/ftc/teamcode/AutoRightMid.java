@@ -17,9 +17,9 @@ public class AutoRightMid extends OpMode {
     // stepA is a drive
     double stepA = 109.5; // was 120
     // stepB is a turn
-    double stepB = -87.75;
+    double stepB = -84.5;
     // stepC is a drive
-    double stepC = 2;
+    double stepC = 0.35;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -88,7 +88,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.2);
+                    done = robot.gyroDrive(0, stepA, 0.3);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 25.75, 0.2);
+                    done = robot.drive(179, 25.75, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -110,7 +110,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(stepB, 0.2);
+                    done = robot.turnTo(stepB, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -124,7 +124,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(-87.75, 0.2);
+                    done = robot.turnTo(-87.75, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -138,7 +138,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepC is 10y
-                    done = robot.gyroDrive(-92.5, stepC, -0.2); // was 43.5
+                    done = robot.gyroDrive(-92.5, stepC, -0.3); // was 43.5
                     telemetry.addData("case 2", "is started");
                 }
                 else

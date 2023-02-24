@@ -95,7 +95,7 @@ public class TwoConeAuto extends TBDOpModeBase
         // Slide down on junction and open claw to drop cone
         LiftDistanceCommand slideDown3Inches = new LiftDistanceCommand(-3, 0.5, lift);
         WaitCommand  slightPause = new WaitCommand( 250);
-        ClawCommand openClaw = new ClawCommand(0.3, claw);
+        ClawCommand openClaw = new ClawCommand(0.3, claw, "none");
         ParallelCommandGroup _3_coneDownClawOpen = new ParallelCommandGroup(slideDown3Inches, slightPause.andThen(openClaw));
 
         // Move wrist back out of the way
@@ -121,7 +121,7 @@ public class TwoConeAuto extends TBDOpModeBase
 
         SequentialCommandGroup _2_driveToStack = new SequentialCommandGroup(_a_depart, _b_midPoint, _c_midPoint, _d_arrive, _e_align.withTimeout(500));
 
-        ClawCommand _3_grabCone = new ClawCommand(0.525, claw);
+        ClawCommand _3_grabCone = new ClawCommand(0.525, claw, "none");
         WaitCommand pause = new WaitCommand( 250 );
 
         LiftDistanceCommand _4_fifthConeUp = new LiftDistanceCommand(12, 0.5, lift);
