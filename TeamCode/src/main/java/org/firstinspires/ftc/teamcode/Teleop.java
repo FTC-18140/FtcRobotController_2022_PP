@@ -145,7 +145,6 @@ public class Teleop extends OpMode
             robot.armstrong.leftSlidePosition = 0;
             robot.armstrong.rightSlidePosition = 0;
             telemetry.addData("resetting left encoders.", 0);
-
         }
 
         /////////////////
@@ -161,6 +160,42 @@ public class Teleop extends OpMode
             robot.armstrong.wristMove(wristPosition);
         }
         telemetry.addData("Wrist Position", robot.armstrong.wrist.getPosition());
+
+
+        // presets for putting the cones at the exact height needed to score
+
+        ////////////
+        // Mid
+        ////////////
+        if(gamepad2.a && gamepad2.b) {
+            wristPosition = 0.5;
+            elbowPosition = 0.755;
+            if (robot.armstrong.getLiftPosition() < 26) {
+                robot.armstrong.liftUpDistance(15, 0.2);
+            }
+        }
+
+        ////////////
+        // High
+        ////////////
+        else if (gamepad2.right_stick_button && gamepad2.left_stick_button) {
+            wristPosition = 0.5;
+            elbowPosition = 0.755;
+            if (robot.armstrong.getLiftPosition() < 50.9) {
+                robot.armstrong.liftUpDistance(26, 0.2);
+            }
+        }
+
+        ////////////////////
+        // High backwards
+        ////////////////////
+        else if (gamepad2.left_bumper && gamepad2.right_bumper) {
+            wristPosition = 0.5;
+            elbowPosition = 0.9;
+            if (robot.armstrong.getLiftPosition() < 50.9) {
+                robot.armstrong.liftUpDistance(26, 0.2);
+            }
+        }
 
 
         /////////////////

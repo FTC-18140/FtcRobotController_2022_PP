@@ -27,12 +27,10 @@ public class ArmStrong {
     Servo twist = null;
 
     ColorSensor color = null;
-    DistanceSensor distance = null;
 
     // Position Variables
     long leftSlidePosition = 0;
     long rightSlidePosition = 0;
-
     double initLiftPosition = 0;
     double initElbowPosition = 0;
     boolean moving = false;

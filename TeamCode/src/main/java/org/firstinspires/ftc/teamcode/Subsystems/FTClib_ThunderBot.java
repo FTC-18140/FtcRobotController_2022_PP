@@ -11,7 +11,7 @@ public class FTClib_ThunderBot
     public ArmSubsystem myArmstrong;
     public LiftSubsystem myLift;
     public ClawSubsystem myClaw;
-    public SensorSubsystem mySensor;
+
 
     public void init( HardwareMap hMap, Telemetry telem )
     {
@@ -22,7 +22,6 @@ public class FTClib_ThunderBot
             myArmstrong = new ArmSubsystem( hMap, telem);
             myLift = new LiftSubsystem( hMap, telem);
             myClaw = new ClawSubsystem( hMap, telem);
-            mySensor = new SensorSubsystem( hMap, telem);
 
         } catch (Exception e)
         {
