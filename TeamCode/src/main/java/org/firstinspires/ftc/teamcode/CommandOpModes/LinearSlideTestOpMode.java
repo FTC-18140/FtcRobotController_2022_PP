@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.DepartCommand;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 @Autonomous(name = "FTCLib_SlideTestOpMode", group = "FTCLib")
 @Config
+@Disabled
 public class LinearSlideTestOpMode extends TBDOpModeBase
 {
     LiftSubsystem lift = null;
