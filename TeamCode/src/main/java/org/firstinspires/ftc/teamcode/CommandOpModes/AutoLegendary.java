@@ -62,7 +62,7 @@ public class AutoLegendary extends TBDOpModeBase
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
             odometry = new DiffDriveOdometrySubsystem(chassis::getLeftEncoderDistance, chassis::getRightEncoderDistance, chassis::getHeadingAsRad,
-                                                      20, 90, 0, telemetry );
+                    20, 90, 0, telemetry );
             arm = new ArmSubsystem(hardwareMap, telemetry);
             lift = new LiftSubsystem(hardwareMap, telemetry);
             claw = new ClawSubsystem(hardwareMap, telemetry);
@@ -78,12 +78,12 @@ public class AutoLegendary extends TBDOpModeBase
 
             ////////////// MASTER COMMAND /////////
             SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveToJunction(),
-                                                                                 dropCone(),
-                                                                                 driveToConeStack(),
-                                                                                 driveBacktoJunction(),
-                                                                                 dropCone2(),
-                                                                                 thirdCone(),
-                                                                                 goToZone());
+                    dropCone(),
+                    driveToConeStack(),
+                    driveBacktoJunction(),
+                    dropCone2(),
+                    thirdCone(),
+                    goToZone());
 
             schedule( driveAroundField );
 
@@ -112,7 +112,7 @@ public class AutoLegendary extends TBDOpModeBase
         WaitCommand waitToTurn = new WaitCommand(100);
         TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 0.75, chassis, odometry);
 
-       return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
+        return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
         //////////////////////////////////////
     }
 
