@@ -321,6 +321,10 @@ public class ArmStrong {
             return false;
         }
     }
+    public void liftFree(double power) {
+        leftLift.setPower(power);
+        rightLift.setPower(power);
+    }
 
     /////////////////
     // ELBOW
@@ -421,6 +425,15 @@ public class ArmStrong {
 //        }
 //    }
 
+    /////////////////
+    // Reset Encoders
+    /////////////////
+    public void resetEncoders() {
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     /////////////////
     // TELEMETRY
     /////////////////

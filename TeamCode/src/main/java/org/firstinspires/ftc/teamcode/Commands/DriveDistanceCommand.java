@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import android.sax.StartElementListener;
-
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
@@ -11,7 +9,8 @@ public class DriveDistanceCommand extends CommandBase
     private final ChassisSubsystem myChassisSubsystem;
     private final double myDistance;
     private final double mySpeed;
-    private final MotionProfile myMotionProfile = new MotionProfile(30, 30, 10);
+    private double myInitialDistance;
+    private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 1, 0.02);
 
     /**
      * Creates a new DriveDistanceCommand.
@@ -30,7 +29,7 @@ public class DriveDistanceCommand extends CommandBase
 
     @Override
     public void initialize() {
-        myChassisSubsystem.resetEncoders();
+       myInitialDistance =  myChassisSubsystem.getAverageEncoderDistance();
     }
 
     @Override
@@ -50,7 +49,7 @@ public class DriveDistanceCommand extends CommandBase
     @Override
     public boolean isFinished()
     {
-        return Math.abs(myChassisSubsystem.getAverageEncoderDistance()) >= myDistance;
+        return Math.abs(myChassisSubsystem.getAverageEncoderDistance() - myInitialDistance) >= myDistance;
     }
 
     /**

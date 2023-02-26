@@ -71,7 +71,8 @@ public class AutoLeftMid extends OpMode {
         robot.update();
         telemetry.addData("Zone", theZone);
 
-        switch (state) {
+        switch (state)
+        {
             case 0:
                 if (!done) {
                     done = robot.armstrong.elbowMove(0.375);

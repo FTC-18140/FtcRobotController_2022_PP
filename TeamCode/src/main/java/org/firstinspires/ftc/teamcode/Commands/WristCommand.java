@@ -9,7 +9,8 @@ public class WristCommand extends CommandBase
     private final double myAngle;
     private final ArmSubsystem myArm;
 
-    WristCommand(double angle, ArmSubsystem arm )
+
+    public WristCommand(double angle, ArmSubsystem arm )
     {
         myAngle = angle;
         myArm = arm;
@@ -18,7 +19,16 @@ public class WristCommand extends CommandBase
 
     @Override
     public void initialize() {
+    }
+
+    @Override
+    public void execute() {
         myArm.wristMove(myAngle);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
     }
 
 }

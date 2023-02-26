@@ -22,7 +22,7 @@ public class LiftSubsystem extends SubsystemBase
     double leftSlidePosition;
     double rightSlidePosition;
 
-    Telemetry telemetry;
+    public Telemetry telemetry;
 
     // Lift parameters
     final private double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -31,26 +31,23 @@ public class LiftSubsystem extends SubsystemBase
     final private double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
             / (SPOOL_DIAMETER_CM * Math.PI);
 
-    public LiftSubsystem(Motor left, Motor right, Telemetry telem)
-    {
-        leftMotor = left;
-        rightMotor = right;
-        telemetry = telem;
-        motors = new MotorGroup(left, right);
-    }
-
-    public LiftSubsystem(HardwareMap hwMap, String left, String right, Telemetry telem)
-    {
-        this(new Motor(hwMap, left),
-             new Motor(hwMap, right),
-             telem);
-    }
-
     public LiftSubsystem( HardwareMap hwMap, Telemetry telem )
     {
-        this( hwMap, "leftLinear", "rightLinear", telem);
-    }
+        telemetry = telem;
+        try
+        {
+            leftMotor = new Motor( hwMap, "leftLinear");
+            rightMotor = new Motor( hwMap, "rightLinear");
+            leftEncoder = leftMotor.encoder;
+            rightEncoder = rightMotor.encoder;
+            motors = new MotorGroup(leftMotor, rightMotor);
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Something in LiftSubsystem not found.  ", e.getMessage());
+        }
 
+    }
 
     /**
      * Makes the lift go up at the power level specified.  This method handles the sign needed
@@ -70,14 +67,13 @@ public class LiftSubsystem extends SubsystemBase
             }
             else if ( getAverageEncoderDistance() > 45)
             {
-                motors.set(0.15);
+                motors.set(0.4);
             }
             else
             {
                 motors.set(power);
             }
         }
-
     }
 
     /**
@@ -98,7 +94,7 @@ public class LiftSubsystem extends SubsystemBase
             }
             else if ( getAverageEncoderDistance() < 8)
             {
-                 motors.set(-0.15);
+                motors.set(-0.15);
             }
             else
             {
@@ -116,8 +112,15 @@ public class LiftSubsystem extends SubsystemBase
     }
 
     public void update() {
-        leftSlidePosition = leftEncoder.getDistance() / COUNTS_PER_CM;
-        rightSlidePosition = rightEncoder.getDistance() / COUNTS_PER_CM;
+        if ( leftEncoder != null )
+        {
+            leftSlidePosition = leftEncoder.getPosition() / COUNTS_PER_CM;
+
+        }
+        if ( rightEncoder != null )
+        {
+            rightSlidePosition = rightEncoder.getPosition() / COUNTS_PER_CM;
+        }
     }
 
     @Override
@@ -125,5 +128,6 @@ public class LiftSubsystem extends SubsystemBase
     {
         super.periodic();
         update();
+        telemetry.addData("EncdoderDistance", getAverageEncoderDistance());
     }
 }

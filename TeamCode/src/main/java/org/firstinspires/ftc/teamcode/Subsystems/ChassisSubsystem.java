@@ -5,10 +5,18 @@ import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.List;
 
@@ -17,8 +25,20 @@ public class ChassisSubsystem extends SubsystemBase
 {
     private final DifferentialDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
+    BNO055IMU imu;
     Telemetry telemetry;
     List<LynxModule> allHubs;
+
+    public double getHeading()
+    {
+        return heading;
+    }
+    public double getHeadingAsRad()
+    {
+        return Math.toRadians(heading);
+    }
+
+    private double heading;
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -28,6 +48,7 @@ public class ChassisSubsystem extends SubsystemBase
     private static final double CPR = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION;
     private static final double RPM = 6000.0/(DRIVE_GEAR_REDUCTION * SPROCKET_REDUCTION);  // max RPM of REV HD motor is 6000
     private static final double CM_PER_COUNT = (WHEEL_DIAMETER_CM * Math.PI) / CPR;
+
 
     /**
      * Creates a new DriveSubsystem.
@@ -43,7 +64,6 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-        resetEncoders();
 
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
         rfEncoder.setDistancePerPulse( CM_PER_COUNT );
@@ -60,7 +80,17 @@ public class ChassisSubsystem extends SubsystemBase
         lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+        // temp
+//        lF.setInverted(true);
+//        rF.setInverted(true);
+
         telemetry = telem;
+        resetEncoders();
+
+        lF.motor.setPower(0);
+        rF.motor.setPower(0);
+        lR.motor.setPower(0);
+        rR.motor.setPower(0);
 
         MotorGroup leftMotors = new MotorGroup(lF, lR);
         MotorGroup rightMotors = new MotorGroup(rF, rR);
@@ -96,6 +126,31 @@ public class ChassisSubsystem extends SubsystemBase
         {
             telemetry.addData("Lynx Module not found", 0);
         }
+
+        try
+        {
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+            // Retrieve and initialize the IMU.
+            imu = hMap.get(BNO055IMU.class, "imu");
+            imu.initialize(parameters);
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        }
+        catch (Exception p_exeception)
+        {
+            telemetry.addData("imu not found in config file", 0);
+            imu = null;
+        }
+
     }
 
     public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
@@ -153,9 +208,22 @@ public class ChassisSubsystem extends SubsystemBase
         return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
     }
 
+    /**
+     * Get the heading angle from the imu and convert it to degrees.
+     * @return the heading angle
+     */
+    private double updateHeading()
+    {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                                                       AngleUnit.DEGREES);
+        return -AngleUnit.DEGREES.normalize(
+                AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+    }
+
     @Override
     public void periodic()
     {
+        heading = updateHeading();
         for (LynxModule module : allHubs)
         {
             module.clearBulkCache();
