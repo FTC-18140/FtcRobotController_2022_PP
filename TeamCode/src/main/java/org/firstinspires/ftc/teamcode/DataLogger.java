@@ -13,7 +13,7 @@ import java.io.Writer;
 public class DataLogger
 {
     private Writer writer;
-    private StringBuffer lineBuffer;
+    private StringBuilder lineBuffer;
     private long msBase;
     private long nsBase;
 
@@ -25,7 +25,7 @@ public class DataLogger
         
         try {
             writer = new FileWriter(filePath);
-            lineBuffer = new StringBuffer(128);
+            lineBuffer = new StringBuilder(128);
         } catch (IOException e) {
         }
         msBase = System.currentTimeMillis();
