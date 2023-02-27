@@ -80,18 +80,18 @@ public class Teleop extends OpMode
             robot.joystickDrive(-gamepad1.left_stick_y * 0.6, gamepad1.left_stick_x * 0.6, gamepad1.right_stick_x * 0.8 * gamepad1.right_stick_x * sign);
         }
 
-        /////////////////
-        // TWIST
-        /////////////////
-
-        // TODO: Add manual control/tweaking of twist here.  The automatic twist is now being handled
-        // by the Armstrong class.
-        //
-        if (gamepad2.left_stick_button) {
-            robot.armstrong.armRotate(1);
-        } else if (gamepad2.right_stick_button) {
-            robot.armstrong.armRotate(0);
-        }
+//        /////////////////
+//        // TWIST
+//        /////////////////
+//
+//        // TODO: Add manual control/tweaking of twist here.  The automatic twist is now being handled
+//        // by the Armstrong class.
+//        //
+//        if (gamepad2.dpad_left) {
+//            robot.armstrong.armRotate(1);
+//        } else if (gamepad2.dpad_right) {
+//            robot.armstrong.armRotate(0);
+//        }
 
         /////////////////
         // CLAW
@@ -165,35 +165,93 @@ public class Teleop extends OpMode
         // presets for putting the cones at the exact height needed to score
 
         ////////////
-        // Mid
+        // Mid forward
         ////////////
-        if(gamepad2.a && gamepad2.b) {
-            wristPosition = 0.5;
-            elbowPosition = 0.755;
-            if (robot.armstrong.getLiftPosition() < 26) {
-                robot.armstrong.liftUpDistance(15, 0.2);
+
+        if (gamepad2.dpad_left) {
+            robot.armstrong.wristMove(0.135);
+            wristPosition = robot.armstrong.getWristPosition();
+
+            robot.armstrong.elbowMove(0.3475);
+            elbowPosition = robot.armstrong.getElbowPosition();
+
+            if (robot.armstrong.getLiftPosition() <= 15.25) {
+                robot.armstrong.liftUp(0.2);
+            }
+
+            if (robot.armstrong.getLiftPosition() < 15.25 && robot.armstrong.getLiftPosition() > 12) {
+                robot.armstrong.liftUp(0.1);
+            }
+
+            if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
+                robot.armstrong.liftDown(0.5);
+            }
+        }
+
+        ////////////
+        // Mid backward
+        ////////////
+        if (gamepad2.dpad_right) {
+            robot.armstrong.wristMove(0.18);
+            wristPosition = robot.armstrong.getWristPosition();
+
+            robot.armstrong.elbowMove(0.28);
+            elbowPosition = robot.armstrong.getElbowPosition();
+
+            if (robot.armstrong.getLiftPosition() <= 14.5) {
+                robot.armstrong.liftUp(1);
+            }
+
+            if (robot.armstrong.getLiftPosition() < 14.5 && robot.armstrong.getLiftPosition() > 12) {
+                robot.armstrong.liftUp(0.1);
+            }
+
+            if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
+                robot.armstrong.liftDown(0.5);
             }
         }
 
         ////////////
         // High
         ////////////
-        else if (gamepad2.right_stick_button && gamepad2.left_stick_button) {
-            wristPosition = 0.5;
-            elbowPosition = 0.755;
-            if (robot.armstrong.getLiftPosition() < 50.9) {
-                robot.armstrong.liftUpDistance(26, 0.2);
+        if (gamepad2.left_stick_button) {
+            if (gamepad2.x) {
+                robot.armstrong.wristMove(0.08);
+                wristPosition = robot.armstrong.getWristPosition();
+
+                robot.armstrong.elbowMove(0.34);
+                elbowPosition = robot.armstrong.getElbowPosition();
+
+                if (robot.armstrong.getLiftPosition() <= 42.25) {
+                    robot.armstrong.liftUp(1);
+                }
+
+                if (robot.armstrong.getLiftPosition() > 42.25) {
+                    robot.armstrong.liftUp(0);
+                }
             }
         }
 
+        telemetry.addData("elbow position", robot.armstrong.getElbowPosition());
+        telemetry.addData("claw position", robot.armstrong.getClawPosition());
         ////////////////////
         // High backwards
         ////////////////////
-        else if (gamepad2.left_bumper && gamepad2.right_bumper) {
-            wristPosition = 0.5;
-            elbowPosition = 0.9;
-            if (robot.armstrong.getLiftPosition() < 50.9) {
-                robot.armstrong.liftUpDistance(26, 0.2);
+        if (gamepad2.left_stick_button) {
+            if (gamepad2.b) {
+                robot.armstrong.wristMove(0.07);
+                wristPosition = robot.armstrong.getWristPosition();
+
+                robot.armstrong.elbowMove(0.285);
+                elbowPosition = robot.armstrong.getElbowPosition();
+
+                if (robot.armstrong.getLiftPosition() <= 42.25) {
+                    robot.armstrong.liftUp(1);
+                }
+
+                if (robot.armstrong.getLiftPosition() > 42.25) {
+                    robot.armstrong.liftUp(0);
+                }
             }
         }
 

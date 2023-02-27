@@ -64,7 +64,9 @@ public class ArmStrong {
 
     // Elbow parameters
     //    distance from elbow to wrist = 16.5 cm;
+    double wristPosition = 0;
     private double elbowPosition = 0;
+    double clawPosition = 0;
 
     // Some getter methods to access values
     public double getCLAW_MAX() {
@@ -89,9 +91,14 @@ public class ArmStrong {
         return ELB_MAX;
     }
 
-
+    public double getWristPosition() {
+        return wristPosition;
+    }
     public double getElbowPosition() {
         return elbowPosition;
+    }
+    public double getClawPosition() {
+        return clawPosition;
     }
 
     public double getLiftPosition() {
