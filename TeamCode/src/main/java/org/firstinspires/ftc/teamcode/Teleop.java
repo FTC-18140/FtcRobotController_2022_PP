@@ -6,21 +6,45 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+/**
+ * The type Teleop.
+ */
 // Initializes the main framework for the program
 @TeleOp(name = "Teleop", group = "Teleop")
 public class Teleop extends OpMode
 {
 
-    // Calls new Robot and gives it a name
+    /**
+     * The Robot.
+     */
+// Calls new Robot and gives it a name
     Thunderbot_2022 robot = new Thunderbot_2022();
 
-    // Variables for the positions for claw, wrist, and elbow
+    /**
+     * The Wrist position.
+     */
+// Variables for the positions for claw, wrist, and elbow
     double wristPosition = 0;
+    /**
+     * The Claw position.
+     */
     double clawPosition = 0;
+    /**
+     * The Elbow position.
+     */
     double elbowPosition = 0.535;
 
+    /**
+     * The Elbow increment.
+     */
     double ELBOW_INCREMENT = 0.005;
+    /**
+     * The Wrist increment.
+     */
     double WRIST_INCREMENT = 0.015; // its 0.0025
+    /**
+     * The Claw increment.
+     */
     double CLAW_INCREMENT = 0.0125;
 
     // All the things that happen when the init button is pressed
