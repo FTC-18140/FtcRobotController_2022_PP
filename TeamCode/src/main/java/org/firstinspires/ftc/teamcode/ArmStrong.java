@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This class controls the linear slide and all that is attached to it.
@@ -222,7 +219,7 @@ public class ArmStrong {
                 rightLift.setPower(power);
             }
         }
-//        if (rightLift != null) {                telemetry.addData("rightHegith: ", rightSlidePosition/COUNTS_PER_CM);
+//        if (rightLift != null) {                telemetry.addData("rightHeight: ", rightSlidePosition/COUNTS_PER_CM);
 //
 //            if (leftSlidePosition / COUNTS_PER_CM >= 51) {
 //                liftStop();
@@ -244,7 +241,7 @@ public class ArmStrong {
         // Down power is negative.  Make sure it's negative.
         power = -1.0 * Math.abs(power);
 
-        if (leftLift != null && rightLift != null)
+        if (leftLift != null)
         {
             if (leftSlidePosition / COUNTS_PER_CM <= 0)
             {
@@ -259,12 +256,19 @@ public class ArmStrong {
                 leftLift.setPower(power);// -0.5
             }
         }
-        if (rightLift != null) {
-            if (rightSlidePosition / COUNTS_PER_CM <= 0) {
+
+        if (rightLift != null)
+        {
+            if (rightSlidePosition / COUNTS_PER_CM <= 0)
+            {
                 liftStop();
-            } else if (rightSlidePosition / COUNTS_PER_CM < 8) {
+            }
+            else if (rightSlidePosition / COUNTS_PER_CM < 8)
+            {
                 rightLift.setPower(-0.15);
-            } else {
+            }
+            else
+            {
                 rightLift.setPower(power);
             }
         }

@@ -200,15 +200,15 @@ public class Teleop extends OpMode
             elbowPosition = robot.armstrong.getElbowPosition();
 
             if (robot.armstrong.getLiftPosition() <= 15.25) {
-                robot.armstrong.liftUp(0.2);
+                robot.armstrong.liftFree(0.2);
             }
 
             if (robot.armstrong.getLiftPosition() < 15.25 && robot.armstrong.getLiftPosition() > 12) {
-                robot.armstrong.liftUp(0.1);
+                robot.armstrong.liftFree(0.15);
             }
 
             if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
-                robot.armstrong.liftDown(0.5);
+                robot.armstrong.liftFree(-0.5);
             }
         }
 
@@ -223,15 +223,15 @@ public class Teleop extends OpMode
             elbowPosition = robot.armstrong.getElbowPosition();
 
             if (robot.armstrong.getLiftPosition() <= 14.5) {
-                robot.armstrong.liftUp(1);
+                robot.armstrong.liftFree(1);
             }
 
             if (robot.armstrong.getLiftPosition() < 14.5 && robot.armstrong.getLiftPosition() > 12) {
-                robot.armstrong.liftUp(0.1);
+                robot.armstrong.liftFree(0.15);
             }
 
             if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
-                robot.armstrong.liftDown(0.5);
+                robot.armstrong.liftFree(-0.5);
             }
         }
 
@@ -247,11 +247,15 @@ public class Teleop extends OpMode
                 elbowPosition = robot.armstrong.getElbowPosition();
 
                 if (robot.armstrong.getLiftPosition() <= 42.25) {
-                    robot.armstrong.liftUp(1);
+                    robot.armstrong.liftFree(1);
+                }
+
+                if (robot.armstrong.getLiftPosition() > 39) {
+                    robot.armstrong.liftFree(0.15);
                 }
 
                 if (robot.armstrong.getLiftPosition() > 42.25) {
-                    robot.armstrong.liftUp(0);
+                    robot.armstrong.liftFree(0);
                 }
             }
         }
@@ -270,11 +274,16 @@ public class Teleop extends OpMode
                 elbowPosition = robot.armstrong.getElbowPosition();
 
                 if (robot.armstrong.getLiftPosition() <= 42.25) {
-                    robot.armstrong.liftUp(1);
+                    robot.armstrong.liftFree(1);
+                }
+
+                if (robot.armstrong.getLiftPosition() > 39) {
+                    robot.armstrong.liftFree(0.15);
                 }
 
                 if (robot.armstrong.getLiftPosition() > 42.25) {
-                    robot.armstrong.liftUp(0);
+                    robot.armstrong.liftFree(0);
+
                 }
             }
         }
