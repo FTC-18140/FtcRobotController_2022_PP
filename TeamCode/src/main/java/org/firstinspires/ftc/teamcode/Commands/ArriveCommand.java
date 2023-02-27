@@ -58,20 +58,16 @@ public class ArriveCommand extends CommandBase
     public ArriveCommand(double x, double y, double speed, double turnSpeed, double endZoneCM, double arriveBuffer, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
-//        toHeading = Math.toRadians(heading);
         mySpeed = speed;
         myBackwards = (speed < 0);
         myTurnSpeed = turnSpeed;
         myArriveBufferCM = arriveBuffer;
         myEndZoneCM = endZoneCM;
-//        myEndPoint = lastPoint;
         myChassisSubsystem = chassis;
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
-//        myTurnOnly = turnOnly;
 
         myMotionProfile  = new MotionProfile(30, myEndZoneCM, 1, 0.005);
-        // temp
         myMotionProfile.telem = telemetry;
 
         addRequirements(myChassisSubsystem, myOdometrySubsystem);
@@ -117,30 +113,19 @@ public class ArriveCommand extends CommandBase
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-//        if (myTurnOnly)
-//        { // no translation speed
-//            telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-//            telemetry.addData("myHeading: ", Math.toDegrees(toHeading));
-//            motorPowers[0] = 0.0;
-//            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
-//            MotionProfile.headingMinSpeed = 0.08;
-//
-//        }
-//        else
-        {  // find translation speed
-            if (myBackwards)
-            {
-                motorPowers[0] = Range.clip(-driveDistance, mySpeed, -0.1);
-            }
-            else
-            {
-                motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
-            }
-            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
 
-            myMotionProfile.setMinTurnSpeed(0.03 * Math.abs(turnAngle)/Math.toRadians(10));
-
+      // find translation speed
+        if (myBackwards)
+        {
+            motorPowers[0] = Range.clip(-driveDistance, mySpeed, -0.1);
         }
+        else
+        {
+            motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
+        }
+        motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
+
+        myMotionProfile.setMinTurnSpeed(0.03 * Math.abs(turnAngle)/Math.toRadians(10));
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);
@@ -149,16 +134,11 @@ public class ArriveCommand extends CommandBase
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
         // Check if we have arrived
-//        if ( myTurnOnly )
-//        { // arriving on a Turn Only move is based on closeness to myHeading
-//            myArrived = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeading, Math.toRadians(
-//                    myTargetZoneCM));
-//        }
-//        else
-        { // arriving on a normal move is based on closeness to the toPoint
-            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint,
-                                                 myArriveBufferCM);
-        }
+
+     // arriving on a normal move is based on closeness to the toPoint
+        myArrived = AutoUtils.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint,
+                                             myArriveBufferCM);
+
 
         telemetry.addData("Arrived at toPoint?  ", myArrived);
         if (myArrived)
@@ -204,19 +184,13 @@ public class ArriveCommand extends CommandBase
 
         // Based on the current heading of the robot, update the value that determines how much
         // the robot needs to turn
-//        if (myTurnOnly)
-//        {
-//            relativeAngleToPosition = -angleWrap(toHeading - myRobotPose.getHeading());
-//        }
-//        else
-        {
-            relativeAngleToPosition = -angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
+        relativeAngleToPosition = -AutoUtils.angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
 
-            if (myBackwards)
-            {
-                relativeAngleToPosition = angleWrap(relativeAngleToPosition - Math.PI);
-            }
+        if (myBackwards)
+        {
+            relativeAngleToPosition = AutoUtils.angleWrap(relativeAngleToPosition - Math.PI);
         }
+
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
         return relativeAngleToPosition;
     }
@@ -228,10 +202,6 @@ public class ArriveCommand extends CommandBase
      */
     private void profileMotorPowers(double[] speeds)
     {
-//        if (fromDistance < toDistance)
-//        {    // If the robot is closer to the "from" point, do acceleration
-//            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
-//        }
        if (toDistance < myEndZoneCM)
         {    // If the robot is closer to the "to" point, do deceleration
             myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
@@ -240,60 +210,9 @@ public class ArriveCommand extends CommandBase
     }
 
 
-    /**
-     * Wraps the able so it is always in the range [-180, 180].
-     *
-     * @param angle Angle to be wrapped, in radians.
-     * @return The wrapped angle, in radians.
-     */
-    public double angleWrap(double angle)
-    {
-        if (angle > 0)
-        {
-            return ((angle + Math.PI) % (Math.PI * 2)) - Math.PI;
-        }
-        else
-        {
-            return ((angle - Math.PI) % (Math.PI * -2)) + Math.PI;
-        }
-    }
 
-    /**
-     * Calculates whether or not two points are equal within a margin of error.
-     *
-     * @param p1     Point 1
-     * @param p2     Point 2
-     * @param buffer Margin of error.
-     * @return True if the point are equal within a margin or error, false otherwise.
-     */
-    public boolean positionEqualsWithBuffer(Translation2d p1, Translation2d p2, double buffer)
-    {
-        if (p1.getX() - buffer < p2.getX() && p1.getX() + buffer > p2.getX())
-        {
-            if (p1.getY() - buffer < p2.getY() && p1.getY() + buffer > p2.getY())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
-//    /**
-//     * Calculates whether or not two angles are equal within a margin of error.
-//     *
-//     * @param a1     Angle 1 (in radians).
-//     * @param a2     Angle 2 (in radians).
-//     * @param buffer Margin of error (in radians)
-//     * @return True if the point are equal within a margin or error, false otherwise.
-//     */
-//    public boolean rotationEqualsWithBuffer(double a1, double a2, double buffer)
-//    {
-//        if (a1 - buffer < a2 && a1 + buffer > a2)
-//        {
-//            return true;
-//        }
-//        return false;
-//    }
+
 
     @Override
     public void end(boolean interrupted) {

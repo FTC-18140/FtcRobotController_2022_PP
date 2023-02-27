@@ -72,10 +72,10 @@ public class MotionProfile extends PathMotionProfile
     public void processHeading(double[] motorspeeds, double angleFromTarget, double maxTurnSpeed)
     {
         // Do the profiling of the turning.
-        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
+//        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
         double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(
                 hdgBufferDeg), minTurnSpeed, headingOrder);
-        telem.addData("shaped Value: ", shapedValue);
+//        telem.addData("shaped Value: ", shapedValue);
         motorspeeds[2] = shapedValue;
     }
 }
