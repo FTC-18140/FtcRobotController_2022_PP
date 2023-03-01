@@ -18,11 +18,32 @@ public class DataLogger
     private long nsBase;
 
     public DataLogger(String fileName) {
+        openFile( fileName);
+//        String directoryPath    = "/sdcard/FIRST/DataLogger";
+//        String filePath         = directoryPath + "/" + fileName + ".csv";
+//
+//        new File(directoryPath).mkdir();        // Make sure that the directory exists
+//
+//        try {
+//            writer = new FileWriter(filePath);
+//            lineBuffer = new StringBuilder(128);
+//        } catch (IOException e) {
+//        }
+//        msBase = System.currentTimeMillis();
+//        nsBase = System.nanoTime();
+//        addField("sec");
+//        addField("d ms");
+    }
+
+    public DataLogger() { }
+
+    public void openFile( String fileName)
+    {
         String directoryPath    = "/sdcard/FIRST/DataLogger";
         String filePath         = directoryPath + "/" + fileName + ".csv";
 
         new File(directoryPath).mkdir();        // Make sure that the directory exists
-        
+
         try {
             writer = new FileWriter(filePath);
             lineBuffer = new StringBuilder(128);
