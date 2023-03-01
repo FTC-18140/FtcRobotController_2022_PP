@@ -98,6 +98,31 @@ public class ArmStrong {
         return clawPosition;
     }
 
+
+
+    /**
+     * An enum that contains various arm preset coordinates.
+     */
+    public enum ArmPositions
+    {
+        MID_FORWARD( 0.3475, 0.135, 15.5),
+        MID_BACKWARD(0.28,0.18, 15.5),
+        HIGH_FORWARD(0.34, 0.08, 45),
+        HIGH_BACKWARD(0.285, 0.07, 45);
+
+        public final double elbow;
+        public final double wrist;
+        public final double lift;
+
+        ArmPositions(double theElbow, double theWrist, double theLift)
+        {
+            this.elbow = theElbow;
+            this.wrist = theWrist;
+            this.lift = theLift;
+        }
+    }
+
+
     public double getLiftPosition() {
         return 0.5*(leftSlidePosition+rightSlidePosition) / COUNTS_PER_CM;
     }
@@ -174,12 +199,6 @@ public class ArmStrong {
         catch (Exception e) {
             telemetry.addData("Color Sensor", "not found");
         }
-//        try {
-//            distance = (DistanceSensor) color;
-//        }
-//        catch (Exception e) {
-//            telemetry.addData("Color Sensor", "not found");
-//        }
 
     }
 
@@ -219,16 +238,7 @@ public class ArmStrong {
                 rightLift.setPower(power);
             }
         }
-//        if (rightLift != null) {                telemetry.addData("rightHeight: ", rightSlidePosition/COUNTS_PER_CM);
-//
-//            if (leftSlidePosition / COUNTS_PER_CM >= 51) {
-//                liftStop();
-//            } else if (leftSlidePosition / COUNTS_PER_CM > 45) {
-//                rightLift.setPower(0.15);
-//            } else {
-//                rightLift.setPower(power);
-//            }
-        }
+    }
 
 
     /**
@@ -330,9 +340,30 @@ public class ArmStrong {
             return false;
         }
     }
+
+    /**
+     * Sets the power to the lift motors without checking to see if it is too high or too low.  This
+     * is a special move that has no safety and should be used only when the lift motors are out place.
+     *
+     * @param power
+     */
     public void liftFree(double power) {
         leftLift.setPower(power);
         rightLift.setPower(power);
+    }
+
+    /**
+     *
+     * @param thePostiion
+     * @param theSpeed
+     * @return
+     */
+    public boolean goTo( ArmPositions thePostiion, double theSpeed)
+    {
+        // do stuff with thePosition.wrist, thePosition.elbow, and thePosition.lift
+
+
+        return true;
     }
 
     /////////////////
