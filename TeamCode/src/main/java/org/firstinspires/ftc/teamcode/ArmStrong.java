@@ -335,6 +335,73 @@ public class ArmStrong {
         rightLift.setPower(power);
     }
 
+    public void normalGoUp () {
+            liftUp(1);
+    }
+
+    public void normalGoDown () {
+            liftDown(1);
+    }
+
+    public void midForwardLift ()
+    {
+        if (getLiftPosition() < 10) {
+            liftFree(1);
+        }
+
+        if (getLiftPosition() < 15.25 && getLiftPosition() > 10) {
+            liftFree(0.15);
+        }
+
+        if (getLiftPosition() < 50 && getLiftPosition() > 16) {
+            liftFree(-0.5);
+        }
+    }
+
+    public void midBackwardLift ()
+    {
+        if (getLiftPosition() < 10) {
+            liftFree(1);
+        }
+
+        if (getLiftPosition() < 14.5 && getLiftPosition() > 10) {
+            liftFree(0.15);
+        }
+
+        if (getLiftPosition() < 50 && getLiftPosition() > 14.5) {
+            liftFree(-0.5);
+        }
+    }
+
+    public void highForwardLift () {
+        if (getLiftPosition() <= 42.25) {
+            liftFree(1);
+        }
+
+        if (getLiftPosition() > 39) {
+            liftFree(0.15);
+        }
+
+        if (getLiftPosition() > 42.25) {
+            liftFree(0);
+        }
+    }
+
+    public void highBackwardLift () {
+        if (getLiftPosition() <= 42.25) {
+            liftFree(1);
+        }
+
+        if (getLiftPosition() > 39) {
+            liftFree(0.15);
+        }
+
+        if (getLiftPosition() > 42.25) {
+            liftFree(0);
+
+        }
+    }
+
     /////////////////
     // ELBOW
     /////////////////

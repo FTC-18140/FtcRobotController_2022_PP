@@ -2,6 +2,8 @@
 package org.firstinspires.ftc.teamcode;
 
 // Specific Libraries of commands to import from the package
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -154,11 +156,11 @@ public class Teleop extends OpMode
             }
         } else {
             if (gamepad2.y) {
-                robot.armstrong.liftUp(1);
-            } else if (gamepad2.a) {
-                robot.armstrong.liftDown(1);
-            } else {
-                robot.armstrong.liftStop();
+                robot.armstrong.normalGoUp();
+            }
+
+            if (gamepad2.a) {
+                robot.armstrong.normalGoDown();
             }
         }
         
@@ -193,51 +195,33 @@ public class Teleop extends OpMode
         // Mid forward
         ////////////
 
-        if (gamepad2.dpad_left) {
+        if (gamepad2.dpad_left)
+        {
             robot.armstrong.wristMove(0.135);
             wristPosition = robot.armstrong.getWristPosition();
 
             robot.armstrong.elbowMove(0.3475);
             elbowPosition = robot.armstrong.getElbowPosition();
 
-            if (robot.armstrong.getLiftPosition() <= 15.25) {
-                robot.armstrong.liftFree(0.2);
-            }
-
-            if (robot.armstrong.getLiftPosition() < 15.25 && robot.armstrong.getLiftPosition() > 12) {
-                robot.armstrong.liftFree(0.15);
-            }
-
-            if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
-                robot.armstrong.liftFree(-0.5);
-            }
+            robot.armstrong.midForwardLift();
         }
 
         ////////////
         // Mid backward
         ////////////
-        if (gamepad2.dpad_right) {
+        if (gamepad2.dpad_right)
+        {
             robot.armstrong.wristMove(0.18);
             wristPosition = robot.armstrong.getWristPosition();
 
             robot.armstrong.elbowMove(0.28);
             elbowPosition = robot.armstrong.getElbowPosition();
 
-            if (robot.armstrong.getLiftPosition() <= 14.5) {
-                robot.armstrong.liftFree(1);
-            }
-
-            if (robot.armstrong.getLiftPosition() < 14.5 && robot.armstrong.getLiftPosition() > 12) {
-                robot.armstrong.liftFree(0.15);
-            }
-
-            if (robot.armstrong.getLiftPosition() < 50 && robot.armstrong.getLiftPosition() > 16) {
-                robot.armstrong.liftFree(-0.5);
-            }
+            robot.armstrong.midBackwardLift();
         }
 
         ////////////
-        // High
+        // High forward
         ////////////
         if (gamepad2.left_stick_button) {
             if (gamepad2.x) {
@@ -247,24 +231,12 @@ public class Teleop extends OpMode
                 robot.armstrong.elbowMove(0.34);
                 elbowPosition = robot.armstrong.getElbowPosition();
 
-                if (robot.armstrong.getLiftPosition() <= 42.25) {
-                    robot.armstrong.liftFree(1);
-                }
-
-                if (robot.armstrong.getLiftPosition() > 39) {
-                    robot.armstrong.liftFree(0.15);
-                }
-
-                if (robot.armstrong.getLiftPosition() > 42.25) {
-                    robot.armstrong.liftFree(0);
-                }
+                robot.armstrong.highForwardLift();
             }
         }
 
-        telemetry.addData("elbow position", robot.armstrong.getElbowPosition());
-        telemetry.addData("claw position", robot.armstrong.getClawPosition());
         ////////////////////
-        // High backwards
+        // High backward
         ////////////////////
         if (gamepad2.left_stick_button) {
             if (gamepad2.b) {
@@ -274,21 +246,9 @@ public class Teleop extends OpMode
                 robot.armstrong.elbowMove(0.285);
                 elbowPosition = robot.armstrong.getElbowPosition();
 
-                if (robot.armstrong.getLiftPosition() <= 42.25) {
-                    robot.armstrong.liftFree(1);
-                }
-
-                if (robot.armstrong.getLiftPosition() > 39) {
-                    robot.armstrong.liftFree(0.15);
-                }
-
-                if (robot.armstrong.getLiftPosition() > 42.25) {
-                    robot.armstrong.liftFree(0);
-
-                }
+               robot.armstrong.highBackwardLift();
             }
         }
-
 
         /////////////////
         // Sensors
