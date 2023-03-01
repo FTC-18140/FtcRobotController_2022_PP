@@ -11,12 +11,14 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -29,6 +31,8 @@ public class ChassisSubsystem extends SubsystemBase
     private final DifferentialDrive myDrive;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
     BNO055IMU imu;
+    Rev2mDistanceSensor sensorTimeOfFlight;
+
     Telemetry telemetry;
     List<LynxModule> allHubs;
 
@@ -42,6 +46,7 @@ public class ChassisSubsystem extends SubsystemBase
     }
 
     private double heading;
+    private double distance;
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -154,6 +159,13 @@ public class ChassisSubsystem extends SubsystemBase
             imu = null;
         }
 
+        // you can use this as a regular DistanceSensor.
+        DistanceSensor sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+
+        // you can also cast this to a Rev2mDistanceSensor if you want to use added
+        // methods associated with the Rev2mDistanceSensor class.
+        sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
+
     }
 
     public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
@@ -231,6 +243,19 @@ public class ChassisSubsystem extends SubsystemBase
         {
             module.clearBulkCache();
         }
+        if ( sensorTimeOfFlight != null )
+        {
+            distance = sensorTimeOfFlight.getDistance(DistanceUnit.CM);
+        }
+        else
+        {
+            distance = 9999;
+        }
+    }
+
+    public double getDistance()
+    {
+        return distance;
     }
 
     public Telemetry getTelemetry() {
