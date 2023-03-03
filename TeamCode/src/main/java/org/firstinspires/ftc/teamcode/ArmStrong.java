@@ -107,7 +107,7 @@ public class ArmStrong {
     public enum ArmPositions
     {
         MID_FORWARD( 0.3475, 0.135, 15.5),
-        MID_BACKWARD(0.28,0.18, 15.5),
+        MID_BACKWARD(0.28,0.18, 18.5),
         HIGH_FORWARD(0.34, 0.08, 45),
         HIGH_BACKWARD(0.285, 0.07, 45);
 

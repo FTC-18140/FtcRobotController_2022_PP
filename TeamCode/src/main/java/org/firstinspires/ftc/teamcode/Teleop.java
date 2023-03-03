@@ -198,36 +198,38 @@ public class Teleop extends OpMode
         // Mid forward
         ////////////
 
-        if (gamepad2.dpad_left)
-        {
-            robot.armstrong.goTo(ArmStrong.ArmPositions.MID_FORWARD, 0.5);
-        }
+//        if (gamepad2.left_stick_button) {
+//            if (gamepad2.b) {
+//                robot.armstrong.goTo(ArmStrong.ArmPositions.MID_FORWARD, 0.5);
+//            }
+//        }
 
         ////////////
         // Mid backward
         ////////////
-        if (gamepad2.dpad_right)
-        {
-            robot.armstrong.goTo(ArmStrong.ArmPositions.MID_BACKWARD, 0.5);
-        }
-
-        ////////////
-        // High forward
-        ////////////
-        if (gamepad2.left_stick_button) {
-            if (gamepad2.x) {
-                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_FORWARD, 0.5);
-            }
-        }
-
-        ////////////////////
-        // High backward
-        ////////////////////
         if (gamepad2.left_stick_button) {
             if (gamepad2.b) {
-                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_BACKWARD, 0.5);
+                robot.armstrong.goTo(ArmStrong.ArmPositions.MID_BACKWARD, 0.8);
             }
         }
+
+//        ////////////
+//        // High forward
+//        ////////////
+//        if (gamepad2.left_stick_button) {
+//            if (gamepad2.x) {
+//                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_FORWARD, 0.5);
+//            }
+//        }
+//
+//        ////////////////////
+//        // High backward
+//        ////////////////////
+//        if (gamepad2.left_stick_button) {
+//            if (gamepad2.b) {
+//                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_BACKWARD, 0.5);
+//            }
+//        }
 
 
         /////////////////
