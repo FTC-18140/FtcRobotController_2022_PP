@@ -60,16 +60,18 @@ public class AutoLegendary extends TBDOpModeBase
     @Override
     public void init()
     {
-        // Open file for logging
-        logger.openFile( logFileName);
-        logger.addField("LeftEncDist" );
-        logger.addField("RighEncDist" );
-        logger.addField( "Heading");
-        logger.addField( "X");
-        logger.addField("Y" );
+
 
         try
         {
+            // Open file for logging
+            logger.openFile( logFileName);
+            logger.addField("LeftEncDist" );
+            logger.addField("RighEncDist" );
+            logger.addField( "Heading");
+            logger.addField( "X");
+            logger.addField("Y" );
+            logger.newLine();
             vision.init(hardwareMap, telemetry);
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
@@ -338,6 +340,7 @@ public class AutoLegendary extends TBDOpModeBase
                 theZone = Zone.TWO;
                 telemetry.addData("Two", 0);
         }
+        telemetry.addData("log file path", logger.getLogFullPathName());
     }
 
 

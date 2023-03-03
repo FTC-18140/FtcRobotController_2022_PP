@@ -5,6 +5,8 @@ package org.firstinspires.ftc.teamcode;
  * 
  * Added to Github on 11/16/2015 (https://github.com/OliviliK/FTC_Library/blob/master/DataLogger.java)
  */
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,8 +19,10 @@ public class DataLogger
     private long msBase;
     private long nsBase;
 
+    private String logFullPathName;
+
     public DataLogger(String fileName) {
-        openFile( fileName);
+//        openFile( fileName);
 //        String directoryPath    = "/sdcard/FIRST/DataLogger";
 //        String filePath         = directoryPath + "/" + fileName + ".csv";
 //
@@ -37,10 +41,12 @@ public class DataLogger
 
     public DataLogger() { }
 
-    public void openFile( String fileName)
-    {
-        String directoryPath    = "/sdcard/FIRST/DataLogger";
+    public void openFile( String fileName) throws IOException {
+    //    String directoryPath    = "/storage/8895-B3F8/FIRST/DataLogger";
+        String directoryPath    = String.format("%s/FIRST/DataLogger", Environment.getExternalStorageDirectory().getAbsolutePath());
         String filePath         = directoryPath + "/" + fileName + ".csv";
+
+        logFullPathName = filePath;
 
         new File(directoryPath).mkdir();        // Make sure that the directory exists
 
@@ -48,6 +54,7 @@ public class DataLogger
             writer = new FileWriter(filePath);
             lineBuffer = new StringBuilder(128);
         } catch (IOException e) {
+            throw e;
         }
         msBase = System.currentTimeMillis();
         nsBase = System.nanoTime();
@@ -126,5 +133,9 @@ public class DataLogger
     protected void finalize() throws Throwable {
         closeDataLogger();
         super.finalize();
+    }
+
+    public String getLogFullPathName ( ) {
+        return logFullPathName;
     }
 }

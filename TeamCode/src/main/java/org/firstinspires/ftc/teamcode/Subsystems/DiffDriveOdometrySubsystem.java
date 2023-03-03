@@ -55,12 +55,14 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
        // telemetry.addData("Robot Pose: ", getPose() );
         telemetry.addData("X, Y: ", "%.3f, %.3f", getPose().getX(), getPose().getY());
         telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
+        telemetry.addData("Log File Path", logger.getLogFullPathName());
 
         logger.addField(left.getAsDouble() );
         logger.addField(right.getAsDouble());
         logger.addField( getPose().getHeading() );
         logger.addField( getPose().getX());
         logger.addField( getPose().getY());
+        logger.newLine();
     }
 
 }
