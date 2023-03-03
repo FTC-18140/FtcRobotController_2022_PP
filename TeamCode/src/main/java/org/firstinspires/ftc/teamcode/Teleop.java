@@ -151,8 +151,6 @@ public class Teleop extends OpMode
                 robot.armstrong.liftFree(0.25);
             } else if (gamepad2.a) {
                 robot.armstrong.liftFree(-0.25);
-            } else {
-                robot.armstrong.liftStop();
             }
         } else {
             if (gamepad2.y) {
@@ -163,7 +161,11 @@ public class Teleop extends OpMode
                 robot.armstrong.normalGoDown();
             }
         }
-        
+
+        if (!gamepad2.dpad_left && !gamepad2.dpad_right && !gamepad2.left_stick_button && !gamepad2.a && !gamepad2.y) {
+            robot.armstrong.liftStop();
+        }
+
         /////////////////
         // RESET
         /////////////////

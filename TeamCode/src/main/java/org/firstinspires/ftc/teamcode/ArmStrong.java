@@ -371,8 +371,16 @@ public class ArmStrong {
             liftFree(0.15);
         }
 
-        if (getLiftPosition() < 50 && getLiftPosition() > 16) {
-            liftFree(-0.5);
+        if (getLiftPosition() < 50 && getLiftPosition() > 20) {
+            liftFree(-0.7);
+        }
+
+        if (getLiftPosition() < 20 && getLiftPosition() > 15.5) {
+            liftFree(-0.1);
+        }
+
+        if (getLiftPosition() <= 15.5 && getLiftPosition() >= 15) {
+            liftStop();
         }
     }
 
@@ -386,8 +394,16 @@ public class ArmStrong {
             liftFree(0.15);
         }
 
-        if (getLiftPosition() < 50 && getLiftPosition() > 14.5) {
-            liftFree(-0.5);
+        if (getLiftPosition() < 50 && getLiftPosition() > 20) {
+            liftFree(-0.7);
+        }
+
+        if (getLiftPosition() < 20 && getLiftPosition() > 14.75) {
+            liftFree(-0.1);
+        }
+
+        if (getLiftPosition() <= 14.75 && getLiftPosition() >= 14.25) {
+            liftStop();
         }
     }
 
