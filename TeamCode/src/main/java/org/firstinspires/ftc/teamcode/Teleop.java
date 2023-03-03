@@ -136,12 +136,13 @@ public class Teleop extends OpMode
         /////////////////
         if (gamepad2.b) {
             elbowPosition -= ELBOW_INCREMENT;
+            elbowPosition = Range.clip(elbowPosition, robot.armstrong.getELB_MIN(), robot.armstrong.getELB_MAX());
+            robot.armstrong.elbowMove(elbowPosition);
         } else if (gamepad2.x) {
             elbowPosition += ELBOW_INCREMENT;
+            elbowPosition = Range.clip(elbowPosition, robot.armstrong.getELB_MIN(), robot.armstrong.getELB_MAX());
+            robot.armstrong.elbowMove(elbowPosition);
         }
-
-        elbowPosition = Range.clip(elbowPosition, robot.armstrong.getELB_MIN(), robot.armstrong.getELB_MAX());
-        robot.armstrong.elbowMove(elbowPosition);
 
         /////////////////
         // LINEAR SLIDE
@@ -199,13 +200,7 @@ public class Teleop extends OpMode
 
         if (gamepad2.dpad_left)
         {
-            robot.armstrong.wristMove(0.135);
-            wristPosition = robot.armstrong.getWristPosition();
-
-            robot.armstrong.elbowMove(0.3475);
-            elbowPosition = robot.armstrong.getElbowPosition();
-
-            robot.armstrong.midForwardLift();
+            robot.armstrong.goTo(ArmStrong.ArmPositions.MID_FORWARD, 0.5);
         }
 
         ////////////
@@ -213,13 +208,7 @@ public class Teleop extends OpMode
         ////////////
         if (gamepad2.dpad_right)
         {
-            robot.armstrong.wristMove(0.18);
-            wristPosition = robot.armstrong.getWristPosition();
-
-            robot.armstrong.elbowMove(0.28);
-            elbowPosition = robot.armstrong.getElbowPosition();
-
-            robot.armstrong.midBackwardLift();
+            robot.armstrong.goTo(ArmStrong.ArmPositions.MID_BACKWARD, 0.5);
         }
 
         ////////////
@@ -227,13 +216,7 @@ public class Teleop extends OpMode
         ////////////
         if (gamepad2.left_stick_button) {
             if (gamepad2.x) {
-                robot.armstrong.wristMove(0.08);
-                wristPosition = robot.armstrong.getWristPosition();
-
-                robot.armstrong.elbowMove(0.34);
-                elbowPosition = robot.armstrong.getElbowPosition();
-
-                robot.armstrong.highForwardLift();
+                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_FORWARD, 0.5);
             }
         }
 
@@ -242,15 +225,10 @@ public class Teleop extends OpMode
         ////////////////////
         if (gamepad2.left_stick_button) {
             if (gamepad2.b) {
-                robot.armstrong.wristMove(0.07);
-                wristPosition = robot.armstrong.getWristPosition();
-
-                robot.armstrong.elbowMove(0.285);
-                elbowPosition = robot.armstrong.getElbowPosition();
-
-               robot.armstrong.highBackwardLift();
+                robot.armstrong.goTo(ArmStrong.ArmPositions.HIGH_BACKWARD, 0.5);
             }
         }
+
 
         /////////////////
         // Sensors

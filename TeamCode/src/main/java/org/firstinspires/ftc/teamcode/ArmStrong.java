@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -208,6 +209,47 @@ public class ArmStrong {
     /////////////////
     // LINEAR SLIDE
     /////////////////
+
+    public boolean goTo (ArmPositions positions, double liftPower)
+    {
+        double LiftPower;
+        double LiftPos = getLiftPosition();
+        double wristPos = positions.wrist;
+        double elbowPos = positions.elbow;
+
+        if (LiftPos < (positions.lift+0.1)) {
+            LiftPower = liftPower;
+        } else if (LiftPos > (positions.lift-0.1)) {
+            LiftPower = -liftPower;
+        } else {
+            LiftPower = 0.0;
+        }
+
+        if (getLiftPosition() > 51 || getLiftPosition() < 0) {
+            liftStop(); // set LiftPower = 0.0;
+        } else if (getLiftPosition() != positions.lift) {
+//            LiftPower = ((Math.abs(positions.lift-getLiftPosition()) / 5) * liftPower);
+            double multiplier = Range.clip(Math.abs(positions.lift-getLiftPosition()) / 5 , 0,1);
+            LiftPower *= multiplier;
+
+
+        }
+
+        boolean moving = (liftPower != 0.0);
+
+        leftLift.setPower(LiftPower);
+        rightLift.setPower(LiftPower);
+
+        wristMove(positions.wrist);
+
+
+
+        elbowMove(positions.elbow);
+        elbowPosition = getElbowPosition();
+
+        return !moving;
+
+    }
 
     /**
      * Makes the lift go up at the power level specified.  This method handles the sign needed
