@@ -24,6 +24,8 @@ import java.util.List;
 public class ChassisSubsystem extends SubsystemBase
 {
     private final DifferentialDrive myDrive;
+    private MotorGroup leftMotors;
+    private MotorGroup rightMotors;
     Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
     BNO055IMU imu;
     Telemetry telemetry;
@@ -92,8 +94,8 @@ public class ChassisSubsystem extends SubsystemBase
         lR.motor.setPower(0);
         rR.motor.setPower(0);
 
-        MotorGroup leftMotors = new MotorGroup(lF, lR);
-        MotorGroup rightMotors = new MotorGroup(rF, rR);
+        leftMotors = new MotorGroup(lF, lR);
+        rightMotors = new MotorGroup(rF, rR);
         myDrive = new DifferentialDrive(leftMotors, rightMotors);
 
     }
@@ -218,6 +220,13 @@ public class ChassisSubsystem extends SubsystemBase
                                                        AngleUnit.DEGREES);
         return -AngleUnit.DEGREES.normalize(
                 AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+    }
+
+    public void setZeroBehavior( Motor.ZeroPowerBehavior behavior)
+    {
+        leftMotors.setZeroPowerBehavior(behavior);
+        rightMotors.setZeroPowerBehavior(behavior);
+
     }
 
     @Override

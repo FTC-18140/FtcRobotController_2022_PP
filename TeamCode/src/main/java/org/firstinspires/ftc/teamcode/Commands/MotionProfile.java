@@ -11,17 +11,17 @@ import static java.lang.Math.max;
 @Config
 public class MotionProfile extends PathMotionProfile
 {
-    private final double accelBufferCM; // cm from target
-    private final double decelBufferCM; // cm to target
+    private double accelBufferCM; // cm from target
+    private double decelBufferCM; // cm to target
     private final double hdgBufferDeg; // degrees from target
-
-    public void setMinTurnSpeed(double minTurnSpeed)
-    {
-        this.minTurnSpeed = minTurnSpeed;
-    }
 
     private double minTurnSpeed;
     public Telemetry telem;
+
+    public static double headingOrder = 1;
+    public static double accelOrder = 1;
+    public static double decelOrder = 1;
+    public static double minAccelSpeed = 0.2;
 
     public MotionProfile(double accelerationBufferCM, double decelerationBufferCM, double headingBufferDeg, double minTurnSpd)
     {
@@ -41,9 +41,9 @@ public class MotionProfile extends PathMotionProfile
     {
         if (distanceToTarget < decelBufferCM) {
             motorSpeeds[0] = shapeWithLimit(motorSpeeds[0], configuredMovementSpeed, distanceToTarget,
-                                            decelBufferCM, 0.15, 1);
+                                            decelBufferCM, 0.15, decelOrder);
             motorSpeeds[1] = shapeWithLimit(motorSpeeds[1], configuredMovementSpeed, distanceToTarget,
-                                            decelBufferCM, 0.15, 1);
+                                            decelBufferCM, 0.15, decelOrder);
         }
     }
 
@@ -51,9 +51,9 @@ public class MotionProfile extends PathMotionProfile
     public void accelerate(double[] motorSpeeds, double distanceFromTarget, double speed, double configuredMovementSpeed, double configuredTurnSpeed) {
         if (distanceFromTarget < accelBufferCM) {
             motorSpeeds[0] = shapeWithLimit(motorSpeeds[0], configuredMovementSpeed, distanceFromTarget,
-                                            accelBufferCM, 0.125, 1);
+                                            accelBufferCM, minAccelSpeed, accelOrder);
             motorSpeeds[1] = shapeWithLimit(motorSpeeds[1], configuredMovementSpeed, distanceFromTarget,
-                                            accelBufferCM, 0.125, 1);
+                                            accelBufferCM, minAccelSpeed, accelOrder);
         }
 
     }
@@ -67,15 +67,21 @@ public class MotionProfile extends PathMotionProfile
         return sign*Range.clip(shapedValue, minSpeed, Math.abs(maxSpeed));
     }
 
-    public static double headingOrder = 1;
-
-    public void processHeading(double[] motorspeeds, double angleFromTarget, double maxTurnSpeed)
+    public void processHeading(double[] motorSpeeds, double angleFromTarget, double maxTurnSpeed)
     {
         // Do the profiling of the turning.
-//        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorspeeds[2], angleFromTarget, maxTurnSpeed);
-        double shapedValue = shapeWithLimit(motorspeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(
-                hdgBufferDeg), minTurnSpeed, headingOrder);
+//        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorSpeeds[2], angleFromTarget, maxTurnSpeed);
+        double shapedValue = shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
 //        telem.addData("shaped Value: ", shapedValue);
-        motorspeeds[2] = shapedValue;
+        motorSpeeds[2] = shapedValue;
     }
+
+
+    public void setMinTurnSpeed(double minTurnSpeed)
+    {
+        this.minTurnSpeed = minTurnSpeed;
+    }
+    public void setDecelBufferCM( double bufferCM ) { this.decelBufferCM = bufferCM; }
+    public void setAccelBufferCM( double bufferCM ) { this.accelBufferCM = bufferCM; }
+
 }
