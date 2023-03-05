@@ -69,7 +69,7 @@ public class DepartCommand extends DriveCommand
         {
             speeds[0] = accel * startTimer.timeRemaining(TimeUnit.MILLISECONDS)/1000;
         }
-        
+
 //        if (fromDistance < myLaunchZoneCM )
 //        {    // If the robot is closer to the "from" point, do acceleration
 //            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
