@@ -10,7 +10,6 @@ import java.util.function.DoubleSupplier;
 /**
  * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s).
  */
-@Config
 public class TurboDriveCommand extends CommandBase
 {
     private final ChassisSubsystem myChassis;

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
 import java.util.concurrent.TimeUnit;
 
-public class DepartCommand extends DriveCommand
+public class DepartCommand extends DriveCommandBase
 {
     private final double myLaunchZoneCM;
     private Deadline startTimer = new Deadline(5000,TimeUnit.MILLISECONDS);

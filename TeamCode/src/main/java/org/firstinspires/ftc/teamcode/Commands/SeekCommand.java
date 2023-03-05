@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
-public class SeekCommand extends DriveCommand
+public class SeekCommand extends DriveCommandBase
 {
 //    private final ChassisSubsystem myChassisSubsystem;
 //    private final DiffDriveOdometrySubsystem myOdometrySubsystem;

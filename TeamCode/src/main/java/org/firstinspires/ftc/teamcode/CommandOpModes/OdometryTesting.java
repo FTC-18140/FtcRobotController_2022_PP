@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
 import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Commands.WristCommand;
+import org.firstinspires.ftc.teamcode.DataLogger;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
@@ -39,6 +40,11 @@ public class OdometryTesting extends TBDOpModeBase
     ClawSubsystem claw = null;
     AprilEyes vision = new AprilEyes();
 
+
+
+    public static DataLogger logger = new DataLogger();
+    public static String logFileName = "legendaryData";
+
     Deadline timerOne = new Deadline(9, TimeUnit.SECONDS);
     Deadline timerTwo = new Deadline(19, TimeUnit.SECONDS);
     Deadline timerThree = new Deadline(27, TimeUnit.SECONDS);
@@ -58,6 +64,17 @@ public class OdometryTesting extends TBDOpModeBase
     {
         try
         {
+            // Open file for logging
+            logger.openFile( logFileName);
+            logger.addField("LeftEncDist" );
+            logger.addField("RighEncDist" );
+            logger.addField( "X");
+            logger.addField("Y" );
+            logger.addField( "Heading");
+            logger.addField("Forward Speed");
+            logger.addField("Rotate Speed");
+            logger.newLine();
+
             vision.init(hardwareMap, telemetry);
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
@@ -335,6 +352,7 @@ public class OdometryTesting extends TBDOpModeBase
     public void stop()
     {
         super.stop();
+        logger.closeDataLogger();
         chassis.stop();
         telemetry.addData("Processed stop.", 4);
     }

@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffOdometrySubsystem;
 import java.util.ArrayList;
 @Disabled
 @Autonomous(name = "FTCLib_RamseteOpMode", group = "FTCLib")
-@Config
 public class FTCLib_RamseteOpMode extends TBDOpModeBase
 {
     ChassisSubsystem myChassis = null;

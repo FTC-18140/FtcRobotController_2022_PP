@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
 @Autonomous(name = "FTCLib_SlideTestOpMode", group = "FTCLib")
-@Config
 @Disabled
 public class LinearSlideTestOpMode extends TBDOpModeBase
 {

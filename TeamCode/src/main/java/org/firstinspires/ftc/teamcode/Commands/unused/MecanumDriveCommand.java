@@ -11,7 +11,6 @@ import java.util.function.DoubleSupplier;
  * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s). Written
  * explicitly for pedagogical purposes.
  */
-@Config
 public class MecanumDriveCommand extends CommandBase {
 
     private final MecanumChassisSubsystem m_drive;

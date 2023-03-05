@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
-public abstract class DriveCommand extends CommandBase
+public abstract class DriveCommandBase extends CommandBase
 {
     protected final ChassisSubsystem myChassisSubsystem;
     protected final DiffDriveOdometrySubsystem myOdometrySubsystem;
@@ -46,7 +46,7 @@ public abstract class DriveCommand extends CommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public DriveCommand(double x, double y, double speed, double turnSpeed, double endZoneCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public DriveCommandBase(double x, double y, double speed, double turnSpeed, double endZoneCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         toPoint = new Translation2d(x, y);
         mySpeed = speed;
@@ -122,6 +122,16 @@ public abstract class DriveCommand extends CommandBase
 //        {
 //            motorPowers[0] = motorPowers[0] * Math.abs(motorPowers[0]/(Math.abs(motorPowers[0])+Math.abs(motorPowers[2])));
 //        }
+        OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+        OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getY());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getHeading());
+        OdometryTesting.logger.addField(motorPowers[0]);
+        OdometryTesting.logger.addField(motorPowers[2]);
+        OdometryTesting.logger.newLine();
+
+
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }
 

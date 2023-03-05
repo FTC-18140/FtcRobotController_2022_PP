@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import static java.lang.Math.abs;
 import static java.lang.Math.ulp;
 
-public class ArriveCommand extends DriveCommand
+public class ArriveCommand extends DriveCommandBase
 {
     private final double mySlowDownZoneCM;
 

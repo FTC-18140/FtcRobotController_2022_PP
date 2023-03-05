@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 
 @Autonomous(name = "FTCLib_ElbowOpMode", group = "FTCLib")
-@Config
 @Disabled
 public class ArmTestOpMode extends TBDOpModeBase {
     ArmSubsystem arm = null;
