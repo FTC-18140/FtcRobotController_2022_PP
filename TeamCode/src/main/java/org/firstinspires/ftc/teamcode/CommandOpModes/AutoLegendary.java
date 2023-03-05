@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
 import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Commands.WristCommand;
+import org.firstinspires.ftc.teamcode.DataLogger;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
@@ -47,6 +48,9 @@ public class AutoLegendary extends TBDOpModeBase
     public static boolean coneTwoDropped = false;
     public static boolean coneThreeDropped = false;
 
+    public static DataLogger logger = new DataLogger();
+    public static String logFileName = "legendaryData";
+
     public enum Zone {
         ONE, TWO, THREE
     }
@@ -56,8 +60,18 @@ public class AutoLegendary extends TBDOpModeBase
     @Override
     public void init()
     {
+
+
         try
         {
+            // Open file for logging
+            logger.openFile( logFileName);
+            logger.addField("LeftEncDist" );
+            logger.addField("RighEncDist" );
+            logger.addField( "Heading");
+            logger.addField( "X");
+            logger.addField("Y" );
+            logger.newLine();
             vision.init(hardwareMap, telemetry);
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
@@ -326,6 +340,7 @@ public class AutoLegendary extends TBDOpModeBase
                 theZone = Zone.TWO;
                 telemetry.addData("Two", 0);
         }
+        telemetry.addData("log file path", logger.getLogFullPathName());
     }
 
 
@@ -344,6 +359,7 @@ public class AutoLegendary extends TBDOpModeBase
     {
         super.stop();
         chassis.stop();
-        telemetry.addData("Processed stop.", 4);
+        logger.closeDataLogger();
+        telemetry.addData("********************* Processed stop.*********************", 4);
     }
 }
