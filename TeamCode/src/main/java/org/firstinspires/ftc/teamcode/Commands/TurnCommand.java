@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -60,6 +61,8 @@ public class TurnCommand extends CommandBase
     public void initialize()
     {
 //        fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
+        myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
     }
 
     @Override
