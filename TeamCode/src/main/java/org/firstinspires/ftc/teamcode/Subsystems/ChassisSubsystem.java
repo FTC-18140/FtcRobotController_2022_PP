@@ -8,12 +8,15 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -28,6 +31,7 @@ public class ChassisSubsystem extends SubsystemBase
     BNO055IMU imu;
     Telemetry telemetry;
     List<LynxModule> allHubs;
+    private DistanceSensor sensorRange;
 
     public double getHeading()
     {
@@ -63,6 +67,7 @@ public class ChassisSubsystem extends SubsystemBase
         rfEncoder = rF.encoder;
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
+
 
 
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
@@ -106,6 +111,7 @@ public class ChassisSubsystem extends SubsystemBase
                             String rightFrontName,
                             String leftRearName,
                             String rightRearName,
+
                             Telemetry telem)
     {
         this(new MotorEx(hMap, leftFrontName, CPR, RPM),
@@ -150,7 +156,7 @@ public class ChassisSubsystem extends SubsystemBase
             telemetry.addData("imu not found in config file", 0);
             imu = null;
         }
-
+        sensorRange = hMap.get(DistanceSensor.class, "sensor_range");
     }
 
     public ChassisSubsystem(HardwareMap hMap, Telemetry telem)
@@ -218,6 +224,10 @@ public class ChassisSubsystem extends SubsystemBase
                                                        AngleUnit.DEGREES);
         return -AngleUnit.DEGREES.normalize(
                 AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+    }
+
+    public double getDistance() {
+        return sensorRange.getDistance(DistanceUnit.CM);
     }
 
     @Override

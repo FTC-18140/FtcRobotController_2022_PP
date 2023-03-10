@@ -16,7 +16,7 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
 
     protected DifferentialDriveOdometry m_odometry;
     Telemetry telemetry;
-    DoubleSupplier left, right, gyro;
+    public DoubleSupplier left, right, gyro;
 
     public final double TRACK_WIDTH = 28.2*2.0;
     public final double TRACK_WIDTH_METERS = TRACK_WIDTH/100.0;
@@ -57,12 +57,12 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
         telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
         telemetry.addData("Log File Path", logger.getLogFullPathName());
 
-        logger.addField(left.getAsDouble() );
-        logger.addField(right.getAsDouble());
-        logger.addField( getPose().getHeading() );
-        logger.addField( getPose().getX());
-        logger.addField( getPose().getY());
-        logger.newLine();
+//        logger.addField(left.getAsDouble() );
+//        logger.addField(right.getAsDouble());
+//        logger.addField( getPose().getHeading() );
+//        logger.addField( getPose().getX());
+//        logger.addField( getPose().getY());
+//        logger.newLine();
     }
 
 }

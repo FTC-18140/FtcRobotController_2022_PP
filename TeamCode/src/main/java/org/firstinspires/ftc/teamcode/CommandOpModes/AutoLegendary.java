@@ -66,6 +66,7 @@ public class AutoLegendary extends TBDOpModeBase
         {
             // Open file for logging
             logger.openFile( logFileName);
+            logger.addField("distance cm");
             logger.addField("LeftEncDist" );
             logger.addField("RighEncDist" );
             logger.addField( "Heading");
@@ -319,6 +320,13 @@ public class AutoLegendary extends TBDOpModeBase
 
             }
         }
+        logger.addField(chassis.getDistance());
+        logger.addField(odometry.left.getAsDouble());
+        logger.addField(odometry.right.getAsDouble());
+        logger.addField( odometry.getPose().getHeading() );
+        logger.addField( odometry.getPose().getX());
+        logger.addField( odometry.getPose().getY());
+        logger.newLine();
     }
 
     @Override
