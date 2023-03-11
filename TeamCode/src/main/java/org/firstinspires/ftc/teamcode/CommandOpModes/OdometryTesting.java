@@ -128,10 +128,10 @@ public class OdometryTesting extends TBDOpModeBase
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
         ArriveCommand arriveAtJunction  = new ArriveCommand(157, 90, 0.4, 0.1, 40, 1, chassis, odometry );
+        WaitCommand waitALittle = new WaitCommand(2000);
+        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getFrontDistance, 18, chassis, odometry);
 
-        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, 0.1, 18, chassis, odometry);
-
-        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction.andThen(new WaitCommand(2000)), turnToPole);
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle, turnToPole);
 
     }
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -8,24 +9,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
+import java.util.function.DoubleSupplier;
+@Config
 public class TurnToJunctionCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffDriveOdometrySubsystem myOdometrySubsystem;
     private final MotionProfile myMotionProfile;
+    private DoubleSupplier distance;
 
     private final boolean myClockwise;
-
     private Pose2d myRobotPose;
 
     public static double myDistanceThreshold = 18;
-
     private final double myMaxTurnSpeed;
-    private final double myMinTurnSpeed;
-
     private boolean myFinished = false;
-
-    double relativeAngleToPosition;
 
     Telemetry telemetry;
 
@@ -33,12 +31,12 @@ public class TurnToJunctionCommand extends CommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public TurnToJunctionCommand(boolean clockwise, double turnSpeed, double minTurnSpeed, double distThreshold, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public TurnToJunctionCommand(boolean clockwise, double turnSpeed, DoubleSupplier distanceSupplier, double distThreshold, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         myClockwise = clockwise;
 
         myMaxTurnSpeed = turnSpeed;
-        myMinTurnSpeed = minTurnSpeed;
+        distance = distanceSupplier;
         myDistanceThreshold = distThreshold;
 
         myChassisSubsystem = chassis;
@@ -87,7 +85,7 @@ public class TurnToJunctionCommand extends CommandBase
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
         // Check if we have arrived
-        myFinished = myChassisSubsystem.getDistance() < myDistanceThreshold;   ///   Am I seeing the pole???
+        myFinished = distance.getAsDouble() < myDistanceThreshold;   ///   Am I seeing the pole???
 
         telemetry.addData("See Junction?  ", myFinished);
 

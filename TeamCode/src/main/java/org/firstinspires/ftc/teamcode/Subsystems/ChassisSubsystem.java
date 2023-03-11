@@ -32,12 +32,14 @@ public class ChassisSubsystem extends SubsystemBase
     private BNO055IMU imu;
     Telemetry telemetry;
     private List<LynxModule> allHubs;
-    private DistanceSensor sensorRange;
+    private DistanceSensor backSensorRange;
+    private DistanceSensor frontSensorRange;
 
 
 
     private double heading;
-    private double distance;
+    private double backDistance;
+    private double frontDistance;
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -144,11 +146,19 @@ public class ChassisSubsystem extends SubsystemBase
         try
         {
             // you can use this as a regular DistanceSensor.
-            sensorRange = hMap.get(DistanceSensor.class, "sensor_range");
+            backSensorRange = hMap.get(DistanceSensor.class, "sensor_range");
         }
         catch (Exception e)
         {
-            telemetry.addData("Distance Sensor not found in config file", 0);
+            telemetry.addData("Back Range Sensor not found in config file", 0);
+        }
+        try
+        {
+            frontSensorRange = hMap.get(DistanceSensor.class, "sensor_range_front");
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Front Range Sensor not found in config file", 0);
         }
 
     }
@@ -234,7 +244,8 @@ public class ChassisSubsystem extends SubsystemBase
         {
             module.clearBulkCache();
         }
-        distance = sensorRange.getDistance(DistanceUnit.CM);
+        backDistance = backSensorRange.getDistance(DistanceUnit.CM);
+        frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
         heading = updateHeading();
 
     }
@@ -250,5 +261,6 @@ public class ChassisSubsystem extends SubsystemBase
     {
         return Math.toRadians(heading);
     }
-    public double getDistance() { return distance; }
+    public double getBackDistance() { return backDistance; }
+    public double getFrontDistance() { return frontDistance; }
 }
