@@ -8,12 +8,14 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -26,21 +28,16 @@ public class ChassisSubsystem extends SubsystemBase
     private final DifferentialDrive myDrive;
     private MotorGroup leftMotors;
     private MotorGroup rightMotors;
-    Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
-    BNO055IMU imu;
+    private Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
+    private BNO055IMU imu;
     Telemetry telemetry;
-    List<LynxModule> allHubs;
+    private List<LynxModule> allHubs;
+    private DistanceSensor sensorRange;
 
-    public double getHeading()
-    {
-        return heading;
-    }
-    public double getHeadingAsRad()
-    {
-        return Math.toRadians(heading);
-    }
+
 
     private double heading;
+    private double distance;
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -72,19 +69,10 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
-//        lF.setRunMode(Motor.RunMode.VelocityControl);
-//        rF.setRunMode(Motor.RunMode.VelocityControl);
-//        lR.setRunMode(Motor.RunMode.VelocityControl);
-//        rR.setRunMode(Motor.RunMode.VelocityControl);
-
         lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        // temp
-//        lF.setInverted(true);
-//        rF.setInverted(true);
 
         telemetry = telem;
         resetEncoders();
@@ -151,6 +139,16 @@ public class ChassisSubsystem extends SubsystemBase
         {
             telemetry.addData("imu not found in config file", 0);
             imu = null;
+        }
+
+        try
+        {
+            // you can use this as a regular DistanceSensor.
+            sensorRange = hMap.get(DistanceSensor.class, "sensor_range");
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Distance Sensor not found in config file", 0);
         }
 
     }
@@ -232,14 +230,25 @@ public class ChassisSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
-        heading = updateHeading();
         for (LynxModule module : allHubs)
         {
             module.clearBulkCache();
         }
+        distance = sensorRange.getDistance(DistanceUnit.CM);
+        heading = updateHeading();
+
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
     }
+    public double getHeading()
+    {
+        return heading;
+    }
+    public double getHeadingAsRad()
+    {
+        return Math.toRadians(heading);
+    }
+    public double getDistance() { return distance; }
 }

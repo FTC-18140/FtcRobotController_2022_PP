@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;
 import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
+import org.firstinspires.ftc.teamcode.Commands.TurnToJunctionCommand;
 import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Commands.WristCommand;
 import org.firstinspires.ftc.teamcode.DataLogger;
@@ -128,7 +129,9 @@ public class OdometryTesting extends TBDOpModeBase
 
         ArriveCommand arriveAtJunction  = new ArriveCommand(157, 90, 0.4, 0.1, 40, 1, chassis, odometry );
 
-        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction);
+        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, 0.1, 18, chassis, odometry);
+
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction.andThen(new WaitCommand(2000)), turnToPole);
 
     }
 
