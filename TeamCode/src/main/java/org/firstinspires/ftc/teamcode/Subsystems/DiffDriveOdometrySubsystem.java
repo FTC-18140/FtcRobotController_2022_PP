@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.function.DoubleSupplier;
 
-import static org.firstinspires.ftc.teamcode.CommandOpModes.AutoLegendary.logger;
+import static org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting.logger;
 
 public class DiffDriveOdometrySubsystem extends SubsystemBase
 {
@@ -55,14 +55,8 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
        // telemetry.addData("Robot Pose: ", getPose() );
         telemetry.addData("X, Y: ", "%.3f, %.3f", getPose().getX(), getPose().getY());
         telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
-        telemetry.addData("Log File Path", logger.getLogFullPathName());
+//        telemetry.addData("Log File Path", logger.getLogFullPathName());
 
-        logger.addField(left.getAsDouble() );
-        logger.addField(right.getAsDouble());
-        logger.addField( getPose().getHeading() );
-        logger.addField( getPose().getX());
-        logger.addField( getPose().getY());
-        logger.newLine();
     }
 
 }

@@ -40,10 +40,8 @@ public class OdometryTesting extends TBDOpModeBase
     ClawSubsystem claw = null;
     AprilEyes vision = new AprilEyes();
 
-
-
     public static DataLogger logger = new DataLogger();
-    public static String logFileName = "legendaryData";
+    public static String logFileName = "odometryTestingData";
 
     Deadline timerOne = new Deadline(9, TimeUnit.SECONDS);
     Deadline timerTwo = new Deadline(19, TimeUnit.SECONDS);
@@ -109,20 +107,29 @@ public class OdometryTesting extends TBDOpModeBase
     private SequentialCommandGroup driveToJunction()
     {
 
+//        ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
+//        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+//        ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
+//
+//        SeekCommand midPointOne = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry);
+//        ArriveCommand arriveAtJunction  = new ArriveCommand(162, 102, 0.5, 0.1, 40, 1, chassis, odometry );
+//        LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
+//        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
+//
+//        WaitCommand waitToTurn = new WaitCommand(100);
+//        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 0.75, chassis, odometry);
+//
+//        return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
+        //////////////////////////////////////
+
         ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
-        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+        DepartCommand driveAwayFromWall = new DepartCommand(100, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
-        SeekCommand midPointOne = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry);
-        ArriveCommand arriveAtJunction  = new ArriveCommand(162, 102, 0.5, 0.1, 40, 1, chassis, odometry );
-        LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
-        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
+        ArriveCommand arriveAtJunction  = new ArriveCommand(157, 90, 0.4, 0.1, 40, 1, chassis, odometry );
 
-        WaitCommand waitToTurn = new WaitCommand(100);
-        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 0.75, chassis, odometry);
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction);
 
-        return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
-        //////////////////////////////////////
     }
 
     private SequentialCommandGroup dropCone()
@@ -354,6 +361,6 @@ public class OdometryTesting extends TBDOpModeBase
         super.stop();
         logger.closeDataLogger();
         chassis.stop();
-        telemetry.addData("Processed stop.", 4);
+        telemetry.addData("********************* Processed stop.*********************", 4);
     }
 }

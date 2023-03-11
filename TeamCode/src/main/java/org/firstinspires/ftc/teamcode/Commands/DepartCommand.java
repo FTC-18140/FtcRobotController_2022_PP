@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
 import java.util.concurrent.TimeUnit;
-
+@Config
 public class DepartCommand extends DriveCommandBase
 {
     private final double myLaunchZoneCM;
-    private Deadline startTimer = new Deadline(5000,TimeUnit.MILLISECONDS);
-    private double timeToAccel = 1.25;
+    private final ElapsedTime accelerationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    static public double timeToAccel = 1.25; // seconds
 
     /**
      * Creates a new ArriveCommand.
@@ -41,7 +42,7 @@ public class DepartCommand extends DriveCommandBase
     {
         if(firstExecute)
         {
-            startTimer.reset();
+            accelerationTimer.reset();
         }
 
         if ( myBackwards)
@@ -64,10 +65,15 @@ public class DepartCommand extends DriveCommandBase
     public void profileMotorPowers(double[] speeds)
     {
         double accel = mySpeed/timeToAccel;
+        double time = accelerationTimer.time(TimeUnit.MILLISECONDS) / 1000.0; //seconds
 
-        if ( !startTimer.hasExpired())
+        if ( time <= timeToAccel)
         {
-            speeds[0] = accel * startTimer.timeRemaining(TimeUnit.MILLISECONDS)/1000;
+            speeds[0] = accel * time;
+        }
+        else
+        {
+            speeds[0] = mySpeed;
         }
 
 //        if (fromDistance < myLaunchZoneCM )
