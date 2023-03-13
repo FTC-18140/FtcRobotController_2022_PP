@@ -17,6 +17,7 @@ public class MotionProfile extends PathMotionProfile
     public Telemetry telem;
 
     public static double headingOrder = 1;
+    public static double headingGain = 0.35;
     public static double accelOrder = 1;
     public static double decelOrder = 1;
     public static double minAccelSpeed = 0.2;
@@ -69,7 +70,7 @@ public class MotionProfile extends PathMotionProfile
     {
         // Do the profiling of the turning.
 //        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorSpeeds[2], angleFromTarget, maxTurnSpeed);
-        double shapedValue = shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
+        double shapedValue = headingGain * shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
 //        telem.addData("shaped Value: ", shapedValue);
         motorSpeeds[2] = shapedValue;
     }

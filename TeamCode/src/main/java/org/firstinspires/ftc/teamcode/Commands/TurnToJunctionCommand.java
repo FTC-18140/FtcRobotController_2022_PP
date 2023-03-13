@@ -54,6 +54,7 @@ public class TurnToJunctionCommand extends CommandBase
     @Override
     public void initialize()
     {
+        telemetry.addData("Initializing Turn to Junction Command: ", myClockwise);
         myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 

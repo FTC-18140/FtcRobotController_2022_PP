@@ -36,6 +36,7 @@ public class ArmSubsystem extends SubsystemBase
             rightElbow = hwMap.servo.get("relbow");
             rightElbow.setDirection(Servo.Direction.REVERSE);
             twist = hwMap.servo.get("twist");
+            armTwist(0);
             wrist = hwMap.servo.get("wrist");
             wrist.setPosition(0.55);
         }

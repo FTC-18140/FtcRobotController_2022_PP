@@ -105,23 +105,14 @@ public abstract class DriveCommandBase extends CommandBase
 
         telemetry.addData("Power 0, profiled: ", motorPowers[0]);
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
+        telemetry.addData("MinTurnSpeed: ", 0.03 * Math.abs(turnAngle)/Math.toRadians(10));
 
         // Check if we have arrived
         // arriving on a normal move is based on closeness to the toPoint
         myArrived = AutoUtils.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myEndZoneCM);
 
         telemetry.addData("Arrived at toPoint?  ", myArrived);
-//        if (myArrived)
-//        {
-//            motorPowers[0] = 0;
-//            motorPowers[1] = 0;
-//            motorPowers[2] = 0;
-//        }
 
-//        if ((Math.abs(motorPowers[0])+Math.abs(motorPowers[2])) > myTurnSpeed )
-//        {
-//            motorPowers[0] = motorPowers[0] * Math.abs(motorPowers[0]/(Math.abs(motorPowers[0])+Math.abs(motorPowers[2])));
-//        }
         OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
         OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
         OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());

@@ -38,8 +38,8 @@ public class ChassisSubsystem extends SubsystemBase
 
 
     private double heading;
-    private double backDistance;
-    private double frontDistance;
+    private double backDistance = 100;
+    private double frontDistance = 100;
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -244,8 +244,14 @@ public class ChassisSubsystem extends SubsystemBase
         {
             module.clearBulkCache();
         }
-        backDistance = backSensorRange.getDistance(DistanceUnit.CM);
-        frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
+        if ( backSensorRange != null )
+        {
+            backDistance = backSensorRange.getDistance(DistanceUnit.CM);
+        }
+        if ( frontSensorRange != null )
+        {
+            frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
+        }
         heading = updateHeading();
 
     }

@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "AutoLegendary", group = "FTCLib")
+@Autonomous(name = "OdometryTesting", group = "FTCLib")
 @Config
 public class OdometryTesting extends TBDOpModeBase
 {
@@ -88,8 +88,6 @@ public class OdometryTesting extends TBDOpModeBase
             register( arm );
             register( lift );
             register( claw );
-            arm.armTwist(0);
-
 
 
             ////////////// MASTER COMMAND /////////
@@ -124,14 +122,17 @@ public class OdometryTesting extends TBDOpModeBase
         //////////////////////////////////////
 
         ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
-        DepartCommand driveAwayFromWall = new DepartCommand(100, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+        DepartCommand driveAwayFromWall = new DepartCommand(65, 90, 0.4, 0.1, 25, 10, false, chassis, odometry);
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
-        ArriveCommand arriveAtJunction  = new ArriveCommand(157, 90, 0.4, 0.1, 40, 1, chassis, odometry );
-        WaitCommand waitALittle = new WaitCommand(2000);
-        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getFrontDistance, 18, chassis, odometry);
+        SeekCommand driveToJunction = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry );
+        ArriveCommand arriveAtJunction  = new ArriveCommand(130, 90, 0.4, 0.1, 20, 2, chassis, odometry );
+        WaitCommand waitALittle = new WaitCommand(1000);
+        DepartCommand backUp = new DepartCommand( 110, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
+        ArriveCommand stop = new ArriveCommand( 90, 90,-0.3, 0.1, 8, 2, chassis, odometry );
+        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getBackDistance, 18, chassis, odometry);
 
-        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle, turnToPole);
+        return new SequentialCommandGroup( driveAndElbow, driveToJunction, arriveAtJunction, waitALittle, backUp, stop, turnToPole);
 
     }
 

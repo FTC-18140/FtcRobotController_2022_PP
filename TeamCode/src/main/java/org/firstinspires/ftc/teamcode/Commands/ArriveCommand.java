@@ -16,13 +16,13 @@ public class ArriveCommand extends DriveCommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public ArriveCommand(double x, double y, double speed, double turnSpeed, double endZoneCM, double arriveBuffer, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public ArriveCommand(double x, double y, double speed, double turnSpeed, double arriveZoneCM, double arriveBufferCM, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
 
         // Need to use the arriveBuffer in the super class where endZoneCM is normally used.
-        super(x, y, speed, turnSpeed, arriveBuffer, true, chassis, odometry);
-        mySlowDownZoneCM = endZoneCM;
-        myMotionProfile.setDecelBufferCM(arriveBuffer);
+        super(x, y, speed, turnSpeed, arriveBufferCM, true, chassis, odometry);
+        mySlowDownZoneCM = arriveZoneCM;
+        myMotionProfile.setDecelBufferCM(arriveZoneCM);
 
     }
 

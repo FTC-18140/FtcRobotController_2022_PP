@@ -21,11 +21,11 @@ public class DepartCommand extends DriveCommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public DepartCommand(double x, double y, double speed, double turnSpeed, double launchZoneCM, double targetZoneCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public DepartCommand(double x, double y, double speed, double turnSpeed, double departZoneCM, double arriveBufferCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
-        super(x, y, speed, turnSpeed, targetZoneCM, stopAtEnd, chassis, odometry);
-        myLaunchZoneCM = launchZoneCM;
-        myMotionProfile.setAccelBufferCM(launchZoneCM);
+        super(x, y, speed, turnSpeed, arriveBufferCM, stopAtEnd, chassis, odometry);
+        myLaunchZoneCM = departZoneCM;
+        myMotionProfile.setAccelBufferCM(departZoneCM);
 
     }
 
