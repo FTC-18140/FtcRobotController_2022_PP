@@ -160,7 +160,7 @@ public abstract class DriveCommandBase extends CommandBase
 
         if (myBackwards)
         {
-            relativeAngleToPosition = AutoUtils.angleWrap(relativeAngleToPosition - Math.PI);
+            relativeAngleToPosition = -AutoUtils.angleWrap(relativeAngleToPosition - Math.PI);
         }
 
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
