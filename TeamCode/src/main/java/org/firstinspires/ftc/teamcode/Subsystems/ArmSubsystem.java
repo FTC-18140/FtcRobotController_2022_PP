@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+@Config
 public class ArmSubsystem extends SubsystemBase
 {
 
@@ -38,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase
             twist = hwMap.servo.get("twist");
             armTwist(0);
             wrist = hwMap.servo.get("wrist");
-            wrist.setPosition(0.55);
+            wrist.setPosition(0.6);
         }
         catch (Exception e)
         {

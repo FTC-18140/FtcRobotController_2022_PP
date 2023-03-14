@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
+import org.firstinspires.ftc.teamcode.MovingAverage;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.ulp;
-
+@Config
 public class ArriveCommand extends DriveCommandBase
 {
     private final double mySlowDownZoneCM;
+    public static int filterSize = 20;
+    private MovingAverage decelFilter = new MovingAverage(filterSize);
 
     /**
      * Creates a new ArriveCommand.
@@ -59,6 +61,8 @@ public class ArriveCommand extends DriveCommandBase
        if (toDistance < mySlowDownZoneCM)
         {    // If the robot is closer to the "to" point, do deceleration
             myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
+            decelFilter.add(speeds[0]);
+            speeds[0] = decelFilter.getValue();
         }
         myMotionProfile.processHeading(speeds, relativeAngleToPosition, myTurnSpeed);
     }

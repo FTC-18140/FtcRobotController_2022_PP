@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -8,6 +9,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -22,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.List;
 
-
+@Config
 public class ChassisSubsystem extends SubsystemBase
 {
     private final DifferentialDrive myDrive;
@@ -40,6 +42,22 @@ public class ChassisSubsystem extends SubsystemBase
     private double heading;
     private double backDistance = 100;
     private double frontDistance = 100;
+
+//    public static double kP = 1;
+//    public static double kI = 0;
+//    public static double kD = 0;
+//
+//    public static double kV = 0.0;
+//    public static double ka = 0;
+//    public static double ks = 0;
+
+    public double[] getCoeffs()
+    {
+        return coeffs;
+    }
+
+    private double[] coeffs = new double[4];
+
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -71,18 +89,46 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
+        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+//        resetEncoders();
+
+        lF.setRunMode(Motor.RunMode.VelocityControl);
+        rF.setRunMode(Motor.RunMode.VelocityControl);
+        lR.setRunMode(Motor.RunMode.VelocityControl);
+        rR.setRunMode(Motor.RunMode.VelocityControl);
+//
+//        lF.setVeloCoefficients(kP, kI, kD);
+//        rF.setVeloCoefficients(kP, kI, kD);
+//        lR.setVeloCoefficients(kP, kI, kD);
+//        rR.setVeloCoefficients(kP, kI, kD);
+//
+//        lF.setFeedforwardCoefficients(ks,kV, ka);
+//        rF.setFeedforwardCoefficients(ks,kV, ka);
+//        lR.setFeedforwardCoefficients(ks,kV, ka);
+//        rR.setFeedforwardCoefficients(ks,kV, ka);
+
         lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        telemetry = telem;
-        resetEncoders();
+        coeffs = rF.getVeloCoefficients();
 
-        lF.motor.setPower(0);
-        rF.motor.setPower(0);
-        lR.motor.setPower(0);
-        rR.motor.setPower(0);
+        telemetry = telem;
+
+        lF.stopMotor();
+        rF.stopMotor();
+        lR.stopMotor();
+        rR.stopMotor();
 
         leftMotors = new MotorGroup(lF, lR);
         rightMotors = new MotorGroup(rF, rR);
@@ -253,6 +299,7 @@ public class ChassisSubsystem extends SubsystemBase
             frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
         }
         heading = updateHeading();
+        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
 
     }
 

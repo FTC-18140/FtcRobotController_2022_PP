@@ -15,7 +15,7 @@ public class DepartCommand extends DriveCommandBase
 {
     private final double myLaunchZoneCM;
     private final ElapsedTime accelerationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    static public double timeToAccel = 1.25; // seconds
+    static public double timeToAccel = 1; // seconds
 
     /**
      * Creates a new ArriveCommand.

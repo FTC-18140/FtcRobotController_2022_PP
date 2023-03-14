@@ -51,6 +51,9 @@ public class OdometryTesting extends TBDOpModeBase
     public static boolean coneOneDropped = false;
     public static boolean coneTwoDropped = false;
     public static boolean coneThreeDropped = false;
+    public static double speed = 0.4;
+    public static double distance = 158;
+    public static double arriveZoneCM = 40;
 
     public enum Zone {
         ONE, TWO, THREE
@@ -122,17 +125,17 @@ public class OdometryTesting extends TBDOpModeBase
         //////////////////////////////////////
 
         ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
-        DepartCommand driveAwayFromWall = new DepartCommand(65, 90, 0.4, 0.1, 25, 10, false, chassis, odometry);
+        DepartCommand driveAwayFromWall = new DepartCommand(65, 90, speed, 0.1, 25, 10, false, chassis, odometry);
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
-        SeekCommand driveToJunction = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry );
-        ArriveCommand arriveAtJunction  = new ArriveCommand(130, 90, 0.4, 0.1, 20, 2, chassis, odometry );
+        SeekCommand driveToJunction = new SeekCommand(90, 90, speed, 0.1, 5, false, chassis, odometry );
+        ArriveCommand arriveAtJunction  = new ArriveCommand(distance, 90, speed, 0.3, arriveZoneCM, 2, chassis, odometry );
         WaitCommand waitALittle = new WaitCommand(1000);
-        DepartCommand backUp = new DepartCommand( 110, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
-        ArriveCommand stop = new ArriveCommand( 90, 90,-0.3, 0.1, 8, 2, chassis, odometry );
+        DepartCommand backUp = new DepartCommand( distance-20, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
+        ArriveCommand stop = new ArriveCommand( distance-40, 90,-0.3, 0.1, 10, 2, chassis, odometry );
         TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getBackDistance, 18, chassis, odometry);
 
-        return new SequentialCommandGroup( driveAndElbow, driveToJunction, arriveAtJunction, waitALittle, backUp, stop, turnToPole);
+        return new SequentialCommandGroup( driveAndElbow, driveToJunction, arriveAtJunction, waitALittle, backUp, stop,turnToPole);
 
     }
 
@@ -346,6 +349,9 @@ public class OdometryTesting extends TBDOpModeBase
                 theZone = Zone.TWO;
                 telemetry.addData("Two", 0);
         }
+
+        double[] coeffs = chassis.getCoeffs();
+        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
     }
 
 

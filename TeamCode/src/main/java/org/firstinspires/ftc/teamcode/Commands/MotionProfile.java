@@ -16,8 +16,8 @@ public class MotionProfile extends PathMotionProfile
     private double minTurnSpeed;
     public Telemetry telem;
 
-    public static double headingOrder = 1;
-    public static double headingGain = 0.35;
+    public static double headingOrder = 3;
+    public static double headingGain = 0.25;
     public static double accelOrder = 1;
     public static double decelOrder = 1;
     public static double minAccelSpeed = 0.2;
