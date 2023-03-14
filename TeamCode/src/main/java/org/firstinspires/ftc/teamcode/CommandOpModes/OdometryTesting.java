@@ -129,7 +129,7 @@ public class OdometryTesting extends TBDOpModeBase
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
 
         SeekCommand driveToJunction = new SeekCommand(90, 90, speed, 0.1, 5, false, chassis, odometry );
-        ArriveCommand arriveAtJunction  = new ArriveCommand(distance, 90, speed, 0.3, arriveZoneCM, 2, chassis, odometry );
+        ArriveCommand arriveAtJunction  = new ArriveCommand(distance, 90, speed, 0.3, arriveZoneCM, 2,chassis, odometry );
         WaitCommand waitALittle = new WaitCommand(1000);
         DepartCommand backUp = new DepartCommand( distance-20, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
         ArriveCommand stop = new ArriveCommand( distance-40, 90,-0.3, 0.1, 10, 2, chassis, odometry );

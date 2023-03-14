@@ -253,6 +253,23 @@ public class ChassisSubsystem extends SubsystemBase
         return -(rfEncoder.getDistance() + rrEncoder.getDistance()) / 2.0;
     }
 
+    public double getBackSensorDistance() {
+        if (backSensorRange.getDistance(DistanceUnit.CM) < 25) {
+            return backSensorRange.getDistance(DistanceUnit.CM);
+        } else {
+            return 0.0;
+        }
+    }
+
+    public double getFrontSensorDistance() {
+        if (frontSensorRange.getDistance(DistanceUnit.CM) < 25) {
+            return frontSensorRange.getDistance(DistanceUnit.CM);
+        }
+        else {
+            return 0.0;
+        }
+    }
+
     public void resetEncoders() {
         lfEncoder.reset();
         rfEncoder.reset();
