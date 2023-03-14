@@ -51,12 +51,12 @@ public class ChassisSubsystem extends SubsystemBase
 //    public static double ka = 0;
 //    public static double ks = 0;
 
-    public double[] getCoeffs()
-    {
-        return coeffs;
-    }
-
-    private double[] coeffs = new double[4];
+//    public double[] getCoeffs()
+//    {
+//        return coeffs;
+//    }
+//
+//    private double[] coeffs = new double[4];
 
 
     // converts inches to motor ticks
@@ -83,28 +83,27 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
         rfEncoder.setDistancePerPulse( CM_PER_COUNT );
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
-        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 //        resetEncoders();
 
-        lF.setRunMode(Motor.RunMode.VelocityControl);
-        rF.setRunMode(Motor.RunMode.VelocityControl);
-        lR.setRunMode(Motor.RunMode.VelocityControl);
-        rR.setRunMode(Motor.RunMode.VelocityControl);
+//        lF.setRunMode(Motor.RunMode.VelocityControl);
+//        rF.setRunMode(Motor.RunMode.VelocityControl);
+//        lR.setRunMode(Motor.RunMode.VelocityControl);
+//        rR.setRunMode(Motor.RunMode.VelocityControl);
 //
 //        lF.setVeloCoefficients(kP, kI, kD);
 //        rF.setVeloCoefficients(kP, kI, kD);
@@ -115,20 +114,20 @@ public class ChassisSubsystem extends SubsystemBase
 //        rF.setFeedforwardCoefficients(ks,kV, ka);
 //        lR.setFeedforwardCoefficients(ks,kV, ka);
 //        rR.setFeedforwardCoefficients(ks,kV, ka);
+//
+//        lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        coeffs = rF.getVeloCoefficients();
+//        coeffs = rF.getVeloCoefficients();
 
         telemetry = telem;
 
-        lF.stopMotor();
-        rF.stopMotor();
-        lR.stopMotor();
-        rR.stopMotor();
+//        lF.stopMotor();
+//        rF.stopMotor();
+//        lR.stopMotor();
+//        rR.stopMotor();
 
         leftMotors = new MotorGroup(lF, lR);
         rightMotors = new MotorGroup(rF, rR);
@@ -146,10 +145,10 @@ public class ChassisSubsystem extends SubsystemBase
                             String rightRearName,
                             Telemetry telem)
     {
-        this(new MotorEx(hMap, leftFrontName, CPR, RPM),
-             new MotorEx(hMap, rightFrontName, CPR, RPM),
-             new MotorEx(hMap, leftRearName, CPR, RPM),
-             new MotorEx(hMap, rightRearName, CPR, RPM),
+        this(new MotorTBD(hMap, leftFrontName, CPR, RPM),
+             new MotorTBD(hMap, rightFrontName, CPR, RPM),
+             new MotorTBD(hMap, leftRearName, CPR, RPM),
+             new MotorTBD(hMap, rightRearName, CPR, RPM),
              telem);
 
         try
@@ -299,7 +298,7 @@ public class ChassisSubsystem extends SubsystemBase
             frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
         }
         heading = updateHeading();
-        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+//        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
 
     }
 
