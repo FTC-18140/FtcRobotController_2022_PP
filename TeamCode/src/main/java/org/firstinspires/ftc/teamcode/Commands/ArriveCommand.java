@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 public class ArriveCommand extends DriveCommandBase
 {
     private final double mySlowDownZoneCM;
-    public static int filterSize = 30;
+    public static int filterSize = 80;
     private MovingAverage decelFilter = new MovingAverage(filterSize);
 
     /**
@@ -59,11 +59,15 @@ public class ArriveCommand extends DriveCommandBase
     public void profileMotorPowers(double[] speeds)
     {
        if (toDistance < mySlowDownZoneCM)
-        {    // If the robot is closer to the "to" point, do deceleration
-            myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
-            decelFilter.add(speeds[0]);
-            speeds[0] = decelFilter.getValue();
-        }
+       {    // If the robot is closer to the "to" point, do deceleration
+           myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
+           decelFilter.add(speeds[0]);
+           speeds[0] = decelFilter.getValue();
+       }
+       else
+       {
+           decelFilter.add(speeds[0]);
+       }
         myMotionProfile.processHeading(speeds, relativeAngleToPosition, myTurnSpeed);
     }
 

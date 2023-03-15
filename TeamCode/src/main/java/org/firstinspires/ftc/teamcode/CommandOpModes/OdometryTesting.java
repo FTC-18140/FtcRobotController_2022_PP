@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.AprilEyes;
@@ -52,7 +53,7 @@ public class OdometryTesting extends TBDOpModeBase
     public static boolean coneTwoDropped = false;
     public static boolean coneThreeDropped = false;
     public static double speed = 0.4;
-    public static double distance = 158;
+    public static double distance = 100;
     public static double arriveZoneCM = 40;
 
     public enum Zone {
@@ -131,11 +132,14 @@ public class OdometryTesting extends TBDOpModeBase
         SeekCommand driveToJunction = new SeekCommand(90, 90, speed, 0.1, 5, false, chassis, odometry );
         ArriveCommand arriveAtJunction  = new ArriveCommand(distance, 90, speed, 0.3, arriveZoneCM, 2, chassis, odometry );
         WaitCommand waitALittle = new WaitCommand(1000);
+        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 10, 0.75, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.65, 0.15, 45, 5, chassis, odometry);
+
         DepartCommand backUp = new DepartCommand( distance-20, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
         ArriveCommand stop = new ArriveCommand( distance-40, 90,-0.3, 0.1, 10, 2, chassis, odometry );
         TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getBackDistance, 18, chassis, odometry);
 
-        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle);
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle, turnToJunction.andThen(new WaitCommand(1000)), turnTowardsCones);
 
     }
 
@@ -158,7 +162,7 @@ public class OdometryTesting extends TBDOpModeBase
         LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-23, 0.5, lift);
 
         SeekCommand driveBack = new SeekCommand(155, 95, -0.4, 0.2, 8, true, chassis, odometry);
-        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.65, 0.1, 10, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.65, 0.1, 10, 10, chassis, odometry);
         ParallelCommandGroup lowerLiftAndTurn = new ParallelCommandGroup(moveLiftDown, turnTowardsCones);
 
         ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
@@ -166,7 +170,7 @@ public class OdometryTesting extends TBDOpModeBase
 
         DepartCommand driveToCones1_5 = new DepartCommand(153, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
         ArriveCommand driveToCones2 = new ArriveCommand(154, 25, 0.3, 0.2, 25, 1, chassis, odometry );
-        TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 10, 0.75, chassis, odometry);
         ClawCommand grabCone = new ClawCommand(0.525, claw, "none");
 
         WaitCommandTBD waitForClaw = new WaitCommandTBD( 250, telemetry);
@@ -194,7 +198,8 @@ public class OdometryTesting extends TBDOpModeBase
 
         ParallelCommandGroup _1_liftAndDriveToCenter = new ParallelCommandGroup(_1a_driveToJunction, _1b_backUpHigh.withTimeout(3000), _1c_wait.andThen(elbowBehind));
 
-        TurnCommand _2_alignToJunction = new TurnCommand(-146.5, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand _2_alignToJunction = new TurnCommand(-146.5, 0.25, 0.15, 10, 0.75, chassis, odometry
+        );
 
         return new SequentialCommandGroup(_1_liftAndDriveToCenter, _2_alignToJunction);
         //////////////////////////////////////////
@@ -224,7 +229,7 @@ public class OdometryTesting extends TBDOpModeBase
         WaitCommandTBD waitAfterConeTurn3 = new WaitCommandTBD(125, telemetry);
         DepartCommand driveToCones1_53 = new DepartCommand(152, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
         ArriveCommand driveToCones23 = new ArriveCommand(154, 22.5, 0.35, 0.2, 25, 1, chassis, odometry );
-        TurnCommand alignToCones3 = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand alignToCones3 = new TurnCommand(-90, 0.25, 0.15, 10, 0.75, chassis, odometry);
         ClawCommand grabCone3 = new ClawCommand(0.525, claw, "none");
 
         WaitCommand waitForClaw3 = new WaitCommand( 250 );
@@ -251,7 +256,8 @@ public class OdometryTesting extends TBDOpModeBase
 
         ParallelCommandGroup _1_liftAndDriveToCenter3 = new ParallelCommandGroup(_1a_driveToJunction3, _1b_backUpHigh3, _1c_wait3.andThen(elbowBehind3));
 
-        TurnCommand   _2_alignToJunction3 = new TurnCommand(-139.5, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand   _2_alignToJunction3 = new TurnCommand(-139.5, 0.25, 0.15, 10, 0.75, chassis, odometry
+        );
 
         SequentialCommandGroup driveBacktoJunction3 = new SequentialCommandGroup(_1_liftAndDriveToCenter3, _2_alignToJunction3);
         //////////////////////////////////////////
@@ -281,13 +287,13 @@ public class OdometryTesting extends TBDOpModeBase
         //
         DepartCommand goToZone2a = new DepartCommand(145, 97, 0.4, 0.3, 8, 5, false, chassis, odometry);
         ArriveCommand goToZone2b = new ArriveCommand( 135, 87, 0.4, 0.3, 5,10, chassis, odometry );
-        TurnCommand goToZone2c = new TurnCommand(-170, 0.3, 0.2, 3, chassis, odometry);
+        TurnCommand goToZone2c = new TurnCommand(-170, 0.3, 0.2, 10, 3, chassis, odometry);
         LiftDistanceCommand liftDownTwo = new LiftDistanceCommand(-40, 0.5, lift);
         ElbowCommand elbowDownTwo = new ElbowCommand(0.535, arm);
 
 
         DepartCommand goToZone3a = new DepartCommand(154, 90, 0.4, 0.3, 8, 5, false, chassis, odometry);
-        TurnCommand turnToCones3 = new TurnCommand(-90, 0.3, 0.2, 5, chassis, odometry);
+        TurnCommand turnToCones3 = new TurnCommand(-90, 0.3, 0.2, 10, 5, chassis, odometry);
         ArriveCommand goToZone3b = new ArriveCommand( 151, 160, -0.4, 0.2, 5,10, chassis, odometry );
         LiftDistanceCommand liftDownThree = new LiftDistanceCommand(-40, 0.5, lift);
         ElbowCommand elbowDownThree = new ElbowCommand(0.535, arm);
@@ -350,8 +356,8 @@ public class OdometryTesting extends TBDOpModeBase
                 telemetry.addData("Two", 0);
         }
 
-//        double[] coeffs = chassis.getCoeffs();
-//        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+        PIDFCoefficients coeffs = chassis.getCoeffs();
+        telemetry.addData("Coeffs: ", coeffs.toString());
     }
 
 
@@ -371,6 +377,6 @@ public class OdometryTesting extends TBDOpModeBase
         super.stop();
         logger.closeDataLogger();
         chassis.stop();
-        telemetry.addData("********************* Processed stop.*********************", 4);
+        telemetry.addData("************* Processed stop.*************", 4);
     }
 }

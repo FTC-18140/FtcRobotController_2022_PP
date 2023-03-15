@@ -12,6 +12,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -43,20 +44,20 @@ public class ChassisSubsystem extends SubsystemBase
     private double backDistance = 100;
     private double frontDistance = 100;
 
-//    public static double kP = 1;
-//    public static double kI = 0;
-//    public static double kD = 0;
-//
-//    public static double kV = 0.0;
-//    public static double ka = 0;
-//    public static double ks = 0;
+    public static double kP = 1;
+    public static double kI = 0;
+    public static double kD = 0;
 
-//    public double[] getCoeffs()
-//    {
-//        return coeffs;
-//    }
-//
-//    private double[] coeffs = new double[4];
+    public static double kV = 0.0136;
+    public static double ka = 0.0025;
+    public static double ks = 0;
+
+    public PIDFCoefficients getCoeffs()
+    {
+        return coeffs;
+    }
+
+    private PIDFCoefficients coeffs;
 
 
     // converts inches to motor ticks
@@ -88,15 +89,20 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
-//        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lF.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rF.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
 //        resetEncoders();
 
@@ -120,9 +126,9 @@ public class ChassisSubsystem extends SubsystemBase
 //        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 //        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-//        coeffs = rF.getVeloCoefficients();
-
+        coeffs = rF.motorEx.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry = telem;
+        telemetry.addData("Coeffs: ", coeffs.toString());
 
 //        lF.stopMotor();
 //        rF.stopMotor();

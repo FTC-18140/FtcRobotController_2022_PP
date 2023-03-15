@@ -81,7 +81,7 @@ public class TwoConeAuto extends TBDOpModeBase
         SequentialCommandGroup _1c_drivePath = new SequentialCommandGroup( _a_depart, _b_midPoint, _c_midPoint, _d_midPoint, _e_arriveAtJunction);
 
         ParallelCommandGroup driveToPole = new ParallelCommandGroup( _1a_ConeUp, _1b_raiseToHigh, _1c_drivePath );
-        TurnCommand alignToPole = new TurnCommand(45, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand alignToPole = new TurnCommand(45, 0.25, 0.15, 10, 0.75, chassis, odometry);
 
         return new SequentialCommandGroup( driveToPole, alignToPole.withTimeout(250));
     }
@@ -107,7 +107,7 @@ public class TwoConeAuto extends TBDOpModeBase
     private SequentialCommandGroup driveToConeStack( double speed )
     {
         LiftDistanceCommand downToStackHeight = new LiftDistanceCommand(-17, 0.5, lift);
-        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.3, 0.1, 2, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.3, 0.1, 10, 2, chassis, odometry);
         ElbowCommand elbowDown = new ElbowCommand( 0.535, arm);
         WaitCommand slightPause = new WaitCommand(500);
 
@@ -117,7 +117,7 @@ public class TwoConeAuto extends TBDOpModeBase
         SeekCommand _b_midPoint = new SeekCommand(150, 58, speed,0.4, 2, false, chassis, odometry);
         SeekCommand _c_midPoint = new SeekCommand(150, 38, speed, 0.3, 2, false, chassis, odometry);
         ArriveCommand _d_arrive = new ArriveCommand(150, 25, speed, 0.2, 10, 1, chassis, odometry );
-        TurnCommand _e_align = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand _e_align = new TurnCommand(-90, 0.25, 0.15, 10, 0.75, chassis, odometry);
 
         SequentialCommandGroup _2_driveToStack = new SequentialCommandGroup(_a_depart, _b_midPoint, _c_midPoint, _d_arrive, _e_align.withTimeout(500));
 
@@ -143,7 +143,7 @@ public class TwoConeAuto extends TBDOpModeBase
 
         ParallelCommandGroup _1_liftAndDriveToPole = new ParallelCommandGroup(_1a_driveBack, pause.andThen(_1b_elbowBack), _1c_backUpHigh);
 
-        TurnCommand _2_alignToPole = new TurnCommand(-128, 0.25, 0.15, 0.75, chassis, odometry);
+        TurnCommand _2_alignToPole = new TurnCommand(-128, 0.25, 0.15, 10, 0.75, chassis, odometry);
 
         return new SequentialCommandGroup(_1_liftAndDriveToPole, _2_alignToPole.withTimeout(500));
     }

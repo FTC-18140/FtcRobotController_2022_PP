@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
@@ -36,7 +36,7 @@ public class TurnCommand extends CommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public TurnCommand(double headingDeg, double turnSpeed, double minTurnSpeed, double targetBufferDeg, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public TurnCommand(double headingDeg, double turnSpeed, double minTurnSpeed, double headingDecelZoneDeg, double targetBufferDeg, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
 
         toHeadingRad = Math.toRadians(headingDeg);
@@ -49,7 +49,7 @@ public class TurnCommand extends CommandBase
         myOdometrySubsystem = odometry;
         telemetry = myChassisSubsystem.getTelemetry();
 
-        myMotionProfile =  new MotionProfile(20, 10, 1, 0.02);
+        myMotionProfile =  new MotionProfile(20, 10, headingDecelZoneDeg, 0.02);
 
         // temp
         myMotionProfile.telem = telemetry;
@@ -60,9 +60,7 @@ public class TurnCommand extends CommandBase
     @Override
     public void initialize()
     {
-//        fromPoint = new Translation2d(myOdometrySubsystem.getPose().getTranslation().getX(), myOdometrySubsystem.getPose().getTranslation().getY());
         myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
     }
 
     @Override
@@ -71,11 +69,6 @@ public class TurnCommand extends CommandBase
         telemetry.addData("Executing Turn Command: ", toHeadingRad);
         // Update the current position of the Robot by getting it from the odometry subsystem.
         myRobotPose = myOdometrySubsystem.getPose();
-
-        // Get new position data from the odometry subsystem and update the robot's location and
-        // distance/angles relative to the From Point and the To Point.
-//        double driveDistance = updatePositions();
-//        telemetry.addData("Distance to Point: ", driveDistance);
 
         // Now that the robot's position is updated. Figure out the angle the robot needs to
         // drive in order to get to the To Point.
@@ -97,55 +90,29 @@ public class TurnCommand extends CommandBase
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
         // Check if we have arrived
-//        if ( myTurnOnly )
-        { // arriving on a Turn Only move is based on closeness to myHeading
-            myFinished = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeadingRad, myTargetZoneRad);
-        }
-//        else
-//        { // arriving on a normal move is based on closeness to the toPoint
-//            myArrived = positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myBuffer);
-//        }
 
-        telemetry.addData("Arrived at toPoint?  ", myFinished);
-        if (myFinished)
-        {
-            motorPowers[0] = 0;
-            motorPowers[1] = 0;
-            motorPowers[2] = 0;
-        }
+        myFinished = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeadingRad, myTargetZoneRad);
 
-        if ((Math.abs(motorPowers[0])+Math.abs(motorPowers[2])) > myMaxTurnSpeed)
-        {
-            motorPowers[0] = motorPowers[0] * Math.abs(motorPowers[0]/(Math.abs(motorPowers[0])+Math.abs(motorPowers[2])));
-        }
+        telemetry.addData("Arrived at target Heading?  ", myFinished);
+
+        OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+        OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getY());
+        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getHeading());
+        OdometryTesting.logger.addField(motorPowers[0]);
+        OdometryTesting.logger.addField(motorPowers[2]);
+        OdometryTesting.logger.newLine();
+
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }
-
-//    private double updatePositions()
-//    {
-
-//
-//        // Update delta Translation values so that we can update how far the robot is from the
-//        // From Point and the To Point
-//        fromDeltaX = myRobotPose.getTranslation().getX() - fromPoint.getX();
-//        fromDeltaY = myRobotPose.getTranslation().getY() - fromPoint.getY();
-//
-//        toDeltaX = toPoint.getX() - myRobotPose.getTranslation().getX();
-//        toDeltaY = toPoint.getY() - myRobotPose.getTranslation().getY();
-//        telemetry.addData("dX2Point, dY2Point: ", "%.3f, %.3f", toDeltaX,toDeltaY);
-//
-//        // Update distances between Robot and From Point and Robot and To Point
-//        fromDistance = Math.hypot(fromDeltaX, fromDeltaY);
-//        toDistance = Math.hypot(toDeltaX, toDeltaY);
-//        return toDistance;
-//    }
 
     private double updateAngles()
     {
         // Based on the current heading of the robot, update the value that determines how much
         // the robot needs to turn
 
-        relativeAngleToPosition = -angleWrap(toHeadingRad - myRobotPose.getHeading());
+        relativeAngleToPosition = -AutoUtils.angleWrap(toHeadingRad - myRobotPose.getHeading());
 
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
         return relativeAngleToPosition;
@@ -161,44 +128,6 @@ public class TurnCommand extends CommandBase
         myMotionProfile.processTurn(speeds, relativeAngleToPosition, myMaxTurnSpeed);
     }
 
-
-    /**
-     * Wraps the able so it is always in the range [-180, 180].
-     *
-     * @param angle Angle to be wrapped, in radians.
-     * @return The wrapped angle, in radians.
-     */
-    public double angleWrap(double angle)
-    {
-        if (angle > 0)
-        {
-            return ((angle + Math.PI) % (Math.PI * 2)) - Math.PI;
-        }
-        else
-        {
-            return ((angle - Math.PI) % (Math.PI * -2)) + Math.PI;
-        }
-    }
-
-    /**
-     * Calculates whether or not two points are equal within a margin of error.
-     *
-     * @param p1     Point 1
-     * @param p2     Point 2
-     * @param buffer Margin of error.
-     * @return True if the point are equal within a margin or error, false otherwise.
-     */
-    public boolean positionEqualsWithBuffer(Translation2d p1, Translation2d p2, double buffer)
-    {
-        if (p1.getX() - buffer < p2.getX() && p1.getX() + buffer > p2.getX())
-        {
-            if (p1.getY() - buffer < p2.getY() && p1.getY() + buffer > p2.getY())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Calculates whether or not two angles are equal within a margin of error.
