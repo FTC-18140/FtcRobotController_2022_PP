@@ -135,7 +135,7 @@ public class OdometryTesting extends TBDOpModeBase
         ArriveCommand stop = new ArriveCommand( distance-40, 90,-0.3, 0.1, 10, 2, chassis, odometry );
         TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getBackDistance, 18, chassis, odometry);
 
-        return new SequentialCommandGroup( driveAndElbow, driveToJunction, arriveAtJunction, waitALittle, backUp, stop,turnToPole);
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle);
 
     }
 
@@ -350,8 +350,8 @@ public class OdometryTesting extends TBDOpModeBase
                 telemetry.addData("Two", 0);
         }
 
-        double[] coeffs = chassis.getCoeffs();
-        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+//        double[] coeffs = chassis.getCoeffs();
+//        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
     }
 
 

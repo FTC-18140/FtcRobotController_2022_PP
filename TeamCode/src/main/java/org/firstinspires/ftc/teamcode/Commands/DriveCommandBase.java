@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
@@ -113,14 +112,14 @@ public abstract class DriveCommandBase extends CommandBase
 
         telemetry.addData("Arrived at toPoint?  ", myArrived);
 
-        OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
-        OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getY());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getHeading());
-        OdometryTesting.logger.addField(motorPowers[0]);
-        OdometryTesting.logger.addField(motorPowers[2]);
-        OdometryTesting.logger.newLine();
+//        OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+//        OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+//        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());
+//        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getY());
+//        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getHeading());
+//        OdometryTesting.logger.addField(motorPowers[0]);
+//        OdometryTesting.logger.addField(motorPowers[2]);
+//        OdometryTesting.logger.newLine();
 
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);

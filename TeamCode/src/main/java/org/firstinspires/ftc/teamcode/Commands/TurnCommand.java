@@ -85,23 +85,10 @@ public class TurnCommand extends CommandBase
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-//        if (myTurnOnly)
-        { // no translation speed
-            telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-            telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
-            motorPowers[0] = 0.0;
-            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
-//            MotionProfile.headingMinSpeed = 0.08;
-
-        }
-//        else
-//        {  // find translation speed
-//            motorPowers[0] = Range.clip(driveDistance, 0.1, mySpeed);
-//            motorPowers[2] = Range.clip(-turnAngle, -1.0 * myTurnSpeed, myTurnSpeed);
-//
-//            MotionProfile.headingMinSpeed = 0.004 * Math.abs(turnAngle)/Math.toRadians(10);
-//
-//        }
+        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
+        telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
+        motorPowers[0] = 0.0;
+        motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);
@@ -155,26 +142,11 @@ public class TurnCommand extends CommandBase
 
     private double updateAngles()
     {
-        // Update the angle to To point in absolute, field-based perspective.  This represents the
-        // the angle the robot needs to move to get to the To Point.
-//        absoluteAngleToPosition = Math.atan2(toDeltaY, toDeltaX);
-//        telemetry.addData("AbsAngle, deg: ", Math.toDegrees(absoluteAngleToPosition));
-
         // Based on the current heading of the robot, update the value that determines how much
         // the robot needs to turn
-//        if (myTurnOnly)
-        {
-            relativeAngleToPosition = -angleWrap(toHeadingRad - myRobotPose.getHeading());
-        }
-//        else
-//        {
-//            relativeAngleToPosition = -angleWrap(absoluteAngleToPosition - myRobotPose.getHeading());
-//
-//            if (myBackwards)
-//            {
-//                relativeAngleToPosition = angleWrap(relativeAngleToPosition - Math.PI);
-//            }
-//        }
+
+        relativeAngleToPosition = -angleWrap(toHeadingRad - myRobotPose.getHeading());
+
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
         return relativeAngleToPosition;
     }
@@ -186,15 +158,7 @@ public class TurnCommand extends CommandBase
      */
     private void profileMotorPowers(double[] speeds)
     {
-//        if (fromDistance < toDistance)
-//        {    // If the robot is closer to the "from" point, do acceleration
-//            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
-//        }
-//        else if (myEndPoint)
-//        {    // If the robot is closer to the "to" point, do deceleration
-//            myMotionProfile.processDecelerate(speeds, toDistance, mySpeed, myTurnSpeed);
-//        }
-        myMotionProfile.processHeading(speeds, relativeAngleToPosition, myMaxTurnSpeed);
+        myMotionProfile.processTurn(speeds, relativeAngleToPosition, myMaxTurnSpeed);
     }
 
 

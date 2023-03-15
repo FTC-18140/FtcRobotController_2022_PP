@@ -16,11 +16,14 @@ public class MotionProfile extends PathMotionProfile
     private double minTurnSpeed;
     public Telemetry telem;
 
-    public static double headingOrder = 3;
-    public static double headingGain = 0.25;
+    public static double headingOrder = 2;
+    public static double headingGain = 0.4;
     public static double accelOrder = 1;
-    public static double decelOrder = 1;
+    public static double decelOrder = 9;
     public static double minAccelSpeed = 0.2;
+    public static double minDecelSpeed = 0.05;
+    public static double turnGain = 0.8;
+
 
     public MotionProfile(double accelerationBufferCM, double decelerationBufferCM, double headingBufferDeg, double minTurnSpd)
     {
@@ -40,9 +43,9 @@ public class MotionProfile extends PathMotionProfile
     {
         if (distanceToTarget < decelBufferCM) {
             motorSpeeds[0] = shapeWithLimit(motorSpeeds[0], configuredMovementSpeed, distanceToTarget,
-                                            decelBufferCM, 0.15, decelOrder);
+                                            decelBufferCM, minDecelSpeed, decelOrder);
             motorSpeeds[1] = shapeWithLimit(motorSpeeds[1], configuredMovementSpeed, distanceToTarget,
-                                            decelBufferCM, 0.15, decelOrder);
+                                            decelBufferCM, minDecelSpeed, decelOrder);
         }
     }
 
@@ -70,11 +73,19 @@ public class MotionProfile extends PathMotionProfile
     {
         // Do the profiling of the turning.
 //        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorSpeeds[2], angleFromTarget, maxTurnSpeed);
-        double shapedValue = headingGain * shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
+        double shapedValue =  headingGain * shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
 //        telem.addData("shaped Value: ", shapedValue);
         motorSpeeds[2] = shapedValue;
     }
 
+    public void processTurn(double[] motorSpeeds, double angleFromTarget, double maxTurnSpeed)
+    {
+        // Do the profiling of the turning.
+//        telem.addData("value to shape: ", "%.3f, %.3f, %.3f", motorSpeeds[2], angleFromTarget, maxTurnSpeed);
+        double shapedValue =  turnGain * shapeWithLimit(motorSpeeds[2], maxTurnSpeed, angleFromTarget, Math.toRadians(hdgBufferDeg), minTurnSpeed, headingOrder);
+//        telem.addData("shaped Value: ", shapedValue);
+        motorSpeeds[2] = shapedValue;
+    }
 
     public void setMinTurnSpeed(double minTurnSpeed)
     {

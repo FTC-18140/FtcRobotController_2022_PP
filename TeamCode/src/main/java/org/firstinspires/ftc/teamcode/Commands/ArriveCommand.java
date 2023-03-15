@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 public class ArriveCommand extends DriveCommandBase
 {
     private final double mySlowDownZoneCM;
-    public static int filterSize = 20;
+    public static int filterSize = 30;
     private MovingAverage decelFilter = new MovingAverage(filterSize);
 
     /**

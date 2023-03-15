@@ -115,16 +115,16 @@ public class AutoLegendary extends TBDOpModeBase
 
         // driveToJunction //
         ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
-        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.5, 0.1, 25, 5, false, chassis, odometry);
         ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
-        SeekCommand midPointOne = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry);
+        SeekCommand midPointOne = new SeekCommand(90, 90, 0.5, 0.1, 5, false, chassis, odometry);
         LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
         // ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
-        ArriveCommand arriveAtJunction  = new ArriveCommand(162, 102, 0.5, 0.1, 40, 1, chassis, odometry );
+        ArriveCommand arriveAtJunction  = new ArriveCommand(160, 102, 0.5, 0.3, 40, 1, chassis, odometry );
         ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
 
         WaitCommand waitToTurn = new WaitCommand(100);
-        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 0.75, chassis, odometry);
+        TurnCommand turnToJunction = new TurnCommand(46, 0.2, 0.15, 0.75, chassis, odometry);
 
         return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
         //////////////////////////////////////
@@ -156,7 +156,7 @@ public class AutoLegendary extends TBDOpModeBase
         WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
         DepartCommand driveToCones1_5 = new DepartCommand(153, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
-        ArriveCommand driveToCones2 = new ArriveCommand(154, 25, 0.3, 0.2, 25, 1, chassis, odometry );
+        ArriveCommand driveToCones2 = new ArriveCommand(153, 25, 0.3, 0.5, 25, 1, chassis, odometry );
         TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
         ClawCommand grabCone = new ClawCommand(0.525, claw, "none");
 
@@ -172,7 +172,7 @@ public class AutoLegendary extends TBDOpModeBase
         // driveBackToJunction //
         DepartCommand  a_driveAwayCones = new DepartCommand(150, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
         SeekCommand b_midPoint = new SeekCommand(148, 75, -0.3, 0.2, 6, false, chassis, odometry);
-        ArriveCommand   c_driveToCenter = new ArriveCommand( 170, 110, -0.3, 0.2, 30, 1, chassis, odometry);
+        ArriveCommand   c_driveToCenter = new ArriveCommand( 160, 102, -0.3, 0.2, 30, 1, chassis, odometry);
 
 
         SequentialCommandGroup _1a_driveToJunction = new SequentialCommandGroup(a_driveAwayCones, b_midPoint, c_driveToCenter.withTimeout(3000));
@@ -214,7 +214,7 @@ public class AutoLegendary extends TBDOpModeBase
         ElbowCommand elbowDown3 = new ElbowCommand( 0.535, arm);
         WaitCommandTBD waitAfterConeTurn3 = new WaitCommandTBD(125, telemetry);
         DepartCommand driveToCones1_53 = new DepartCommand(152, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
-        ArriveCommand driveToCones23 = new ArriveCommand(154, 22.5, 0.35, 0.2, 25, 1, chassis, odometry );
+        ArriveCommand driveToCones23 = new ArriveCommand(154, 22.5, 0.35, 0.5, 25, 1, chassis, odometry );
         TurnCommand alignToCones3 = new TurnCommand(-90, 0.25, 0.15, 0.75, chassis, odometry);
         ClawCommand grabCone3 = new ClawCommand(0.525, claw, "none");
 
@@ -230,7 +230,7 @@ public class AutoLegendary extends TBDOpModeBase
         // driveBackToJunction //
         DepartCommand a_driveAwayCones3 = new DepartCommand(152, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
         SeekCommand b_midPoint3 = new SeekCommand(150, 75, -0.3, 0.2, 6, false, chassis, odometry);
-        ArriveCommand c_driveToCenter3 = new ArriveCommand( 173, 112, -0.3, 0.2, 30, 1, chassis, odometry);
+        ArriveCommand c_driveToCenter3 = new ArriveCommand( 160, 102, -0.3, 0.2, 30, 1, chassis, odometry);
 
 
         SequentialCommandGroup _1a_driveToJunction3 = new SequentialCommandGroup(a_driveAwayCones3, b_midPoint3, c_driveToCenter3.withTimeout(3000));
