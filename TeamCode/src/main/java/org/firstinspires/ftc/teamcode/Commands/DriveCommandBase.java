@@ -106,22 +106,25 @@ public abstract class DriveCommandBase extends CommandBase
 
         telemetry.addData("Power 0, profiled: ", motorPowers[0]);
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
-        telemetry.addData("MinTurnSpeed: ", 0.03 * Math.abs(turnAngle)/Math.toRadians(10));
+//        telemetry.addData("MinTurnSpeed: ", 0.03 * Math.abs(turnAngle)/Math.toRadians(10));
 
         // Check if we have arrived
         // arriving on a normal move is based on closeness to the toPoint
         myArrived = AutoUtils.positionEqualsWithBuffer(myRobotPose.getTranslation(), toPoint, myEndZoneCM);
 
-        telemetry.addData("Arrived at toPoint?  ", myArrived);
+//        telemetry.addData("Arrived at toPoint?  ", myArrived);
 
-        AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
-        AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getX());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getY());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getHeading());
-        AutoEpic.logger.addField(motorPowers[0]);
-        AutoEpic.logger.addField(motorPowers[2]);
-        AutoEpic.logger.newLine();
+        if (AutoEpic.doLogging)
+        {
+            AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+            AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getX());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getY());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getHeading());
+            AutoEpic.logger.addField(motorPowers[0]);
+            AutoEpic.logger.addField(motorPowers[2]);
+            AutoEpic.logger.newLine();
+        }
 
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);

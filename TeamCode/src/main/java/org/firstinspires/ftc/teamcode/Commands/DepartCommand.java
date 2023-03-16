@@ -76,11 +76,6 @@ public class DepartCommand extends DriveCommandBase
             speeds[0] = mySpeed;
         }
 
-//        if (fromDistance < myLaunchZoneCM )
-//        {    // If the robot is closer to the "from" point, do acceleration
-//            myMotionProfile.processAccelerate(speeds, fromDistance, mySpeed, myTurnSpeed);
-//
-//        }
         myMotionProfile.processHeading(speeds, relativeAngleToPosition, myTurnSpeed);
     }
 

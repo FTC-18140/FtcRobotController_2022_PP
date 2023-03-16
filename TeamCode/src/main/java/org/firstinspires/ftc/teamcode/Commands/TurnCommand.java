@@ -79,31 +79,34 @@ public class TurnCommand extends CommandBase
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-        telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
+//        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
+//        telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
         motorPowers[0] = 0.0;
         motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);
 
-        telemetry.addData("Power 0, profiled: ", motorPowers[0]);
-        telemetry.addData("Power 2, profiled: ", motorPowers[2]);
+//        telemetry.addData("Power 0, profiled: ", motorPowers[0]);
+        telemetry.addData("Power 2: ", motorPowers[2]);
 
         // Check if we have arrived
 
         myFinished = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeadingRad, myTargetZoneRad);
 
-        telemetry.addData("Arrived at target Heading?  ", myFinished);
+//        telemetry.addData("Arrived at target Heading?  ", myFinished);
 
-        AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
-        AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getX());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getY());
-        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getHeading());
-        AutoEpic.logger.addField(motorPowers[0]);
-        AutoEpic.logger.addField(motorPowers[2]);
-        AutoEpic.logger.newLine();
+        if (AutoEpic.doLogging)
+        {
+            AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+            AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getX());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getY());
+            AutoEpic.logger.addField(myOdometrySubsystem.getPose().getHeading());
+            AutoEpic.logger.addField(motorPowers[0]);
+            AutoEpic.logger.addField(motorPowers[2]);
+            AutoEpic.logger.newLine();
+        }
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);
     }

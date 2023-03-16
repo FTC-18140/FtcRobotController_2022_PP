@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -38,6 +39,12 @@ public class LiftSubsystem extends SubsystemBase
         {
             leftMotor = new Motor( hwMap, "leftLinear");
             rightMotor = new Motor( hwMap, "rightLinear");
+            leftMotor.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            leftMotor.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightMotor.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             leftEncoder = leftMotor.encoder;
             rightEncoder = rightMotor.encoder;
             motors = new MotorGroup(leftMotor, rightMotor);
@@ -128,6 +135,6 @@ public class LiftSubsystem extends SubsystemBase
     {
         super.periodic();
         update();
-        telemetry.addData("EncdoderDistance", getAverageEncoderDistance());
+//        telemetry.addData("EncdoderDistance", getAverageEncoderDistance());
     }
 }

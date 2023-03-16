@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
-import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,15 +11,11 @@ import org.firstinspires.ftc.teamcode.AprilEyes;
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.ClawCommand;
 import org.firstinspires.ftc.teamcode.Commands.DepartCommand;
-import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
-import org.firstinspires.ftc.teamcode.Commands.DynamicSeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;
 import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
-import org.firstinspires.ftc.teamcode.Commands.TurnDistanceCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnToJunctionCommand;
-import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Commands.WristCommand;
 import org.firstinspires.ftc.teamcode.DataLogger;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
@@ -31,7 +24,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "AutoEpic", group = "FTCLib")
@@ -59,6 +51,8 @@ public class AutoEpic extends TBDOpModeBase
     public static double dynamicSpeed = 0.1;
     public static double dynamicTurnSpeed = 0.1;
     public static double dynamicBuffer = 1;
+    public static boolean doLogging = false;
+
     public enum Zone {
         ONE, TWO, THREE
     }
@@ -72,14 +66,18 @@ public class AutoEpic extends TBDOpModeBase
 
         try
         {
-            // Open file for logging
-            logger.openFile( logFileName);
-            logger.addField("LeftEncDist" );
-            logger.addField("RighEncDist" );
-            logger.addField( "Heading");
-            logger.addField( "X");
-            logger.addField("Y" );
-            logger.newLine();
+            if ( doLogging)
+            {
+                // Open file for logging
+                logger.openFile(logFileName);
+                logger.addField("LeftEncDist");
+                logger.addField("RighEncDist");
+                logger.addField("Heading");
+                logger.addField("X");
+                logger.addField("Y");
+                logger.newLine();
+            }
+
             vision.init(hardwareMap, telemetry);
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
@@ -94,8 +92,6 @@ public class AutoEpic extends TBDOpModeBase
             register( arm );
             register( lift );
             register( claw );
-            arm.armTwist(0.05);
-
 
 
             ////////////// MASTER COMMAND /////////
@@ -233,7 +229,10 @@ public class AutoEpic extends TBDOpModeBase
     {
         super.stop();
         chassis.stop();
-        logger.closeDataLogger();
+        if ( doLogging)
+        {
+            logger.closeDataLogger();
+        }
         telemetry.addData("********************* Processed stop.*********************", 4);
     }
 }
