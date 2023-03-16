@@ -77,12 +77,13 @@ public class TurnCommand extends CommandBase
 
         // Determine if robot needs to drive and turn to get to the position.
         double[] motorPowers = new double[3];
+        motorPowers[0] = 0.0; // no driving forward
         motorPowers[1] = 0; // no strafing
+
+        motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
 
 //        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
 //        telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
-        motorPowers[0] = 0.0;
-        motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
         profileMotorPowers(motorPowers);

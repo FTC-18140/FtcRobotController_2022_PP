@@ -62,8 +62,6 @@ public class AutoEpic extends TBDOpModeBase
     @Override
     public void init()
     {
-
-
         try
         {
             if ( doLogging)
