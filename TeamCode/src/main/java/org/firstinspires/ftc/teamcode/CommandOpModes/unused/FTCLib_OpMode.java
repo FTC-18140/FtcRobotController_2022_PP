@@ -33,8 +33,8 @@ public class FTCLib_OpMode extends TBDOpModeBase
                                                   telemetry );
             register( odometry );
 
-            DriveDistanceCommand step1 = new DriveDistanceCommand( 90, 0.3, chassis);
-            schedule( step1 );
+//            DriveDistanceCommand step1 = new DriveDistanceCommand( 90, 0.3, chassis);
+//            schedule( step1 );
         }
         catch (Exception e)
         {

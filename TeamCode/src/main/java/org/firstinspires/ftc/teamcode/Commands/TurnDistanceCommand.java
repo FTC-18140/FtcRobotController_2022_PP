@@ -7,18 +7,18 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandOpModes.AutoEpic;
-import org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
-public class TurnCommand extends CommandBase
+public class TurnDistanceCommand extends CommandBase
 {
     private final ChassisSubsystem myChassisSubsystem;
     private final DiffDriveOdometrySubsystem myOdometrySubsystem;
     private final MotionProfile myMotionProfile;
 
 
-    private final double toHeadingRad;
+    private final double turnRad;
+    private double myInitialAngleRad;
 
     private Pose2d myRobotPose;
 
@@ -37,10 +37,11 @@ public class TurnCommand extends CommandBase
      * Creates a new ArriveCommand.
      *
      */
-    public TurnCommand(double headingDeg, double turnSpeed, double minTurnSpeed, double headingDecelZoneDeg, double targetBufferDeg, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public TurnDistanceCommand(double turnDeg, double turnSpeed, double minTurnSpeed, double headingDecelZoneDeg, double targetBufferDeg, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
 
-        toHeadingRad = Math.toRadians(headingDeg);
+
+        turnRad = Math.toRadians(turnDeg);
 
         myMaxTurnSpeed = turnSpeed;
         myMinTurnSpeed = minTurnSpeed;
@@ -62,39 +63,44 @@ public class TurnCommand extends CommandBase
     public void initialize()
     {
         myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        myInitialAngleRad = myOdometrySubsystem.getPose().getHeading();
     }
 
     @Override
     public void execute()
     {
-        telemetry.addData("Executing Turn Command: ", toHeadingRad);
+        telemetry.addData("Executing Turn Command: ", turnRad);
         // Update the current position of the Robot by getting it from the odometry subsystem.
         myRobotPose = myOdometrySubsystem.getPose();
 
         // Now that the robot's position is updated. Figure out the angle the robot needs to
         // drive in order to get to the To Point.
-        double turnAngle = updateAngles();
+       // double turnAngle = updateAngles();
 
         // Determine if robot needs to drive and turn to get to the position.
         double[] motorPowers = new double[3];
         motorPowers[1] = 0; // no strafing
 
-        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
-        telemetry.addData("myHeading: ", Math.toDegrees(toHeadingRad));
+//        telemetry.addData("RobotHeading: ", Math.toDegrees(myRobotPose.getHeading()));
+//        telemetry.addData("myHeading: ", Math.toDegrees(turnRad));
         motorPowers[0] = 0.0;
-        motorPowers[2] = Range.clip(-turnAngle, -1.0 * myMaxTurnSpeed, myMaxTurnSpeed);
+        if (turnRad > 0) {
+            motorPowers[2] = myMaxTurnSpeed;
+        }else {
+            motorPowers[2] = -myMaxTurnSpeed;
+            }
 
         // Do the motion profiling on the motor powers based on where we are relative to the target
-        profileMotorPowers(motorPowers);
+       // profileMotorPowers(motorPowers);
 
-        telemetry.addData("Power 0, profiled: ", motorPowers[0]);
-        telemetry.addData("Power 2, profiled: ", motorPowers[2]);
+//        telemetry.addData("Power 0, profiled: ", motorPowers[0]);
+//        telemetry.addData("Power 2, profiled: ", motorPowers[2]);
 
         // Check if we have arrived
 
-        myFinished = rotationEqualsWithBuffer(myRobotPose.getHeading(), toHeadingRad, myTargetZoneRad);
+   //     myFinished = rotationEqualsWithBuffer(myRobotPose.getHeading(), turnRad, myTargetZoneRad);
 
-        telemetry.addData("Arrived at target Heading?  ", myFinished);
+    //    telemetry.addData("Arrived at target Heading?  ", myFinished);
 
         AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
         AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
@@ -113,7 +119,7 @@ public class TurnCommand extends CommandBase
         // Based on the current heading of the robot, update the value that determines how much
         // the robot needs to turn
 
-        relativeAngleToPosition = -AutoUtils.angleWrap(toHeadingRad - myRobotPose.getHeading());
+        relativeAngleToPosition = -AutoUtils.angleWrap(turnRad - myRobotPose.getHeading());
 
         telemetry.addData("Relative Angle, deg: ", Math.toDegrees(relativeAngleToPosition));
         return relativeAngleToPosition;
@@ -154,6 +160,6 @@ public class TurnCommand extends CommandBase
 
     @Override
     public boolean isFinished() {
-        return myFinished;
+        return Math.abs(myRobotPose.getHeading() - myInitialAngleRad) >= Math.abs(turnRad);
     }
 }

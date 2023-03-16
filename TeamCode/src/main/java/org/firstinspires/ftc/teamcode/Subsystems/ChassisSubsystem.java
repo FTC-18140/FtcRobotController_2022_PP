@@ -304,6 +304,7 @@ public class ChassisSubsystem extends SubsystemBase
             frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
         }
         heading = updateHeading();
+        telemetry.addData("Front Distsance Sensor: ", getFrontDistance());
 //        telemetry.addData("Coeffs: ", "%f, %f, %f, %f", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
 
     }

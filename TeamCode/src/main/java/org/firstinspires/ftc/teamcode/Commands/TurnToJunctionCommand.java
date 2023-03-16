@@ -21,7 +21,7 @@ public class TurnToJunctionCommand extends CommandBase
     private final boolean myClockwise;
     private Pose2d myRobotPose;
 
-    public static double myDistanceThreshold = 18;
+    public double myDistanceThreshold = 18;
     private final double myMaxTurnSpeed;
     private boolean myFinished = false;
 
@@ -54,7 +54,7 @@ public class TurnToJunctionCommand extends CommandBase
     @Override
     public void initialize()
     {
-        telemetry.addData("Initializing Turn to Junction Command: ", myClockwise);
+        telemetry.addData("Initializing Turn to Junction Command: ", myDistanceThreshold);
         myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 

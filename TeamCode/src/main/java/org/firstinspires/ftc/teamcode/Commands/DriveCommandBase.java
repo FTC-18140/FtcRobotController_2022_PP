@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CommandOpModes.AutoEpic;
 import org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
@@ -16,7 +17,7 @@ public abstract class DriveCommandBase extends CommandBase
     protected final MotionProfile myMotionProfile;
 
     protected Translation2d fromPoint;
-    protected final Translation2d toPoint;
+    protected Translation2d toPoint;
 
     protected Pose2d myRobotPose;
 
@@ -113,14 +114,14 @@ public abstract class DriveCommandBase extends CommandBase
 
         telemetry.addData("Arrived at toPoint?  ", myArrived);
 
-        OdometryTesting.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
-        OdometryTesting.logger.addField(myChassisSubsystem.getRightEncoderDistance());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getX());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getY());
-        OdometryTesting.logger.addField(myOdometrySubsystem.getPose().getHeading());
-        OdometryTesting.logger.addField(motorPowers[0]);
-        OdometryTesting.logger.addField(motorPowers[2]);
-        OdometryTesting.logger.newLine();
+        AutoEpic.logger.addField(myChassisSubsystem.getLeftEncoderDistance());
+        AutoEpic.logger.addField(myChassisSubsystem.getRightEncoderDistance());
+        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getX());
+        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getY());
+        AutoEpic.logger.addField(myOdometrySubsystem.getPose().getHeading());
+        AutoEpic.logger.addField(motorPowers[0]);
+        AutoEpic.logger.addField(motorPowers[2]);
+        AutoEpic.logger.newLine();
 
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], motorPowers[2]);

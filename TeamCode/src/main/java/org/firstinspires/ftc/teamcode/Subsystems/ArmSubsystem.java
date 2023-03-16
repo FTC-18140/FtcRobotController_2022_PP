@@ -60,7 +60,7 @@ public class ArmSubsystem extends SubsystemBase
             if (elbowAngle < 0.31) {
                 armTwist(1);
             } else if (elbowAngle > 0.31) {
-                armTwist(0);
+                armTwist(0.05);
             }
             if (elbowAngle > 0.49){
                 wristMove(0.55);
