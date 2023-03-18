@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Commands;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.OdometrySubsystem;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
@@ -14,7 +13,8 @@ public class DriveDistanceCommand extends CommandBase
     private final DiffDriveOdometrySubsystem myOdometrySubsystem;
     private double myDistance;
     private double mySpeed;
-    private double myInitialDistance;
+    private double myInitialDistanceLeft;
+    private double myInitialDistanceRight;
     private final MotionProfile myMotionProfile = new MotionProfile(10, 10, 1, 0.02);
 
     public static double distanceFromPole = 23.5;
@@ -39,15 +39,18 @@ public class DriveDistanceCommand extends CommandBase
     @Override
     public void initialize() {
        myDistance = myChassisSubsystem.getFrontDistance() - distanceFromPole;
-       myInitialDistance =  myChassisSubsystem.getAverageEncoderDistance();
+        myInitialDistanceLeft =  myChassisSubsystem.getLeftEncoderDistance();
+        myInitialDistanceRight = myChassisSubsystem.getRightEncoderDistance();
     }
 
     @Override
     public void execute()
     {
-        myChassisSubsystem.getTelemetry().addData("Initial Distance", myInitialDistance);
+        myChassisSubsystem.getTelemetry().addData("Executing Drive Distance Command: ", myDistance);
+        myChassisSubsystem.getTelemetry().addData("Distance Left: ", myChassisSubsystem.getLeftEncoderDistance() - myInitialDistanceLeft);
+        myChassisSubsystem.getTelemetry().addData("Distance Right: ", myChassisSubsystem.getRightEncoderDistance() - myInitialDistanceRight);
+
         double[] motorPowers = new double[]{mySpeed, 0, 0};
-    //    adjustSpeedsWithProfile(motorPowers, myChassisSubsystem.getAverageEncoderDistance());
 
         myChassisSubsystem.arcadeDrive(motorPowers[0], 0);
     }
@@ -61,7 +64,8 @@ public class DriveDistanceCommand extends CommandBase
     @Override
     public boolean isFinished()
     {
-        return Math.abs(myChassisSubsystem.getAverageEncoderDistance() - myInitialDistance) >= myDistance;
+        return (Math.abs(myChassisSubsystem.getLeftEncoderDistance() - myInitialDistanceLeft) >= myDistance) &&
+               (Math.abs(myChassisSubsystem.getRightEncoderDistance() - myInitialDistanceRight ) >= myDistance);
     }
 
     /**

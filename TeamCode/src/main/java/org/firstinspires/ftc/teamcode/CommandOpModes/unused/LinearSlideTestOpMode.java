@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandOpModes;
+package org.firstinspires.ftc.teamcode.CommandOpModes.unused;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.CommandOpModes.TBDOpModeBase;
 import org.firstinspires.ftc.teamcode.Commands.ArriveCommand;
 import org.firstinspires.ftc.teamcode.Commands.DepartCommand;
 import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;

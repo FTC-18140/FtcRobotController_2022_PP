@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.teamcode.CommandOpModes.unused;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Commands.DriveDistanceCommand;
-import org.firstinspires.ftc.teamcode.Subsystems.FTClib_ThunderBot;
-
-import java.util.List;
+import org.firstinspires.ftc.teamcode.Subsystems.unused.FTClib_ThunderBot;
 
 @Autonomous(name = "Test Linear FTCLib OpMode")
 @Disabled

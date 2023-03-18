@@ -20,13 +20,10 @@ public class ArmSubsystem extends SubsystemBase
     Servo wrist;
     Telemetry telemetry;
     double elbowAngle;
-    public static double angleWhenTwist = 280;
-    public static double minElbowAngle = 247.5;      // 0.275
-    public static double maxElbowAngle = 481.5;      // 0.535
-    public static double minWristAngle = 0.0;        // 0.0
-    public static double maxWristAngle = 168.75;     // 0.625
-    public static double minTwistAngle = 0;
-    public static double maxTwistAngle = 180;
+
+    public static double initTwistValue = 0.05;
+    public static double initWristValue = 0.6;
+
 
     public ArmSubsystem( HardwareMap hwMap, Telemetry telem )
     {
@@ -37,9 +34,9 @@ public class ArmSubsystem extends SubsystemBase
             rightElbow = hwMap.servo.get("relbow");
             rightElbow.setDirection(Servo.Direction.REVERSE);
             twist = hwMap.servo.get("twist");
-            armTwist(0);
+            armTwist(initTwistValue);
             wrist = hwMap.servo.get("wrist");
-            wrist.setPosition(0.6);
+            wrist.setPosition(initWristValue);
         }
         catch (Exception e)
         {
@@ -60,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase
             if (elbowAngle < 0.31) {
                 armTwist(1);
             } else if (elbowAngle > 0.31) {
-                armTwist(0.05);
+                armTwist(initTwistValue);
             }
             if (elbowAngle > 0.49){
                 wristMove(0.55);
