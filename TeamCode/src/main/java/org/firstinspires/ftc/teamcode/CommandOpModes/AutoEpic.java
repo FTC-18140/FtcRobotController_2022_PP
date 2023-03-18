@@ -113,9 +113,9 @@ public class AutoEpic extends TBDOpModeBase
 
         DepartCommand halfWayFirst = new DepartCommand(70, 90, 0.4, 0.5, 20, 10, false, chassis, odometry);
         ArriveCommand otherHalfFirst = new ArriveCommand(149, 90, 0.3, 0.5, 40, 2, chassis, odometry);
-        TurnCommand overshotTurn = new TurnCommand(62, 0.4, 0.1, 10, 2, chassis, odometry);
+        TurnCommand overshotTurn = new TurnCommand(60, 0.4, 0.1, 20, 2, chassis, odometry);
         TurnToJunctionCommand alignTurn = new TurnToJunctionCommand(false, 0.1, chassis::getFrontDistance, 45, chassis, odometry); // distThreshold = 45
-        SeekCommand getCloserFirst = new SeekCommand(158, 99, 0.18, 0.4, 2, true, chassis, odometry); // x = 161 y = 100
+        SeekCommand getCloserFirst = new SeekCommand(159, 101, 0.18, 0.4, 2, true, chassis, odometry); // x = 161 y = 100
         LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50, 0.75, lift);
 
         ParallelCommandGroup liftSlideAndDrive = new ParallelCommandGroup(otherHalfFirst, goUpToHigh);
@@ -131,11 +131,11 @@ public class AutoEpic extends TBDOpModeBase
     {
         WristCommand moveWristDown = new WristCommand(0, arm);
         ClawCommand openUp = new ClawCommand(0.3, claw, "coneOne");
-        LiftDistanceCommand goDownOnHigh = new LiftDistanceCommand(-3, 0.5, lift);
+        LiftDistanceCommand goDownOnHigh = new LiftDistanceCommand(-6, 0.5, lift);
         WristCommand moveWristUp = new WristCommand(0.5, arm);
+
         WaitCommand  waitForConeDrop = new WaitCommand( 500);
-        TurnCommand correctTurnFirst = new TurnCommand(60, 0.4
-                , 0.15, 5, 2, chassis, odometry);
+        TurnCommand correctTurnFirst = new TurnCommand(60, 0.4, 0.15, 5, 2, chassis, odometry);
 
         return  new SequentialCommandGroup( moveWristDown,  new WaitCommand(250), goDownOnHigh, openUp, new WaitCommand(250), moveWristUp, waitForConeDrop, correctTurnFirst);
         ///////////////////////////////
@@ -143,11 +143,12 @@ public class AutoEpic extends TBDOpModeBase
 
     private SequentialCommandGroup driveToConeStack()
     {
-        LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-23, 0.5, lift);
+        LiftDistanceCommand moveLiftDown = new LiftDistanceCommand(-20, 0.3, lift);
+        ElbowCommand armDownFirst = new ElbowCommand(0.535, arm);
         SeekCommand driveBackSecond = new SeekCommand(154, 91, -0.3, 0.5, 2, true, chassis, odometry);
-        TurnCommand turnToConeStackSecond = new TurnCommand(-90, 0.4, 0.2, 30, 5, chassis, odometry);
+        TurnCommand turnToConeStackSecond = new TurnCommand(-90, 0.5, 0.2, 30, 5, chassis, odometry);
 
-        ParallelCommandGroup slideDownAndTurnSecond = new ParallelCommandGroup(moveLiftDown, turnToConeStackSecond);
+        ParallelCommandGroup slideDownAndTurnSecond = new ParallelCommandGroup(moveLiftDown, armDownFirst, turnToConeStackSecond);
         return new SequentialCommandGroup(driveBackSecond, slideDownAndTurnSecond);
     }
 
@@ -183,7 +184,7 @@ public class AutoEpic extends TBDOpModeBase
         super.loop();
         if (timerOne.hasExpired()) {
             if (coneOneDropped == false) {
-                stop();
+             //   stop();
             }
         }
         if (timerTwo.hasExpired()) {
@@ -235,6 +236,7 @@ public class AutoEpic extends TBDOpModeBase
     {
         super.stop();
         chassis.stop();
+        lift.liftStop();
         if ( doLogging)
         {
             logger.closeDataLogger();
