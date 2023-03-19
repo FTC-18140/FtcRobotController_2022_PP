@@ -33,8 +33,8 @@ public class LinearSlideTestOpMode extends TBDOpModeBase
         {
 
             lift = new LiftSubsystem(hardwareMap, telemetry);
-            LiftDistanceCommand goUp = new LiftDistanceCommand(5, 0.3, lift);
-            LiftDistanceCommand goDown = new LiftDistanceCommand(-5, 0.3, lift);
+            LiftDistanceCommand goUp = new LiftDistanceCommand(50, 0.3, lift);
+            LiftDistanceCommand goDown = new LiftDistanceCommand(-23, 0.3, lift);
             register( lift );
 
 

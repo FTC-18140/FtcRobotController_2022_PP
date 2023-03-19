@@ -343,9 +343,9 @@ public class ArmStrong {
 
             // less than 0.31, twist reverse
             // more than 0.31, untwist
-            if (elbowPosition < 0.31) {
+            if (elbowPosition < 0.29) {
                 armRotate(1);
-            } else if (elbowPosition > 0.31) {
+            } else if (elbowPosition > 0.29) {
                 armRotate(0);
             }
 
