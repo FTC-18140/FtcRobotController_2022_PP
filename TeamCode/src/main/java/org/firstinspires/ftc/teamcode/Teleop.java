@@ -17,7 +17,7 @@ public class Teleop extends OpMode
     // Variables for the positions for claw, wrist, and elbow
     double wristPosition = 0;
     double clawPosition = 0;
-    double elbowPosition = 0.535;
+    double elbowPosition = 0.465;
 
     double ELBOW_INCREMENT = 0.005;
     double WRIST_INCREMENT = 0.015; // its 0.0025
@@ -104,9 +104,9 @@ public class Teleop extends OpMode
         /////////////////
         // ELBOW
         /////////////////
-        if (gamepad2.b) {
+        if (gamepad2.x) {
             elbowPosition -= ELBOW_INCREMENT;
-        } else if (gamepad2.x) {
+        } else if (gamepad2.b) {
             elbowPosition += ELBOW_INCREMENT;
         }
 

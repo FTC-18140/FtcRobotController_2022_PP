@@ -54,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase
 
             // less than 0.31, twist reverse
             // more than 0.31, untwist
-            if (elbowAngle < 0.31) {
+            if (elbowAngle > 0.71) {
                 armTwist(1);
-            } else if (elbowAngle > 0.31) {
+            } else if (elbowAngle < 0.71) {
                 armTwist(initTwistValue);
             }
-            if (elbowAngle > 0.49){
+            if (elbowAngle < 0.49){
                 wristMove(0.55);
             }
         }

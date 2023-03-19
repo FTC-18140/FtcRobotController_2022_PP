@@ -84,9 +84,13 @@ public class TurnToJunctionCommand extends CommandBase
 
         telemetry.addData("Power 0, profiled: ", motorPowers[0]);
         telemetry.addData("Power 2, profiled: ", motorPowers[2]);
+        telemetry.addData("Distance Detected: ", distance.getAsDouble());
 
+        double theCurrHeading = myOdometrySubsystem.getPose().getHeading();
         // Check if we have arrived
-        myFinished = distance.getAsDouble() < myDistanceThreshold;   ///   Am I seeing the pole???
+        myFinished = ( distance.getAsDouble() < myDistanceThreshold ) ||
+                     ( (theCurrHeading > 0) && (theCurrHeading < Math.toRadians(41)) )||
+                     ( (theCurrHeading < 0) && (theCurrHeading < Math.toRadians(-140) ));///   Am I seeing the pole???
 
         telemetry.addData("See Junction?  ", myFinished);
 
