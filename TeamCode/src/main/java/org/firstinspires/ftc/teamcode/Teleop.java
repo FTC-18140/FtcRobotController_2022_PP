@@ -15,9 +15,9 @@ public class Teleop extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
 
     // Variables for the positions for claw, wrist, and elbow
-    double wristPosition = 0;
+    double wristPosition = 0.55;
     double clawPosition = 0;
-    double elbowPosition = 0.465;
+    double elbowPosition = 0.495;
 
     double ELBOW_INCREMENT = 0.005;
     double WRIST_INCREMENT = 0.015; // its 0.0025
@@ -64,7 +64,8 @@ public class Teleop extends OpMode
     @Override
     public void loop() {
         robot.update();
-
+        telemetry.addData("Lelbow Position", robot.armstrong.leftElbow.getPosition());
+        telemetry.addData("Relbow Position", robot.armstrong.rightElbow.getPosition());
         /////////////////
         // CHASSIS
         /////////////////

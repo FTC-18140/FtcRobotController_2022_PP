@@ -308,6 +308,7 @@ public class AutoLegendary extends TBDOpModeBase
     public void loop() {
         super.loop();
         if (timerOne.hasExpired()) {
+
             if (coneOneDropped == false) {
                 stop();
             }

@@ -53,8 +53,8 @@ public class ArmStrong {
     final private double WRIST_MAX = 0.625;
     final private double WRIST_MIN = 0.0;
 
-    final private double INIT_ELB = 0.465;
-    final private double ELB_MIN = 0.465; // 0.26
+    final private double INIT_ELB = 0.495;
+    final private double ELB_MIN = 0.495; // 0.26
     final private double ELB_MAX = 0.74; // 0.535
 
     // Lift parameters
@@ -346,10 +346,10 @@ public class ArmStrong {
             if (elbowPosition > 0.71) {
                 armRotate(1);
             } else if (elbowPosition < 0.71) {
-                armRotate(0);
+                armRotate(0.05);
             }
 
-            if (elbowPosition < 0.49) {
+            if (elbowPosition < 0.55) {
                 wristMove(0.55);
             }
         }
