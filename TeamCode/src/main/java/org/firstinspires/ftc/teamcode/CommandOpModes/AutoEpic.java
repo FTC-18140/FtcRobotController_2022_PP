@@ -127,7 +127,7 @@ public class AutoEpic extends TBDOpModeBase
         ParallelCommandGroup liftSlideAndDrive = new ParallelCommandGroup(otherHalfFirst, goUpToHigh);
         ParallelCommandGroup liftArmAndDrive = new ParallelCommandGroup(liftConeUp, halfWayFirst);
 
-        SequentialCommandGroup firstJunction = new SequentialCommandGroup(initTwist, liftArmAndDrive, liftSlideAndDrive.andThen(new WaitCommand(250)), overshotTurn, getCloserFirst.withTimeout(5000), alignTurn);
+        SequentialCommandGroup firstJunction = new SequentialCommandGroup(initTwist, liftArmAndDrive, liftSlideAndDrive.andThen(new WaitCommand(250)), overshotTurn, getCloserFirst.withTimeout(2000), alignTurn);
 
         return firstJunction;
     }
@@ -162,7 +162,7 @@ public class AutoEpic extends TBDOpModeBase
         LiftDistanceCommand liftSlightlySecond = new LiftDistanceCommand(12, 0.5, lift);
 
         ParallelCommandGroup slideDownAndTurnSecond = new ParallelCommandGroup(moveLiftDown, armDownFirst, turnToConeStackSecond);
-        return new SequentialCommandGroup(driveBackSecond, slideDownAndTurnSecond, driveHalfToConeStack, driveOtherHalf, clawCloseSecond.andThen(new WaitCommand(250)), liftSlightlySecond.andThen(new WaitCommand(250)));
+        return new SequentialCommandGroup(driveBackSecond, slideDownAndTurnSecond, driveHalfToConeStack, driveOtherHalf.withTimeout(2000), clawCloseSecond.andThen(new WaitCommand(250)), liftSlightlySecond.andThen(new WaitCommand(250)));
 
     }
 
@@ -183,7 +183,7 @@ public class AutoEpic extends TBDOpModeBase
 
         ParallelCommandGroup liftAndDriveSecond = new ParallelCommandGroup(driveRestOfWayToJunctionSecond, liftSlideSecond, elbowRaiseHalfSecond.andThen(new WaitCommand(500).andThen(elbowRaiseSecond)));
 
-        return new SequentialCommandGroup(driveBackToJunctionSecond, liftAndDriveSecond, overShotSecond, getCloserSecond, getCloserSecond2.withTimeout(5000), alignForSecondCone);
+        return new SequentialCommandGroup(driveBackToJunctionSecond, liftAndDriveSecond, overShotSecond, getCloserSecond, getCloserSecond2.withTimeout(2000), alignForSecondCone);
     }
 
     private SequentialCommandGroup dropCone2()
