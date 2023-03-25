@@ -127,7 +127,7 @@ public class AutoEpic extends TBDOpModeBase
         ParallelCommandGroup liftSlideAndDrive = new ParallelCommandGroup(otherHalfFirst, goUpToHigh);
         ParallelCommandGroup liftArmAndDrive = new ParallelCommandGroup(liftConeUp, halfWayFirst);
 
-        SequentialCommandGroup firstJunction = new SequentialCommandGroup(initTwist, liftArmAndDrive, liftSlideAndDrive.andThen(new WaitCommand(250)), overshotTurn, getCloserFirst.withTimeout(5000), alignTurn);
+        SequentialCommandGroup firstJunction = new SequentialCommandGroup(initTwist, liftArmAndDrive.withTimeout(5000), liftSlideAndDrive.andThen(new WaitCommand(250)), overshotTurn, getCloserFirst, alignTurn);
 
         return firstJunction;
     }
@@ -183,7 +183,7 @@ public class AutoEpic extends TBDOpModeBase
 
         ParallelCommandGroup liftAndDriveSecond = new ParallelCommandGroup(driveRestOfWayToJunctionSecond, liftSlideSecond, elbowRaiseHalfSecond.andThen(new WaitCommand(500).andThen(elbowRaiseSecond)));
 
-        return new SequentialCommandGroup(driveBackToJunctionSecond, liftAndDriveSecond, overShotSecond, getCloserSecond, getCloserSecond2.withTimeout(5000), alignForSecondCone);
+        return new SequentialCommandGroup(driveBackToJunctionSecond, liftAndDriveSecond.withTimeout(5000), overShotSecond, getCloserSecond, getCloserSecond2.withTimeout(5000), alignForSecondCone);
     }
 
     private SequentialCommandGroup dropCone2()
