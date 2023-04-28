@@ -19,7 +19,7 @@ public class AutoRightMid extends OpMode {
     // stepB is a turn
     double stepB = -84.5;
     // stepC is a drive
-    double stepC = 0.35;
+    double stepC = 1;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -76,7 +76,7 @@ public class AutoRightMid extends OpMode {
         {
             case 0:
                 if (!done) {
-                    done = robot.armstrong.elbowMove(0.375);
+                    done = robot.armstrong.elbowMove(0.64);
                 } else {
                     robot.stop();
                     done = false;
@@ -138,7 +138,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepC is 10y
-                    done = robot.gyroDrive(-92.5, stepC, -0.3); // was 43.5
+                    done = robot.gyroDrive(-92.5, stepC, -0.2); // was 43.5
                     telemetry.addData("case 2", "is started");
                 }
                 else
@@ -202,7 +202,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 11:
                 if (!done) {
-                    done = robot.armstrong.elbowMove(0.535) || (getRuntime() > 1);
+                    done = robot.armstrong.elbowMove(0.465) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;

@@ -121,13 +121,15 @@ public class AutoEpic extends TBDOpModeBase
         ArriveCommand otherHalfFirst = new ArriveCommand(149, 90, 0.3, 0.5, 40, 2, chassis, odometry);
         TurnCommand overshotTurn = new TurnCommand(60, 0.4, 0.1, 20, 2, chassis, odometry);
         TurnToJunctionCommand alignTurn = new TurnToJunctionCommand(false, 0.1, chassis::getFrontDistance, 45, chassis, odometry); // distThreshold = 45
-        SeekCommand getCloserFirst = new SeekCommand(159, 101, 0.18, 0.4, 2, true, chassis, odometry); // x = 161 y = 100
+        SeekCommand getCloserFirst = new SeekCommand(159, 101, 0.18, 0.4, 3, true, chassis, odometry); // x = 161 y = 100
         LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50, 0.75, lift);
 
         ParallelCommandGroup liftSlideAndDrive = new ParallelCommandGroup(otherHalfFirst, goUpToHigh);
         ParallelCommandGroup liftArmAndDrive = new ParallelCommandGroup(liftConeUp, halfWayFirst);
 
+
         SequentialCommandGroup firstJunction = new SequentialCommandGroup(initTwist, liftArmAndDrive.withTimeout(5000), liftSlideAndDrive.andThen(new WaitCommand(250)), overshotTurn, getCloserFirst, alignTurn);
+
 
         return firstJunction;
     }
@@ -162,7 +164,7 @@ public class AutoEpic extends TBDOpModeBase
         LiftDistanceCommand liftSlightlySecond = new LiftDistanceCommand(12, 0.5, lift);
 
         ParallelCommandGroup slideDownAndTurnSecond = new ParallelCommandGroup(moveLiftDown, armDownFirst, turnToConeStackSecond);
-        return new SequentialCommandGroup(driveBackSecond, slideDownAndTurnSecond, driveHalfToConeStack, driveOtherHalf, clawCloseSecond.andThen(new WaitCommand(250)), liftSlightlySecond.andThen(new WaitCommand(250)));
+        return new SequentialCommandGroup(driveBackSecond, slideDownAndTurnSecond, driveHalfToConeStack, driveOtherHalf.withTimeout(2000), clawCloseSecond.andThen(new WaitCommand(250)), liftSlightlySecond.andThen(new WaitCommand(250)));
 
     }
 
