@@ -57,6 +57,7 @@ public class TestClass {
         wait(1000);
         turn(0.5, "Right");
         wait(1000);
+        
         turn(0.5, "Left");
         wait(1000);
     }
