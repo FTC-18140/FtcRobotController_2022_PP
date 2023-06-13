@@ -36,6 +36,8 @@ public class Thunderbot_2022
     ArmStrong armstrong = new ArmStrong();
     LED lights = new LED();
 
+
+
     // Position Variables
     long leftFrontPosition = 0;
     long rightFrontPosition = 0;
@@ -64,6 +66,9 @@ public class Thunderbot_2022
     public Thunderbot_2022()
     {
 
+    }
+    public void init(HardwareMap ahwMap, Telemetry telem ) {
+        init(ahwMap, telem, false);
     }
 
     /**
