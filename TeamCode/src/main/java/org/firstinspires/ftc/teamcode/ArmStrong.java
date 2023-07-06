@@ -290,14 +290,19 @@ public class ArmStrong {
             moving = true;
         }
         double slideDistanceMoved = Math.abs(initLiftPosition - getLiftPosition());
+
         if (slideDistanceMoved > distance) {
+            telemetry.addData("slideDistanceMoved", slideDistanceMoved);
             liftStop();
             moving = false;
             return true;
         } else {
             liftUp(power);
+            telemetry.addData("slideDistanceMoved", slideDistanceMoved);
+            telemetry.addData("distance", distance);
             return false;
         }
+
     }
 
     /**
@@ -441,6 +446,12 @@ public class ArmStrong {
         leftSlidePosition = leftLift.getCurrentPosition();
         rightSlidePosition = rightLift.getCurrentPosition();
         telemetry.addData("leftHeight: ", leftSlidePosition/COUNTS_PER_CM);
+        telemetry.addData("initLiftPostion", initLiftPosition);
+        telemetry.addData("moving", Boolean.toString(moving));
+        double liftPos = getLiftPosition();
+        telemetry.addData("liftPosition", liftPos);
+        double slideDistanceMoved = Math.abs(initLiftPosition - liftPos);
+        telemetry.addData("slideDistanceMoved", slideDistanceMoved);
 
     }
 
