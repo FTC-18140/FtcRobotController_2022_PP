@@ -22,12 +22,20 @@ public class RiverTestAsync extends OpMode{
         START,
         TRAJECTORY_1,
         LIFT_1,
+        CLAW_1,
+        FORWARD_1,
+        CLAW_2,
+        LIFT_2,
+        BACK_1,
         TRAJECTORY_2,
         TRAJECTORY_3,
         IDLE
     }
 
     Trajectory trajectory_1;
+
+    Trajectory forward_1;
+    Trajectory back_1;
 
     Trajectory trajectory_2;
 
@@ -43,11 +51,19 @@ public class RiverTestAsync extends OpMode{
         drive = new SampleMecanumDrive(hardwareMap);
 
         trajectory_1 = drive.trajectoryBuilder(new Pose2d(0,0,0))
-                .lineToLinearHeading(new Pose2d(20,0,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(20, 0, Math.toRadians(-45)))
+                .build();
+
+        forward_1 = drive.trajectoryBuilder(trajectory_1.end())
+                .forward(10)
+                .build();
+
+        back_1 = drive.trajectoryBuilder(trajectory_1.end())
+                .back(10)
                 .build();
 
         trajectory_2 = drive.trajectoryBuilder(trajectory_1.end())
-                .splineTo(new Vector2d(10,10), Math.toRadians(180))
+                .splineTo(new Vector2d(10,-10), Math.toRadians(-180))
                 .build();
     }
 
@@ -60,25 +76,73 @@ public class RiverTestAsync extends OpMode{
                     drive.followTrajectoryAsync(trajectory_1);
                 }
                 break;
+
             case TRAJECTORY_1:
                 if(!drive.isBusy()) {
                     currentState = State.LIFT_1;
                 }
                 break;
+
             case LIFT_1:
                 if (!liftDone) {
-                    liftDone = robot.armstrong.liftUpDistance(10, 0.3);
+                    liftDone = robot.armstrong.liftUpDistance(5, 0.4);
 
                 }else{
+                    currentState = State.CLAW_1;
+                    liftDone = false;
+                }
+                break;
+
+            case CLAW_1:
+                if (!liftDone) {
+                    liftDone = robot.armstrong.clawMove(robot.armstrong.getCLAW_MIN());
+
+                }else{
+                    currentState = State.FORWARD_1;
+                    drive.followTrajectory(forward_1);
+                }
+                break;
+
+            case FORWARD_1:
+                if(!drive.isBusy()) {
+                    currentState = State.CLAW_2;
+                    liftDone = false;
+                }
+                break;
+
+            case CLAW_2:
+                if (!liftDone) {
+                    liftDone = robot.armstrong.clawMove(robot.armstrong.getCLAW_MAX());
+
+                }else{
+                    currentState = State.LIFT_2;
+                    liftDone = false;
+                }
+                break;
+
+            case LIFT_2:
+                if (!liftDone) {
+                    liftDone = robot.armstrong.liftUpDistance(10, 0.4);
+
+                }else{
+                    currentState = State.BACK_1;
+                    drive.followTrajectory(back_1);
+                }
+                break;
+
+            case BACK_1:
+                if(!drive.isBusy()) {
                     currentState = State.TRAJECTORY_2;
                     drive.followTrajectory(trajectory_2);
                 }
                 break;
+
             case TRAJECTORY_2:
                 if(!drive.isBusy()) {
                     currentState = State.IDLE;
                 }
                 break;
+
             case IDLE:
                 telemetry.addData("done", "true");
                 break;
