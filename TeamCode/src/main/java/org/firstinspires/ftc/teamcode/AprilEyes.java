@@ -72,6 +72,13 @@ Telemetry telemetry;
 
     public void stopCamera()
     {
-        camera.stopStreaming();
+        try
+        {
+            camera.stopStreaming();
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Camera is not streaming.", 0);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -8,37 +9,56 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.List;
 
-
+@Config
 public class ChassisSubsystem extends SubsystemBase
 {
     private final DifferentialDrive myDrive;
-    Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
-    BNO055IMU imu;
+    private MotorGroup leftMotors;
+    private MotorGroup rightMotors;
+    private Motor.Encoder lfEncoder, rfEncoder, lrEncoder, rrEncoder;
+    private BNO055IMU imu;
     Telemetry telemetry;
-    List<LynxModule> allHubs;
+    private List<LynxModule> allHubs;
+    private DistanceSensor backSensorRange;
+    private DistanceSensor frontSensorRange;
 
-    public double getHeading()
-    {
-        return heading;
-    }
-    public double getHeadingAsRad()
-    {
-        return Math.toRadians(heading);
-    }
+
 
     private double heading;
+    private double backDistance = 100;
+    private double frontDistance = 100;
+
+    public static double kP = 1;
+    public static double kI = 0;
+    public static double kD = 0;
+
+    public static double kV = 0.0136;
+    public static double ka = 0.0025;
+    public static double ks = 0;
+
+    public PIDFCoefficients getCoeffs()
+    {
+        return coeffs;
+    }
+
+    private PIDFCoefficients coeffs;
+
 
     // converts inches to motor ticks
     private static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
@@ -64,36 +84,59 @@ public class ChassisSubsystem extends SubsystemBase
         lrEncoder = lR.encoder;
         rrEncoder = rR.encoder;
 
-
         lfEncoder.setDistancePerPulse( CM_PER_COUNT );
         rfEncoder.setDistancePerPulse( CM_PER_COUNT );
         lrEncoder.setDistancePerPulse( CM_PER_COUNT );
         rrEncoder.setDistancePerPulse( CM_PER_COUNT );
 
+        lF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rF.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rR.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lF.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rF.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+//        resetEncoders();
+
 //        lF.setRunMode(Motor.RunMode.VelocityControl);
 //        rF.setRunMode(Motor.RunMode.VelocityControl);
 //        lR.setRunMode(Motor.RunMode.VelocityControl);
 //        rR.setRunMode(Motor.RunMode.VelocityControl);
+//
+//        lF.setVeloCoefficients(kP, kI, kD);
+//        rF.setVeloCoefficients(kP, kI, kD);
+//        lR.setVeloCoefficients(kP, kI, kD);
+//        rR.setVeloCoefficients(kP, kI, kD);
+//
+//        lF.setFeedforwardCoefficients(ks,kV, ka);
+//        rF.setFeedforwardCoefficients(ks,kV, ka);
+//        lR.setFeedforwardCoefficients(ks,kV, ka);
+//        rR.setFeedforwardCoefficients(ks,kV, ka);
+//
+//        lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        lF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        rF.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        lR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        rR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        // temp
-//        lF.setInverted(true);
-//        rF.setInverted(true);
-
+        coeffs = rF.motorEx.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry = telem;
-        resetEncoders();
+        telemetry.addData("Coeffs: ", coeffs.toString());
 
-        lF.motor.setPower(0);
-        rF.motor.setPower(0);
-        lR.motor.setPower(0);
-        rR.motor.setPower(0);
+//        lF.stopMotor();
+//        rF.stopMotor();
+//        lR.stopMotor();
+//        rR.stopMotor();
 
-        MotorGroup leftMotors = new MotorGroup(lF, lR);
-        MotorGroup rightMotors = new MotorGroup(rF, rR);
+        leftMotors = new MotorGroup(lF, lR);
+        rightMotors = new MotorGroup(rF, rR);
         myDrive = new DifferentialDrive(leftMotors, rightMotors);
 
     }
@@ -108,10 +151,10 @@ public class ChassisSubsystem extends SubsystemBase
                             String rightRearName,
                             Telemetry telem)
     {
-        this(new MotorEx(hMap, leftFrontName, CPR, RPM),
-             new MotorEx(hMap, rightFrontName, CPR, RPM),
-             new MotorEx(hMap, leftRearName, CPR, RPM),
-             new MotorEx(hMap, rightRearName, CPR, RPM),
+        this(new MotorTBD(hMap, leftFrontName, CPR, RPM),
+             new MotorTBD(hMap, rightFrontName, CPR, RPM),
+             new MotorTBD(hMap, leftRearName, CPR, RPM),
+             new MotorTBD(hMap, rightRearName, CPR, RPM),
              telem);
 
         try
@@ -149,6 +192,24 @@ public class ChassisSubsystem extends SubsystemBase
         {
             telemetry.addData("imu not found in config file", 0);
             imu = null;
+        }
+
+        try
+        {
+            // you can use this as a regular DistanceSensor.
+            backSensorRange = hMap.get(DistanceSensor.class, "sensor_range");
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Back Range Sensor not found in config file", 0);
+        }
+        try
+        {
+            frontSensorRange = hMap.get(DistanceSensor.class, "sensor_range_front");
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("Front Range Sensor not found in config file", 0);
         }
 
     }
@@ -220,17 +281,43 @@ public class ChassisSubsystem extends SubsystemBase
                 AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
 
+    public void setZeroBehavior( Motor.ZeroPowerBehavior behavior)
+    {
+        leftMotors.setZeroPowerBehavior(behavior);
+        rightMotors.setZeroPowerBehavior(behavior);
+
+    }
+
     @Override
     public void periodic()
     {
-        heading = updateHeading();
         for (LynxModule module : allHubs)
         {
             module.clearBulkCache();
         }
+        if ( backSensorRange != null )
+        {
+            backDistance = backSensorRange.getDistance(DistanceUnit.CM);
+        }
+        if ( frontSensorRange != null )
+        {
+            frontDistance = frontSensorRange.getDistance(DistanceUnit.CM);
+        }
+        heading = updateHeading();
+//        telemetry.addData("Front Distsance Sensor: ", getFrontDistance());
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
     }
+    public double getHeading()
+    {
+        return heading;
+    }
+    public double getHeadingAsRad()
+    {
+        return Math.toRadians(heading);
+    }
+    public double getBackDistance() { return backDistance; }
+    public double getFrontDistance() { return frontDistance; }
 }

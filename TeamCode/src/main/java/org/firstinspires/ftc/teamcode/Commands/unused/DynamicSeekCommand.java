@@ -1,18 +1,20 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.unused;
 
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
+import org.firstinspires.ftc.teamcode.Commands.DriveCommandBase;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DiffDriveOdometrySubsystem;
 
-public class SeekCommand extends DriveCommandBase
+public class DynamicSeekCommand extends DriveCommandBase
 {
 
     /**
      * Creates a new SeekCommand.
      *
      */
-    public SeekCommand(double x, double y, double speed, double turnSpeed, double arriveBufferCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
+    public DynamicSeekCommand(double x, double y, double speed, double turnSpeed, double arriveBufferCM, boolean stopAtEnd, ChassisSubsystem chassis, DiffDriveOdometrySubsystem odometry)
     {
         super(x, y, speed, turnSpeed, arriveBufferCM, stopAtEnd, chassis, odometry);
     }
@@ -21,8 +23,14 @@ public class SeekCommand extends DriveCommandBase
     public void initialize()
     {
         super.initialize();
+        // 20.32 is the distance from the pole that is required to place a cone
+        double dX = (myChassisSubsystem.getFrontDistance() - 20.32) * Math.cos(myOdometrySubsystem.getPose().getHeading());
+        double dY = (myChassisSubsystem.getFrontDistance() - 20.32) * Math.sin(myOdometrySubsystem.getPose().getHeading());
+        double newX = myOdometrySubsystem.getPose().getX() + dX;
+        double newY = myOdometrySubsystem.getPose().getY() + dY;
+        toPoint = new Translation2d(newX, newY);
         telemetry.addData("Seek Command Initialized,", toPoint);
-        myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        myChassisSubsystem.setZeroBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override

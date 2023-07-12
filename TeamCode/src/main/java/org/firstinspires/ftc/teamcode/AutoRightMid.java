@@ -15,11 +15,11 @@ public class AutoRightMid extends OpMode {
 
     // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
-    double stepA = 147.5; // was 120
+    double stepA = 109.5; // was 120
     // stepB is a turn
-    double stepB = -87.75;
+    double stepB = -84.5;
     // stepC is a drive
-    double stepC = 0.5;
+    double stepC = 1;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -48,8 +48,8 @@ public class AutoRightMid extends OpMode {
 
         if (theZone == 1)
         { // set the number to the value of black
-            stepF = 60;
-            stepFPower = 0.5;
+            stepF = 42.5;
+            stepFPower = 0.3;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -58,8 +58,8 @@ public class AutoRightMid extends OpMode {
         }
         else
         { // set the number to the value of white
-            stepF = 60;
-            stepFPower = -0.5;
+            stepF = 42.5;
+            stepFPower = -0.3;
         }
 
 
@@ -70,14 +70,13 @@ public class AutoRightMid extends OpMode {
     public void loop()
     {
         robot.update();
-        // It is not Ryan's fault it is Ashley's fault casue she stopped taking her vitamin C cause she got too lazy
         telemetry.addData("Zone", theZone);
 
         switch (state)
         {
             case 0:
                 if (!done) {
-                    done = robot.armstrong.elbowMove(0.375);
+                    done = robot.armstrong.elbowMove(0.64);
                 } else {
                     robot.stop();
                     done = false;
@@ -89,7 +88,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.5);
+                    done = robot.gyroDrive(0, stepA, 0.3);
                 }
                 else
                 {
@@ -100,7 +99,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 30.5, 0.5);
+                    done = robot.drive(179, 25.75, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -111,7 +110,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(stepB, 0.5);
+                    done = robot.turnTo(stepB, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -125,7 +124,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(-87.75, 0.5);
+                    done = robot.turnTo(-87.75, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -139,7 +138,7 @@ public class AutoRightMid extends OpMode {
                 if (!done)
                 {
                     // stepC is 10y
-                    done = robot.gyroDrive(-92.5, stepC, -0.5); // was 43.5
+                    done = robot.gyroDrive(-92.5, stepC, -0.2); // was 43.5
                     telemetry.addData("case 2", "is started");
                 }
                 else
@@ -151,7 +150,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 6:
                 if (!done) {
-                    done = robot.armstrong.liftUpDistance(25, 0.5);
+                    done = robot.armstrong.liftUpDistance(25, 0.4);
                 } else {
                     robot.stop();
                     done = false;
@@ -203,7 +202,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 11:
                 if (!done) {
-                    done = robot.armstrong.elbowMove(0.535) || (getRuntime() > 1);
+                    done = robot.armstrong.elbowMove(0.465) || (getRuntime() > 1);
                 } else {
                     robot.stop();
                     done = false;
@@ -232,7 +231,7 @@ public class AutoRightMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(-90, 28, 0.5);
+                    done = robot.drive(-90, 28, 0.3);
                 } else {
                     robot.stop();
                     done = false;

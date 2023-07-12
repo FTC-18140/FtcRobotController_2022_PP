@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.CommandOpModes.TBDOpModeBase;
-import org.firstinspires.ftc.teamcode.Commands.DefaultDriveCommand;
-import org.firstinspires.ftc.teamcode.Commands.DefaultLiftCommand;
-import org.firstinspires.ftc.teamcode.Commands.TurboDriveCommand;
+import org.firstinspires.ftc.teamcode.Commands.unused.DefaultDriveCommand;
+import org.firstinspires.ftc.teamcode.Commands.unused.DefaultLiftCommand;
+import org.firstinspires.ftc.teamcode.Commands.unused.TurboDriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 

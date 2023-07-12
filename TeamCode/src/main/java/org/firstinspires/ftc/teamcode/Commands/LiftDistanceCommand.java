@@ -37,6 +37,7 @@ public class LiftDistanceCommand extends CommandBase
             myLift.liftDown(mySpeed);
         }
         myLift.telemetry.addData("Init Encoder Distance", myInitialDistance);
+        myLift.telemetry.addData("Current Coder Distance: ", myLift.getAverageEncoderDistance());
     }
 
     @Override

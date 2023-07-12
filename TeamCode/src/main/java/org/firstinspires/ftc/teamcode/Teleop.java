@@ -15,9 +15,9 @@ public class Teleop extends OpMode
     Thunderbot_2022 robot = new Thunderbot_2022();
 
     // Variables for the positions for claw, wrist, and elbow
-    double wristPosition = 0;
+    double wristPosition = 0.55;
     double clawPosition = 0;
-    double elbowPosition = 0.535;
+    double elbowPosition = 0.495;
 
     double ELBOW_INCREMENT = 0.005;
     double WRIST_INCREMENT = 0.015; // its 0.0025
@@ -64,21 +64,21 @@ public class Teleop extends OpMode
     @Override
     public void loop() {
         robot.update();
-        telemetry.addData("Larm position", robot.armstrong.leftElbow.getPosition());
-        telemetry.addData("Rarm position", robot.armstrong.rightElbow.getPosition());
+        telemetry.addData("Lelbow Position", robot.armstrong.leftElbow.getPosition());
+        telemetry.addData("Relbow Position", robot.armstrong.rightElbow.getPosition());
         /////////////////
         // CHASSIS
         /////////////////
-        if (gamepad1.a) {
+        if (gamepad1.left_trigger > 0.1) {
             // TURBO!!!
             robot.joystickDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-        } else if (gamepad1.x){
+        } else if (gamepad1.right_trigger > 0.1) {
             // 20 percent
             robot.joystickDrive(-gamepad1.left_stick_y * 0.2, gamepad1.left_stick_x * 0.2, gamepad1.right_stick_x * 0.2);
         } else {
             // Normal Drive
             double sign = Math.signum(gamepad1.right_stick_x);
-            robot.joystickDrive(-gamepad1.left_stick_y * 0.55, gamepad1.left_stick_x * 0.55, gamepad1.right_stick_x * 0.55 * gamepad1.right_stick_x * sign);
+            robot.joystickDrive(-gamepad1.left_stick_y * 0.6, gamepad1.left_stick_x * 0.6, gamepad1.right_stick_x * 0.8 * gamepad1.right_stick_x * sign);
         }
 
         /////////////////
@@ -88,11 +88,7 @@ public class Teleop extends OpMode
         // TODO: Add manual control/tweaking of twist here.  The automatic twist is now being handled
         // by the Armstrong class.
         //
-        if (gamepad2.left_stick_button) {
-            robot.armstrong.armRotate(1);
-        } else if (gamepad2.right_stick_button) {
-            robot.armstrong.armRotate(0);
-        }
+
 
         /////////////////
         // CLAW
@@ -109,9 +105,9 @@ public class Teleop extends OpMode
         /////////////////
         // ELBOW
         /////////////////
-        if (gamepad2.b) {
+        if (gamepad2.x) {
             elbowPosition -= ELBOW_INCREMENT;
-        } else if (gamepad2.x) {
+        } else if (gamepad2.b) {
             elbowPosition += ELBOW_INCREMENT;
         }
 

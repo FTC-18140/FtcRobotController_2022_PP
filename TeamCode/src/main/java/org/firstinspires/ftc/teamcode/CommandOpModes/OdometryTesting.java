@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.AprilEyes;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Commands.ElbowCommand;
 import org.firstinspires.ftc.teamcode.Commands.LiftDistanceCommand;
 import org.firstinspires.ftc.teamcode.Commands.SeekCommand;
 import org.firstinspires.ftc.teamcode.Commands.TurnCommand;
+import org.firstinspires.ftc.teamcode.Commands.TurnToJunctionCommand;
 import org.firstinspires.ftc.teamcode.Commands.WaitCommandTBD;
 import org.firstinspires.ftc.teamcode.Commands.WristCommand;
 import org.firstinspires.ftc.teamcode.DataLogger;
@@ -29,9 +31,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.LiftSubsystem;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "AutoLegendary", group = "FTCLib")
+@Autonomous(name = "OdometryTesting", group = "FTCLib")
 @Config
-public class AutoLegendary extends TBDOpModeBase
+public class OdometryTesting extends TBDOpModeBase
 {
     ChassisSubsystem chassis = null;
     DiffDriveOdometrySubsystem odometry = null;
@@ -40,6 +42,9 @@ public class AutoLegendary extends TBDOpModeBase
     ClawSubsystem claw = null;
     AprilEyes vision = new AprilEyes();
 
+    public static DataLogger logger = new DataLogger();
+    public static String logFileName = "odometryTestingData";
+
     Deadline timerOne = new Deadline(9, TimeUnit.SECONDS);
     Deadline timerTwo = new Deadline(19, TimeUnit.SECONDS);
     Deadline timerThree = new Deadline(27, TimeUnit.SECONDS);
@@ -47,9 +52,9 @@ public class AutoLegendary extends TBDOpModeBase
     public static boolean coneOneDropped = false;
     public static boolean coneTwoDropped = false;
     public static boolean coneThreeDropped = false;
-
-    public static DataLogger logger = new DataLogger();
-    public static String logFileName = "legendaryData";
+    public static double speed = 0.4;
+    public static double distance = 100;
+    public static double arriveZoneCM = 40;
 
     public enum Zone {
         ONE, TWO, THREE
@@ -60,18 +65,19 @@ public class AutoLegendary extends TBDOpModeBase
     @Override
     public void init()
     {
-
-
         try
         {
             // Open file for logging
             logger.openFile( logFileName);
             logger.addField("LeftEncDist" );
             logger.addField("RighEncDist" );
-            logger.addField( "Heading");
             logger.addField( "X");
             logger.addField("Y" );
+            logger.addField( "Heading");
+            logger.addField("Forward Speed");
+            logger.addField("Rotate Speed");
             logger.newLine();
+
             vision.init(hardwareMap, telemetry);
 
             chassis = new ChassisSubsystem(hardwareMap, telemetry);
@@ -86,20 +92,11 @@ public class AutoLegendary extends TBDOpModeBase
             register( arm );
             register( lift );
             register( claw );
-            arm.armTwist(0);
-
 
 
             ////////////// MASTER COMMAND /////////
-            SequentialCommandGroup driveAroundField = new SequentialCommandGroup(driveToJunction(),
-                    dropCone(),
-                    driveToConeStack(),
-                    driveBacktoJunction(),
-                    dropCone2(),
-                    thirdCone(),
-                    goToZone());
 
-            schedule( driveAroundField );
+            schedule( driveToJunction() );
 
         }
         catch (Exception e)
@@ -113,21 +110,37 @@ public class AutoLegendary extends TBDOpModeBase
     private SequentialCommandGroup driveToJunction()
     {
 
-        // driveToJunction //
-        ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
-        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.5, 0.1, 25, 5, false, chassis, odometry);
-        ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
-        SeekCommand midPointOne = new SeekCommand(90, 90, 0.5, 0.1, 5, false, chassis, odometry);
-        LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
-        // ScheduleCommand raiseUpLift = new ScheduleCommand( goUpToHigh);
-        ArriveCommand arriveAtJunction  = new ArriveCommand(160, 102, 0.5, 0.3, 40, 1, chassis, odometry );
-        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
-
-        WaitCommand waitToTurn = new WaitCommand(100);
-        TurnCommand turnToJunction = new TurnCommand(46, 0.2, 0.15, 10, 0.75, chassis, odometry);
-
-        return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
+//        ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
+//        DepartCommand driveAwayFromWall = new DepartCommand(50, 90, 0.4, 0.1, 25, 5, false, chassis, odometry);
+//        ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
+//
+//        SeekCommand midPointOne = new SeekCommand(90, 90, 0.4, 0.1, 5, false, chassis, odometry);
+//        ArriveCommand arriveAtJunction  = new ArriveCommand(162, 102, 0.5, 0.1, 40, 1, chassis, odometry );
+//        LiftDistanceCommand goUpToHigh = new LiftDistanceCommand(50.9, 0.75, lift);
+//        ParallelCommandGroup driveAndLift = new ParallelCommandGroup(midPointOne.andThen(arriveAtJunction), goUpToHigh);
+//
+//        WaitCommand waitToTurn = new WaitCommand(100);
+//        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 0.75, chassis, odometry);
+//
+//        return new SequentialCommandGroup( driveAndElbow, driveAndLift, waitToTurn, turnToJunction);
         //////////////////////////////////////
+
+        ElbowCommand liftConeUp = new ElbowCommand( 0.36, arm);
+        DepartCommand driveAwayFromWall = new DepartCommand(65, 90, speed, 0.1, 25, 10, false, chassis, odometry);
+        ParallelCommandGroup driveAndElbow = new ParallelCommandGroup( liftConeUp, driveAwayFromWall);
+
+        SeekCommand driveToJunction = new SeekCommand(90, 90, speed, 0.1, 5, false, chassis, odometry );
+        ArriveCommand arriveAtJunction  = new ArriveCommand(distance, 90, speed, 0.3, arriveZoneCM, 2, chassis, odometry );
+        WaitCommand waitALittle = new WaitCommand(1000);
+        TurnCommand turnToJunction = new TurnCommand(46, 0.25, 0.1, 10, 0.75, chassis, odometry);
+        TurnCommand turnTowardsCones = new TurnCommand(-90, 0.65, 0.15, 45, 5, chassis, odometry);
+
+        DepartCommand backUp = new DepartCommand( distance-20, 90, -0.3, 0.1, 12, 3, false, chassis, odometry);
+        ArriveCommand stop = new ArriveCommand( distance-40, 90,-0.3, 0.1, 10, 2, chassis, odometry );
+        TurnToJunctionCommand turnToPole = new TurnToJunctionCommand(true, 0.2, chassis::getBackDistance, 18, chassis, odometry);
+
+        return new SequentialCommandGroup( driveAndElbow, arriveAtJunction, waitALittle, turnToJunction.andThen(new WaitCommand(1000)), turnTowardsCones);
+
     }
 
     private SequentialCommandGroup dropCone()
@@ -156,7 +169,7 @@ public class AutoLegendary extends TBDOpModeBase
         WaitCommandTBD waitAfterConeTurn = new WaitCommandTBD(125, telemetry);
 
         DepartCommand driveToCones1_5 = new DepartCommand(153, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
-        ArriveCommand driveToCones2 = new ArriveCommand(153, 25, 0.3, 0.5, 25, 1, chassis, odometry );
+        ArriveCommand driveToCones2 = new ArriveCommand(154, 25, 0.3, 0.2, 25, 1, chassis, odometry );
         TurnCommand alignToCones = new TurnCommand(-90, 0.25, 0.15, 10, 0.75, chassis, odometry);
         ClawCommand grabCone = new ClawCommand(0.525, claw, "none");
 
@@ -172,7 +185,7 @@ public class AutoLegendary extends TBDOpModeBase
         // driveBackToJunction //
         DepartCommand  a_driveAwayCones = new DepartCommand(150, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
         SeekCommand b_midPoint = new SeekCommand(148, 75, -0.3, 0.2, 6, false, chassis, odometry);
-        ArriveCommand   c_driveToCenter = new ArriveCommand( 160, 102, -0.3, 0.2, 30, 1, chassis, odometry);
+        ArriveCommand   c_driveToCenter = new ArriveCommand( 170, 110, -0.3, 0.2, 30, 1, chassis, odometry);
 
 
         SequentialCommandGroup _1a_driveToJunction = new SequentialCommandGroup(a_driveAwayCones, b_midPoint, c_driveToCenter.withTimeout(3000));
@@ -215,7 +228,7 @@ public class AutoLegendary extends TBDOpModeBase
         ElbowCommand elbowDown3 = new ElbowCommand( 0.535, arm);
         WaitCommandTBD waitAfterConeTurn3 = new WaitCommandTBD(125, telemetry);
         DepartCommand driveToCones1_53 = new DepartCommand(152, 40, 0.4, 0.2, 15, 5,false, chassis, odometry );
-        ArriveCommand driveToCones23 = new ArriveCommand(154, 22.5, 0.35, 0.5, 25, 1, chassis, odometry );
+        ArriveCommand driveToCones23 = new ArriveCommand(154, 22.5, 0.35, 0.2, 25, 1, chassis, odometry );
         TurnCommand alignToCones3 = new TurnCommand(-90, 0.25, 0.15, 10, 0.75, chassis, odometry);
         ClawCommand grabCone3 = new ClawCommand(0.525, claw, "none");
 
@@ -231,7 +244,7 @@ public class AutoLegendary extends TBDOpModeBase
         // driveBackToJunction //
         DepartCommand a_driveAwayCones3 = new DepartCommand(152, 40, -0.3, 0.2, 5, 3, false, chassis, odometry);
         SeekCommand b_midPoint3 = new SeekCommand(150, 75, -0.3, 0.2, 6, false, chassis, odometry);
-        ArriveCommand c_driveToCenter3 = new ArriveCommand( 160, 102, -0.3, 0.2, 30, 1, chassis, odometry);
+        ArriveCommand c_driveToCenter3 = new ArriveCommand( 173, 112, -0.3, 0.2, 30, 1, chassis, odometry);
 
 
         SequentialCommandGroup _1a_driveToJunction3 = new SequentialCommandGroup(a_driveAwayCones3, b_midPoint3, c_driveToCenter3.withTimeout(3000));
@@ -292,7 +305,7 @@ public class AutoLegendary extends TBDOpModeBase
 
         // This HashMap lets us associate the signal zone with an command group.
         HashMap<Object, Command> theMap =  new HashMap<Object, Command>();
-        theMap.put( Zone.ONE, zoneOne);
+        theMap.put(Zone.ONE, zoneOne);
         theMap.put(Zone.TWO, zoneTwo);
         theMap.put(Zone.THREE, zoneThree);
 
@@ -308,7 +321,6 @@ public class AutoLegendary extends TBDOpModeBase
     public void loop() {
         super.loop();
         if (timerOne.hasExpired()) {
-
             if (coneOneDropped == false) {
                 stop();
             }
@@ -343,7 +355,9 @@ public class AutoLegendary extends TBDOpModeBase
                 theZone = Zone.TWO;
                 telemetry.addData("Two", 0);
         }
-        telemetry.addData("log file path", logger.getLogFullPathName());
+
+        PIDFCoefficients coeffs = chassis.getCoeffs();
+        telemetry.addData("Coeffs: ", coeffs.toString());
     }
 
 
@@ -361,8 +375,8 @@ public class AutoLegendary extends TBDOpModeBase
     public void stop()
     {
         super.stop();
-        chassis.stop();
         logger.closeDataLogger();
-        telemetry.addData("********************* Processed stop.*********************", 4);
+        chassis.stop();
+        telemetry.addData("************* Processed stop.*************", 4);
     }
 }

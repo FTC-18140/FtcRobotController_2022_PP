@@ -9,15 +9,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.function.DoubleSupplier;
 
+import static org.firstinspires.ftc.teamcode.CommandOpModes.OdometryTesting.logger;
+
 public class DiffDriveOdometrySubsystem extends SubsystemBase
 {
 
     protected DifferentialDriveOdometry m_odometry;
     Telemetry telemetry;
     DoubleSupplier left, right, gyro;
-
-    public final double TRACK_WIDTH = 28.2*2.0;
-    public final double TRACK_WIDTH_METERS = TRACK_WIDTH/100.0;
 
     /**
      * Make sure you are using the supplier version of the constructor
@@ -53,6 +52,7 @@ public class DiffDriveOdometrySubsystem extends SubsystemBase
        // telemetry.addData("Robot Pose: ", getPose() );
         telemetry.addData("X, Y: ", "%.3f, %.3f", getPose().getX(), getPose().getY());
         telemetry.addData("Heading, deg: ", "%.3f", Math.toDegrees(getPose().getHeading()));
+
     }
 
 }

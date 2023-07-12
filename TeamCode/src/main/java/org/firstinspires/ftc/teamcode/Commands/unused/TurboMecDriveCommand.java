@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands.unused;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.Commands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystems.unused.MecanumChassisSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -12,7 +10,6 @@ import java.util.function.DoubleSupplier;
  * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s). Written
  * explicitly for pedagogical purposes.
  */
-@Config
 public class TurboMecDriveCommand extends CommandBase {
 
     private final MecanumChassisSubsystem m_drive;
