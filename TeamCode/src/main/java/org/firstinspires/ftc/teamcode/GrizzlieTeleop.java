@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.LastSeason.Commands.Thunderbot_2022;
 
-@TeleOp(name = "Teleop", group = "Teleop")
-public class Teleop extends OpMode {
+@TeleOp(name = "GrizzlieTeleop", group = "Teleop")
+public class GrizzlieTeleop extends OpMode {
     Thunderbot_2022 robot = new Thunderbot_2022();
 
     public void init() {

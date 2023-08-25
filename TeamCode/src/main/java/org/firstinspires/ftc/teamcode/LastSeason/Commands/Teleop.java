@@ -78,7 +78,7 @@ public class Teleop extends OpMode
         } else {
             // Normal Drive
             double sign = Math.signum(gamepad1.right_stick_x);
-            robot.joystickDrive(-gamepad1.left_ stick_y * 0.6, gamepad1.left_stick_x * 0.6, gamepad1.right_stick_x * 0.8 * gamepad1.right_stick_x * sign);
+            robot.joystickDrive(-gamepad1.left_stick_y * 0.6, gamepad1.left_stick_x * 0.6, gamepad1.right_stick_x * 0.8 * gamepad1.right_stick_x * sign);
         }
 
         /////////////////
