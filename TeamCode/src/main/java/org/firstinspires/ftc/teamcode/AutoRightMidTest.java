@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode.LastSeason.Commands;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.Thunderbot_2022;
 
 @Autonomous
 /**
  * AutoTest Class
  */
-public class AutoLeftMid extends OpMode {
+public class AutoRightMidTest extends OpMode {
 
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
@@ -15,11 +17,11 @@ public class AutoLeftMid extends OpMode {
 
     // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
-    double stepA = 176.15; // was 120
+    double stepA = 177; // was 120
     // stepB is a turn
-    double stepB = 90;
+    double stepB = -82.5;
     // stepC is a drive
-    double stepC = 3.1;
+    double stepC = 3.3;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -49,7 +51,7 @@ public class AutoLeftMid extends OpMode {
         if (theZone == 1)
         { // set the number to the value of black
             stepF = 85;
-            stepFPower = -0.3;
+            stepFPower = 0.3;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -59,7 +61,7 @@ public class AutoLeftMid extends OpMode {
         else
         { // set the number to the value of white
             stepF = 85;
-            stepFPower = 0.3;
+            stepFPower = -0.3;
         }
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
@@ -71,8 +73,7 @@ public class AutoLeftMid extends OpMode {
         robot.update();
         telemetry.addData("Zone", theZone);
 
-        switch (state)
-        {
+        switch (state) {
             case 0:
                 if (!done) {
                     done = robot.armstrong.elbowMove(0.375);
@@ -98,7 +99,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 29, 0.3);
+                    done = robot.drive(179, 26.5, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -123,7 +124,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(92.5, 0.3);
+                    done = robot.turnTo(-82.5, 0.3);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -138,7 +139,7 @@ public class AutoLeftMid extends OpMode {
                 {
                     // stepC is 10y
                     done = true;
-                    done = robot.gyroDrive(92.5, stepC, -0.3); // was 43.5
+                    done = robot.gyroDrive(-82.5, stepC, -0.3); // was 43.5
                     telemetry.addData("case 2", "is started");
                 }
                 else
@@ -221,7 +222,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 13:
                 if (!done) {
-                    done = robot.gyroDrive(95, 1, 0.3);
+                    done = robot.gyroDrive(-82.5, 1, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -230,7 +231,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(90, 30, 0.3);
+                    done = robot.drive(-82.5, 45, 0.3);
                 } else {
                     robot.stop();
                     done = false;
@@ -239,7 +240,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 15:
                 if (!done) {
-                    done = robot.gyroDrive(90, stepF, stepFPower);
+                    done = robot.gyroDrive(-90, stepF, stepFPower);
                 } else {
                     robot.stop();
                     done = false;
@@ -252,3 +253,4 @@ public class AutoLeftMid extends OpMode {
         telemetry.addData("State", state);
     }
 }
+

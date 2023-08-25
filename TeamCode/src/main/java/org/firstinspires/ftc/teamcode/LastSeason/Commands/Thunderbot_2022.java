@@ -41,6 +41,7 @@ public class Thunderbot_2022
     long rightFrontPosition = 0;
     long leftRearPosition = 0;
     long rightRearPosition = 0;
+    double allMotors = 0;
     double heading = 0;
     List<LynxModule> allHubs;
 
@@ -51,7 +52,7 @@ public class Thunderbot_2022
 
     // converts inches to motor ticks
     static final double COUNTS_PER_MOTOR_REV = 28; // REV HD Hex motor
-    static final double DRIVE_GEAR_REDUCTION = 3.61 * 5.23;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
+    static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;  // actual gear ratios of the 4:1 and 5:1 UltraPlanetary gear box modules
     static final double WHEEL_DIAMETER_CM = 9.6;  // goBilda mecanum wheels are 96mm in diameter
     static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)
                                         / (WHEEL_DIAMETER_CM * Math.PI);
@@ -375,10 +376,13 @@ public class Thunderbot_2022
             {
                 // the rightFront wheel doesn't move at a desired direction of 45 degrees
                 initialPosition = leftFrontPosition;
+                initialPosition = allMotors;
             }
             else
             {
                 initialPosition = rightFrontPosition;
+                initialPosition = allMotors;
+
             }
             moving = true;
         }
@@ -399,10 +403,14 @@ public class Thunderbot_2022
         if (targetHeading == 45 || targetHeading == -135)
         {
             distanceMoved = abs(leftFrontPosition - initialPosition);
+            distanceMoved = abs(allMotors - initialPosition);
+
         }
         else
         {
             distanceMoved = abs(rightFrontPosition - initialPosition);
+            distanceMoved = abs(allMotors - initialPosition);
+
         }
         double distanceMovedInCM = distanceMoved / COUNTS_PER_CM;
 
@@ -630,6 +638,10 @@ public class Thunderbot_2022
         rightFrontPosition = rightFront.getCurrentPosition();
         leftRearPosition = leftRear.getCurrentPosition();
         rightRearPosition = rightRear.getCurrentPosition();
+
+        allMotors = (leftFrontPosition + rightFrontPosition + leftRearPosition + rightRearPosition) / 4;
+
+        telemetry.addData("Motor Position", allMotors);
 
         heading = updateHeading();
         armstrong.update();

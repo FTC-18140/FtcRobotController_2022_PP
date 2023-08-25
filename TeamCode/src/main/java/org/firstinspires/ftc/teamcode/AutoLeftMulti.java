@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.LastSeason.Commands;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 /**
  * AutoTest Class
  */
-public class AutoLeftMid extends OpMode {
+public class AutoLeftMulti extends OpMode {
 
     Thunderbot_2022 robot = new Thunderbot_2022();
     boolean done = false;
@@ -15,11 +15,11 @@ public class AutoLeftMid extends OpMode {
 
     // All of these values (A-F) work on the strafing to the right
     // stepA is a drive
-    double stepA = 176.15; // was 120
+    double stepA = 147.5; // was 120
     // stepB is a turn
     double stepB = 90;
     // stepC is a drive
-    double stepC = 3.1;
+    double stepC = 0.5;
     // stepD is a drive
     double stepD = 5;
     // stepE is a turn
@@ -48,8 +48,8 @@ public class AutoLeftMid extends OpMode {
 
         if (theZone == 1)
         { // set the number to the value of black
-            stepF = 85;
-            stepFPower = -0.3;
+            stepF = 60;
+            stepFPower = -0.5;
         }
         else if (theZone == 2)
         { // set the number to the value of half black
@@ -58,8 +58,8 @@ public class AutoLeftMid extends OpMode {
         }
         else
         { // set the number to the value of white
-            stepF = 85;
-            stepFPower = 0.3;
+            stepF = 60;
+            stepFPower = 0.5;
         }
 
         telemetry.addData("Robot Location: ", robot.updateHeading());
@@ -87,7 +87,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepA is 45
-                    done = robot.gyroDrive(0, stepA, 0.3);
+                    done = robot.gyroDrive(0, stepA, 0.5);
                 }
                 else
                 {
@@ -98,7 +98,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 2:
                 if (!done) {
-                    done = robot.drive(179, 29, 0.3);
+                    done = robot.drive(179, 30.5, 0.2);
                 } else {
                     robot.stop();
                     done = false;
@@ -109,7 +109,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(stepB, 0.3);
+                    done = robot.turnTo(stepB, 0.5);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -123,7 +123,7 @@ public class AutoLeftMid extends OpMode {
                 if (!done)
                 {
                     // stepB is 45
-                    done = robot.turnTo(92.5, 0.3);
+                    done = robot.turnTo(92.5, 0.5);
                     telemetry.addData("case 1", "is started");
                 }
                 else
@@ -148,6 +148,11 @@ public class AutoLeftMid extends OpMode {
                     state++;
                 }
                 break;
+
+            /////////////
+            // Linear Slide Movement
+            /////////////
+                /*
             case 6:
                 if (!done) {
                     done = robot.armstrong.liftUpDistance(25, 0.4);
@@ -218,10 +223,105 @@ public class AutoLeftMid extends OpMode {
                     done = false;
                     state++;
                 }
+                break;*/
+
+            case 6:
+                if (!done) {
+                    done = robot.turnTo( 0, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+
+            case 7:
+                if (!done) {
+                    done = robot.gyroDrive(0, 27.5, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+
+            case 8:
+                if (!done) {
+                    done = robot.turnTo( 100, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+
+            case 9:
+                if (!done) {
+                    done = robot.gyroDrive( 90,35, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 10:
+                if (!done) {
+                    done = robot.armstrong.elbowMove(0.535);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+            case 11:
+                if (!done) {
+                    done = robot.gyroDrive( 90, 65,-0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+
+            case 12:
+                if (!done) {
+                    done = robot.turnTo( -90, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
                 break;
             case 13:
                 if (!done) {
-                    done = robot.gyroDrive(95, 1, 0.3);
+                    done = robot.gyroDrive(-90, 15, 0.5);
+                } else {
+                    robot.stop();
+                    done = false;
+                    state++;
+                }
+                break;
+                
+            /////////////
+            // add in the picking up of the cone
+            ////////////
+
+
+
+//            case 16:
+//                if (!done) {
+//                    done = robot.gyroDrive(-135, 22.5, -0.5);
+//                } else {
+//                    robot.stop();
+//                    done = false;
+//                    state++;
+//                }
+            ////////////
+            // Parking
+            ////////////
+                /*            case 13:
+                if (!done) {
+                    done = robot.gyroDrive(95, 1, 0.5);
                 } else {
                     robot.stop();
                     done = false;
@@ -230,7 +330,7 @@ public class AutoLeftMid extends OpMode {
                 break;
             case 14:
                 if (!done) {
-                    done = robot.drive(90, 30, 0.3);
+                    done = robot.drive(90, 28, 0.5);
                 } else {
                     robot.stop();
                     done = false;
@@ -245,7 +345,8 @@ public class AutoLeftMid extends OpMode {
                     done = false;
                     state++;
                 }
-                break;
+                break;*/
+
             default:
                 break;
         }
